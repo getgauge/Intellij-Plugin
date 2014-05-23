@@ -1,0 +1,22 @@
+{
+  parserClass="com.thoughtworks.gauge.parser.SpecParser"
+
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+  psiClassPrefix="Spec"
+  psiImplClassSuffix="Impl"
+  psiPackage="com.thoughtworks.gauge.language.psi"
+  psiImplPackage="com.thoughtworks.gauge.language.psi.impl"
+
+  elementTypeHolderClass="com.thoughtworks.gauge.language.token.SpecTokenTypes"
+  elementTypeClass="com.thoughtworks.gauge.language.token.SpecElementType"
+  tokenTypeClass="com.thoughtworks.gauge.language.token.SpecTokenType"
+}
+
+specFile ::= specDetail scenario+
+private specDetail ::= (comment)*  specHeading (step|comment)*
+private scenario ::= scenarioHeading (step | comment)*
+private comment ::= COMMENT
+private specHeading ::= SPECHEADING
+private scenarioHeading ::= SCENARIOHEADING
+private step ::= STEP
