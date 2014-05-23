@@ -20,8 +20,8 @@ import static com.thoughtworks.gauge.language.token.SpecTokenTypes.*;
 LineTerminator = \r|\n|\r\n
 InputCharacter = [^\r\n]
 WhiteSpace = [ \t\f]
-ScenarioHeading = {WhiteSpace}* "##" {InputCharacter}* {LineTerminator}*
-SpecHeading = {WhiteSpace}* "#" {InputCharacter}* {LineTerminator}*
+ScenarioHeading = {WhiteSpace}* "##" {InputCharacter}* {LineTerminator}+ | {WhiteSpace}* {InputCharacter}* {LineTerminator} [-]+ {LineTerminator}+
+SpecHeading = {WhiteSpace}* "#" {InputCharacter}* {LineTerminator}+ | {WhiteSpace}* {InputCharacter}* {LineTerminator} [=]+ {LineTerminator}+
 Step = {WhiteSpace}* "*" {InputCharacter}* {LineTerminator}*
 Comment = {InputCharacter}*? {LineTerminator}*?
 %%
