@@ -28,6 +28,7 @@
     <!-- Add your extensions here -->
       <fileTypeFactory implementation="com.thoughtworks.gauge.language.SpecFileTypeFactory"/>
       <lang.parserDefinition language="Specification" implementationClass="com.thoughtworks.gauge.parser.SpecParserDefinition"/>
+      <lang.syntaxHighlighterFactory key="Specification" implementationClass="com.thoughtworks.gauge.highlight.SpecSyntaxHighlighterFactory"/>
   </extensions>
 
   <application-components>

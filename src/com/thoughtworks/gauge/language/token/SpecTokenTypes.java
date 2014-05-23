@@ -9,8 +9,8 @@ public interface SpecTokenTypes {
 
 
   IElementType COMMENT = new SpecTokenType("Comment");
-  IElementType SCENARIOHEADING = new SpecTokenType("Scenario Heading");
-  IElementType SPECHEADING = new SpecTokenType("Spec Heading");
+  IElementType SCENARIO_HEADING = new SpecTokenType("Scenario Heading");
+  IElementType SPEC_HEADING = new SpecTokenType("Spec Heading");
   IElementType STEP = new SpecTokenType("Step");
 
   class Factory {

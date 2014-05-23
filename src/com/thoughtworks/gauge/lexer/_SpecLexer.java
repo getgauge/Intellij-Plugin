@@ -446,7 +446,7 @@ public class _SpecLexer implements FlexLexer {
 
       switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
         case 4: 
-          { return SCENARIOHEADING;
+          { return SCENARIO_HEADING;
           }
         case 5: break;
         case 3: 
@@ -454,7 +454,7 @@ public class _SpecLexer implements FlexLexer {
           }
         case 6: break;
         case 2: 
-          { return SPECHEADING;
+          { return SPEC_HEADING;
           }
         case 7: break;
         case 1: 

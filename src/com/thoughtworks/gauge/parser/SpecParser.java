@@ -39,7 +39,7 @@ public class SpecParser implements PsiParser {
   // scenarioHeading (step | comment)*
   static boolean scenario(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "scenario")) return false;
-    if (!nextTokenIs(builder_, SCENARIOHEADING)) return false;
+    if (!nextTokenIs(builder_, SCENARIO_HEADING)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = scenarioHeading(builder_, level_ + 1);
@@ -72,16 +72,16 @@ public class SpecParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // SCENARIOHEADING
+  // SCENARIO_HEADING
   static boolean scenarioHeading(PsiBuilder builder_, int level_) {
-    return consumeToken(builder_, SCENARIOHEADING);
+    return consumeToken(builder_, SCENARIO_HEADING);
   }
 
   /* ********************************************************** */
   // (comment)*  specHeading (step|comment)*
   static boolean specDetail(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "specDetail")) return false;
-    if (!nextTokenIs(builder_, "", COMMENT, SPECHEADING)) return false;
+    if (!nextTokenIs(builder_, "", COMMENT, SPEC_HEADING)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = specDetail_0(builder_, level_ + 1);
@@ -140,7 +140,7 @@ public class SpecParser implements PsiParser {
   // specDetail scenario+
   static boolean specFile(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "specFile")) return false;
-    if (!nextTokenIs(builder_, "", COMMENT, SPECHEADING)) return false;
+    if (!nextTokenIs(builder_, "", COMMENT, SPEC_HEADING)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = specDetail(builder_, level_ + 1);
@@ -166,9 +166,9 @@ public class SpecParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // SPECHEADING
+  // SPEC_HEADING
   static boolean specHeading(PsiBuilder builder_, int level_) {
-    return consumeToken(builder_, SPECHEADING);
+    return consumeToken(builder_, SPEC_HEADING);
   }
 
   /* ********************************************************** */
