@@ -29,6 +29,7 @@
       <fileTypeFactory implementation="com.thoughtworks.gauge.language.SpecFileTypeFactory"/>
       <lang.parserDefinition language="Specification" implementationClass="com.thoughtworks.gauge.parser.SpecParserDefinition"/>
       <lang.syntaxHighlighterFactory key="Specification" implementationClass="com.thoughtworks.gauge.highlight.SpecSyntaxHighlighterFactory"/>
+      <colorSettingsPage implementation="com.thoughtworks.gauge.highlight.SpecColorSettingsPage"/>
   </extensions>
 
   <application-components>
