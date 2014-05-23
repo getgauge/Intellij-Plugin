@@ -20,6 +20,8 @@ public class SpecSyntaxHighlighter extends SyntaxHighlighterBase {
     public static final TextAttributesKey SCENARIO_HEADING = createTextAttributesKey("SCENARIO_HEADING", DefaultLanguageHighlighterColors.MARKUP_ATTRIBUTE);
     public static final TextAttributesKey STEP = createTextAttributesKey("STEP", DefaultLanguageHighlighterColors.INSTANCE_METHOD);
     public static final TextAttributesKey COMMENT = createTextAttributesKey("COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT);
+    public static final TextAttributesKey TABLE_HEADER = createTextAttributesKey("TABLE_HEADER", DefaultLanguageHighlighterColors.CONSTANT);
+    public static final TextAttributesKey TABLE_ROW = createTextAttributesKey("TABLE_ROW", DefaultLanguageHighlighterColors.DOC_COMMENT);
 
     static final TextAttributesKey BAD_CHARACTER = createTextAttributesKey("SIMPLE_BAD_CHARACTER",
             new TextAttributes(Color.RED, null, null, null, Font.BOLD));
@@ -30,6 +32,8 @@ public class SpecSyntaxHighlighter extends SyntaxHighlighterBase {
     private static final TextAttributesKey[] SCENARIO_HEADING_ATTRIBUTE = new TextAttributesKey[]{SCENARIO_HEADING};
     private static final TextAttributesKey[] STEP_ATTRIBUTE = new TextAttributesKey[]{STEP};
     private static final TextAttributesKey[] COMMENT_ATTRIBUTE = new TextAttributesKey[]{COMMENT};
+    private static final TextAttributesKey[] TABLE_HEADER_ATTRIBUTE = new TextAttributesKey[]{TABLE_HEADER};
+    private static final TextAttributesKey[] TABLE_ROW_ATTRIBUTE = new TextAttributesKey[]{TABLE_ROW};
 
     @NotNull
     @Override
@@ -49,6 +53,10 @@ public class SpecSyntaxHighlighter extends SyntaxHighlighterBase {
             return STEP_ATTRIBUTE;
         } else if (tokenType.equals(SpecTokenTypes.COMMENT)) {
             return COMMENT_ATTRIBUTE;
+        } else if (tokenType.equals(SpecTokenTypes.TABLE_HEADER)) {
+            return TABLE_HEADER_ATTRIBUTE;
+        } else if (tokenType.equals(SpecTokenTypes.TABLE_ROW)) {
+            return TABLE_ROW_ATTRIBUTE;
         } else if (tokenType.equals(TokenType.BAD_CHARACTER)) {
             return BAD_CHAR_KEYS;
         } else {

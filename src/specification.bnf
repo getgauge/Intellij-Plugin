@@ -14,9 +14,10 @@
 }
 
 specFile ::= specDetail scenario+
-private specDetail ::= (comment)*  specHeading (step|comment)*
+private specDetail ::= (comment)*  specHeading table? (step|comment)*
 private scenario ::= scenarioHeading (step | comment)*
 private comment ::= COMMENT
-private specHeading ::= SPECHEADING
-private scenarioHeading ::= SCENARIOHEADING
-private step ::= STEP
+private specHeading ::= SPEC_HEADING
+private scenarioHeading ::= SCENARIO_HEADING
+private step ::= STEP table?
+private table ::= TABLE_HEADER TABLE_ROW*

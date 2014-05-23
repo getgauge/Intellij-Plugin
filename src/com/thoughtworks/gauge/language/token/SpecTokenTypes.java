@@ -12,6 +12,8 @@ public interface SpecTokenTypes {
   IElementType SCENARIO_HEADING = new SpecTokenType("Scenario Heading");
   IElementType SPEC_HEADING = new SpecTokenType("Spec Heading");
   IElementType STEP = new SpecTokenType("Step");
+  IElementType TABLE_HEADER = new SpecTokenType("Table Header");
+  IElementType TABLE_ROW = new SpecTokenType("Table Row");
 
   class Factory {
     public static PsiElement createElement(ASTNode node) {
