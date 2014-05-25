@@ -4,21 +4,24 @@ package com.thoughtworks.gauge.language.token;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
+import com.thoughtworks.gauge.language.psi.impl.StepElementImpl;
 
 public interface SpecTokenTypes {
 
+    IElementType COMMENT = new SpecTokenType("Comment");
+    IElementType SCENARIO_HEADING = new SpecTokenType("Scenario Heading");
+    IElementType SPEC_HEADING = new SpecTokenType("Spec Heading");
+    IElementType STEP = new SpecTokenType("Step");
+    IElementType TABLE_HEADER = new SpecTokenType("Table Header");
+    IElementType TABLE_ROW = new SpecTokenType("Table Row");
 
-  IElementType COMMENT = new SpecTokenType("Comment");
-  IElementType SCENARIO_HEADING = new SpecTokenType("Scenario Heading");
-  IElementType SPEC_HEADING = new SpecTokenType("Spec Heading");
-  IElementType STEP = new SpecTokenType("Step");
-  IElementType TABLE_HEADER = new SpecTokenType("Table Header");
-  IElementType TABLE_ROW = new SpecTokenType("Table Row");
-
-  class Factory {
-    public static PsiElement createElement(ASTNode node) {
-      IElementType type = node.getElementType();
-      throw new AssertionError("Unknown element type: " + type);
+    class Factory {
+        public static PsiElement createElement(ASTNode node) {
+            IElementType type = node.getElementType();
+            if (type == STEP) {
+                return new StepElementImpl(node);
+            }
+            throw new AssertionError("Unknown element type: " + type);
+        }
     }
-  }
 }

@@ -11,6 +11,9 @@
   elementTypeHolderClass="com.thoughtworks.gauge.language.token.SpecTokenTypes"
   elementTypeClass="com.thoughtworks.gauge.language.token.SpecElementType"
   tokenTypeClass="com.thoughtworks.gauge.language.token.SpecTokenType"
+
+  psiImplUtilClass="com.thoughtworks.gauge.language.psi.SpecPsiImplUtil"
+
 }
 
 specFile ::= specDetail scenario+
@@ -19,5 +22,6 @@ private scenario ::= scenarioHeading (step | comment)*
 private comment ::= COMMENT
 private specHeading ::= SPEC_HEADING
 private scenarioHeading ::= SCENARIO_HEADING
-private step ::= STEP table?
+private step ::= STEP table?    {mixin="com.thoughtworks.gauge.language.psi.impl.StepElementImpl"
+                                   implements="com.thoughtworks.gauge.language.psi.SpecNamedElement" methods = [getStepName]}
 private table ::= TABLE_HEADER TABLE_ROW*
