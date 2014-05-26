@@ -3,7 +3,7 @@ package com.thoughtworks.gauge.language.psi;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiElement;
 
-public interface StepElement extends SpecNamedElement {
+public interface SpecStep extends SpecNamedElement {
 
     String getStepName();
 
@@ -14,4 +14,6 @@ public interface StepElement extends SpecNamedElement {
     PsiElement getNameIdentifier();
 
     ItemPresentation getPresentation();
+
+    SpecTable getInlineTable();
 }

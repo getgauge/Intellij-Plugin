@@ -4,14 +4,15 @@ import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiElement;
 import com.thoughtworks.gauge.language.psi.SpecPsiImplUtil;
-import com.thoughtworks.gauge.language.psi.StepElement;
+import com.thoughtworks.gauge.language.psi.SpecStep;
+import com.thoughtworks.gauge.language.psi.SpecTable;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class StepElementImpl extends SpecNamedElementImpl implements StepElement {
+public class SpecStepImpl extends SpecNamedElementImpl implements SpecStep {
 
-    public StepElementImpl(@NotNull ASTNode node) {
+    public SpecStepImpl(@NotNull ASTNode node) {
         super(node);
     }
 
@@ -38,5 +39,11 @@ public class StepElementImpl extends SpecNamedElementImpl implements StepElement
     @Override
     public ItemPresentation getPresentation() {
         return SpecPsiImplUtil.getPresentation(this);
+    }
+
+    @Override
+    @Nullable
+    public SpecTable getInlineTable() {
+        return findChildByClass(SpecTable.class);
     }
 }

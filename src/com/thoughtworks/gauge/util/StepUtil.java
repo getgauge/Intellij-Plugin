@@ -1,35 +1,49 @@
 package com.thoughtworks.gauge.util;
 
+import com.intellij.codeInsight.AnnotationUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.search.FileTypeIndex;
+import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.indexing.FileBasedIndex;
-import com.thoughtworks.gauge.language.SpecFile;
-import com.thoughtworks.gauge.language.SpecFileType;
-import com.thoughtworks.gauge.language.psi.StepElement;
+import com.intellij.psi.search.searches.AnnotatedElementsSearch;
+import com.intellij.util.Query;
+import com.thoughtworks.gauge.StepValueExtractor;
+import com.thoughtworks.gauge.language.psi.SpecStep;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 public class StepUtil {
-    public static List<StepElement> findSteps(Project project) {
-        List<StepElement> result = new ArrayList<StepElement>();
-        Collection<VirtualFile> virtualFiles = FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, SpecFileType.INSTANCE,
-                GlobalSearchScope.allScope(project));
-        for (VirtualFile virtualFile : virtualFiles) {
-            SpecFile simpleFile = (SpecFile) PsiManager.getInstance(project).findFile(virtualFile);
-            if (simpleFile != null) {
-                StepElement[] step = PsiTreeUtil.getChildrenOfType(simpleFile, StepElement.class);
-                if (step != null) {
-                    Collections.addAll(result, step);
+
+    private static StepValueExtractor stepValueExtractor = new StepValueExtractor();
+
+    public static PsiMethod findStepImpl(SpecStep step, Project project) {
+        Collection<PsiMethod> stepMethods = getStepMethods(project);
+        return filter(stepMethods, step);
+    }
+
+    private static PsiMethod filter(Collection<PsiMethod> stepMethods, SpecStep step) {
+        String stepText = step.getStepName();
+
+        for (PsiMethod stepMethod : stepMethods) {
+            final PsiModifierList modifierList = stepMethod.getModifierList();
+            final PsiAnnotation[] annotations = modifierList.getAnnotations();
+            for (PsiAnnotation annotation : annotations) {
+                if (annotationTextMatches(annotation, stepText)) {
+                    return stepMethod;
                 }
             }
         }
-        return result;
+        return null;
+    }
+
+    private static boolean annotationTextMatches(PsiAnnotation annotation, String stepValue) {
+        String annotationValue = AnnotationUtil.getStringAttributeValue(annotation, "value");
+        String methodValue = stepValueExtractor.getValue(annotationValue).getValue();
+        return methodValue.equals(stepValue);
+    }
+
+    public static Collection<PsiMethod> getStepMethods(Project project) {
+        final PsiClass step = JavaPsiFacade.getInstance(project).findClass("com.thoughtworks.gauge.Step", GlobalSearchScope.allScope(project));
+        final Query<PsiMethod> psiMethods = AnnotatedElementsSearch.searchPsiMethods(step, GlobalSearchScope.allScope(project));
+        return psiMethods.findAll();
     }
 }

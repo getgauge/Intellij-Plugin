@@ -20,7 +20,18 @@ public class SpecParser implements PsiParser {
     boolean result_;
     builder_ = adapt_builder_(root_, builder_, this, null);
     Marker marker_ = enter_section_(builder_, 0, _COLLAPSE_, null);
-    result_ = parse_root_(root_, builder_, 0);
+    if (root_ == SCENARIO) {
+      result_ = scenario(builder_, 0);
+    }
+    else if (root_ == STEP) {
+      result_ = step(builder_, 0);
+    }
+    else if (root_ == TABLE) {
+      result_ = table(builder_, 0);
+    }
+    else {
+      result_ = parse_root_(root_, builder_, 0);
+    }
     exit_section_(builder_, 0, marker_, root_, result_, true, TRUE_CONDITION);
     return builder_.getTreeBuilt();
   }
@@ -37,14 +48,14 @@ public class SpecParser implements PsiParser {
 
   /* ********************************************************** */
   // scenarioHeading (step | comment)*
-  static boolean scenario(PsiBuilder builder_, int level_) {
+  public static boolean scenario(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "scenario")) return false;
     if (!nextTokenIs(builder_, SCENARIO_HEADING)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = scenarioHeading(builder_, level_ + 1);
     result_ = result_ && scenario_1(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
+    exit_section_(builder_, marker_, SCENARIO, result_);
     return result_;
   }
 
@@ -181,14 +192,14 @@ public class SpecParser implements PsiParser {
 
   /* ********************************************************** */
   // STEP table?
-  static boolean step(PsiBuilder builder_, int level_) {
+  public static boolean step(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "step")) return false;
     if (!nextTokenIs(builder_, STEP)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, STEP);
     result_ = result_ && step_1(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
+    exit_section_(builder_, marker_, STEP, result_);
     return result_;
   }
 
@@ -201,14 +212,14 @@ public class SpecParser implements PsiParser {
 
   /* ********************************************************** */
   // TABLE_HEADER TABLE_ROW*
-  static boolean table(PsiBuilder builder_, int level_) {
+  public static boolean table(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "table")) return false;
     if (!nextTokenIs(builder_, TABLE_HEADER)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, TABLE_HEADER);
     result_ = result_ && table_1(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
+    exit_section_(builder_, marker_, TABLE, result_);
     return result_;
   }
 

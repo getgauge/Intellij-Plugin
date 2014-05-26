@@ -24,7 +24,7 @@ TableInputCharacter = [^|\r\n]
 WhiteSpace = [ \t\f]
 ScenarioHeading = {WhiteSpace}* "##" {InputCharacter}* {LineTerminator}+ | {WhiteSpace}* {InputCharacter}* {LineTerminator} [-]+ {LineTerminator}+
 SpecHeading = {WhiteSpace}* "#" {InputCharacter}* {LineTerminator}+ | {WhiteSpace}* {InputCharacter}* {LineTerminator} [=]+ {LineTerminator}+
-Step = {WhiteSpace}* "*" {InputCharacter}* {LineTerminator}*
+Step = {WhiteSpace}* "*" [^*] {InputCharacter}* {LineTerminator}*
 TableHeader = {WhiteSpace}* ("|" {TableInputCharacter}*)+ "|" {LineTerminator} | {WhiteSpace}* ("|" {TableInputCharacter}*)+ "|" {LineTerminator} {WhiteSpace}* {TableSeparator}+ {LineTerminator}+
 TableRow={WhiteSpace}* ("|" {TableInputCharacter}*)+ "|" {LineTerminator}
 Comment = {InputCharacter}*? {LineTerminator}*?
