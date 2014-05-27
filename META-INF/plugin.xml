@@ -30,6 +30,7 @@
       <lang.syntaxHighlighterFactory key="Specification" implementationClass="com.thoughtworks.gauge.highlight.SpecSyntaxHighlighterFactory"/>
       <colorSettingsPage implementation="com.thoughtworks.gauge.highlight.SpecColorSettingsPage"/>
       <annotator language="Specification" implementationClass="com.thoughtworks.gauge.annotator.StepAnnotator"/>
+      <completion.contributor language="Specification" implementationClass="com.thoughtworks.gauge.autocomplete.StepCompletionContributor"/>
   </extensions>
 
   <application-components>
