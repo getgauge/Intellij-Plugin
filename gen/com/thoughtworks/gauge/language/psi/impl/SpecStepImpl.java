@@ -3,17 +3,24 @@ package com.thoughtworks.gauge.language.psi.impl;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiElement;
-import com.thoughtworks.gauge.language.psi.SpecPsiImplUtil;
-import com.thoughtworks.gauge.language.psi.SpecStep;
-import com.thoughtworks.gauge.language.psi.SpecTable;
+import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.thoughtworks.gauge.language.psi.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class SpecStepImpl extends SpecNamedElementImpl implements SpecStep {
 
     public SpecStepImpl(@NotNull ASTNode node) {
         super(node);
+    }
+
+    public void accept(@NotNull PsiElementVisitor visitor) {
+        if (visitor instanceof SpecVisitor) ((SpecVisitor) visitor).visitStep(this);
+        else super.accept(visitor);
     }
 
     @Override
@@ -45,5 +52,11 @@ public class SpecStepImpl extends SpecNamedElementImpl implements SpecStep {
     @Nullable
     public SpecTable getInlineTable() {
         return findChildByClass(SpecTable.class);
+    }
+
+    @Override
+    @NotNull
+    public List<SpecArg> getArgList() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, SpecArg.class);
     }
 }

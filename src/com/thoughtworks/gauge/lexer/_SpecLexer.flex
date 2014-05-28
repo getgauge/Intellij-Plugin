@@ -16,12 +16,13 @@ import static com.thoughtworks.gauge.language.token.SpecTokenTypes.*;
 %function advance
 %type IElementType
 %unicode
-%state INTABLE,INSTEP,INARG,INDYNAMIC
+%state INTABLE,INSTEP,INARG,INDYNAMIC,INTABLEHEADER,INTABLEBODY,INTABLEBODYROW
 
 LineTerminator = \r|\n|\r\n
 InputCharacter = [^\r\n]
 TableInputCharacter = [^|\r\n]
 WhiteSpace = [ \t\f]
+TableIdentifier = [|]
 ScenarioHeading = {WhiteSpace}* "##" {InputCharacter}* {LineTerminator}? | {WhiteSpace}* {InputCharacter}* {LineTerminator} [-]+ {LineTerminator}?
 SpecHeading = {WhiteSpace}* "#" {InputCharacter}* {LineTerminator}? | {WhiteSpace}* {InputCharacter}* {LineTerminator} [=]+ {LineTerminator}?
 Step = {WhiteSpace}* "*" [^*] {InputCharacter}* {LineTerminator}*
@@ -35,7 +36,7 @@ TableSeparator = [-|]
   {SpecHeading}                 {return SPEC_HEADING;}
   "*"                           {yybegin(INSTEP);return STEP_IDENTIFIER;}
   "*" {WhiteSpace}* "*"         {return COMMENT;}
-  {TableHeader}                 {yybegin(INTABLE);return TABLE_HEADER;}
+  {TableIdentifier}             {yybegin(INTABLEHEADER);return TABLE_BORDER;}
   [^]                           {return COMMENT;}
 }
 
@@ -56,7 +57,20 @@ TableSeparator = [-|]
   [>]                           {yybegin(INSTEP); return DYNAMIC_ARG_END;}
 }
 
-<INTABLE> {
-  {TableRow}                    {yybegin(INTABLE);return TABLE_ROW;}
-  [^]                           {yypushback(1); yybegin(YYINITIAL);}
+<INTABLEHEADER> {
+    (\\\||[^|\r\n])*                        {yybegin(INTABLEHEADER); return TABLE_HEADER;}
+    {TableIdentifier}                       {yybegin(INTABLEHEADER); return TABLE_BORDER;}
+    {LineTerminator}{WhiteSpace}*           {yybegin(INTABLEBODY);return NEW_LINE;}
+}
+<INTABLEBODY> {
+    {TableIdentifier}                       {yybegin(INTABLEBODYROW); return TABLE_BORDER;}
+    [^]                                     {yypushback(1); yybegin(YYINITIAL);}
+}
+
+
+<INTABLEBODYROW> {
+    (\\\||[^-|\r\n])*                       {yybegin(INTABLEBODYROW); return TABLE_ROW;}
+    [-]*                                    {yybegin(INTABLEBODYROW); return TABLE_BORDER;}
+    {TableIdentifier}                       {yybegin(INTABLEBODYROW); return TABLE_BORDER;}
+    {LineTerminator}{WhiteSpace}*           {yybegin(INTABLEBODY); return NEW_LINE;}
 }

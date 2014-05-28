@@ -25,4 +25,6 @@ private scenarioHeading ::= SCENARIO_HEADING
 step ::= STEP_IDENTIFIER (arg|STEP)+ table?    {mixin="com.thoughtworks.gauge.language.psi.impl.SpecStepImpl"
                                    implements="com.thoughtworks.gauge.language.psi.SpecNamedElement" methods = [getStepName]}
 arg ::= (DYNAMIC_ARG_START DYNAMIC_ARG DYNAMIC_ARG_END) | (ARG_START ARG ARG_END)
-table ::= TABLE_HEADER TABLE_ROW*
+table ::= tableHeader tableBody
+tableHeader ::= TABLE_BORDER (TABLE_HEADER TABLE_BORDER)+ NEW_LINE (TABLE_BORDER)* NEW_LINE
+tableBody ::=(TABLE_BORDER (TABLE_ROW TABLE_BORDER)+ NEW_LINE)*

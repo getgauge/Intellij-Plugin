@@ -14,14 +14,14 @@ import static com.thoughtworks.gauge.language.token.SpecTokenTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.thoughtworks.gauge.language.psi.*;
 
-public class SpecArgImpl extends ASTWrapperPsiElement implements SpecArg {
+public class SpecTableBodyImpl extends ASTWrapperPsiElement implements SpecTableBody {
 
-    public SpecArgImpl(ASTNode node) {
+    public SpecTableBodyImpl(ASTNode node) {
         super(node);
     }
 
     public void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof SpecVisitor) ((SpecVisitor) visitor).visitArg(this);
+        if (visitor instanceof SpecVisitor) ((SpecVisitor) visitor).visitTableBody(this);
         else super.accept(visitor);
     }
 

@@ -21,48 +21,48 @@ import org.jetbrains.annotations.NotNull;
 public class SpecParserDefinition implements ParserDefinition {
     public static final TokenSet WHITE_SPACES = TokenSet.create(TokenType.WHITE_SPACE);
     public static final TokenSet COMMENTS = TokenSet.create(SpecTokenTypes.COMMENT);
- 
+
     public static final IFileElementType FILE = new IFileElementType(Language.<Specification>findInstance(Specification.class));
- 
+
     @NotNull
     @Override
     public Lexer createLexer(Project project) {
         return new SpecLexer();
     }
- 
+
     @NotNull
     public TokenSet getWhitespaceTokens() {
         return WHITE_SPACES;
     }
- 
+
     @NotNull
     public TokenSet getCommentTokens() {
         return COMMENTS;
     }
- 
+
     @NotNull
     public TokenSet getStringLiteralElements() {
         return TokenSet.EMPTY;
     }
- 
+
     @NotNull
     public PsiParser createParser(final Project project) {
         return new SpecParser();
     }
- 
+
     @Override
     public IFileElementType getFileNodeType() {
         return FILE;
     }
- 
+
     public PsiFile createFile(FileViewProvider viewProvider) {
         return new SpecFile(viewProvider);
     }
- 
+
     public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode left, ASTNode right) {
         return SpaceRequirements.MAY;
     }
- 
+
     @NotNull
     public PsiElement createElement(ASTNode node) {
         return SpecTokenTypes.Factory.createElement(node);

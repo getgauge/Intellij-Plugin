@@ -7,28 +7,36 @@ import com.intellij.psi.PsiElement;
 
 public class SpecVisitor extends PsiElementVisitor {
 
-  public void visitArg(@NotNull SpecArg o) {
-    visitPsiElement(o);
-  }
+    public void visitArg(@NotNull SpecArg o) {
+        visitPsiElement(o);
+    }
 
-  public void visitScenario(@NotNull SpecScenario o) {
-    visitPsiElement(o);
-  }
+    public void visitScenario(@NotNull SpecScenario o) {
+        visitPsiElement(o);
+    }
 
-  public void visitStep(@NotNull SpecStep o) {
-    visitNamedElement(o);
-  }
+    public void visitStep(@NotNull SpecStep o) {
+        visitNamedElement(o);
+    }
 
-  public void visitTable(@NotNull SpecTable o) {
-    visitPsiElement(o);
-  }
+    public void visitTable(@NotNull SpecTable o) {
+        visitPsiElement(o);
+    }
 
-  public void visitNamedElement(@NotNull SpecNamedElement o) {
-    visitPsiElement(o);
-  }
+    public void visitTableBody(@NotNull SpecTableBody o) {
+        visitPsiElement(o);
+    }
 
-  public void visitPsiElement(@NotNull PsiElement o) {
-    visitElement(o);
-  }
+    public void visitTableHeader(@NotNull SpecTableHeader o) {
+        visitPsiElement(o);
+    }
+
+    public void visitNamedElement(@NotNull SpecNamedElement o) {
+        visitPsiElement(o);
+    }
+
+    public void visitPsiElement(@NotNull PsiElement o) {
+        visitElement(o);
+    }
 
 }
