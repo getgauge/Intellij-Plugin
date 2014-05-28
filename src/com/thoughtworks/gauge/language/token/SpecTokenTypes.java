@@ -15,6 +15,7 @@ public interface SpecTokenTypes {
     IElementType SCENARIO = new SpecTokenType("Scenario");
     IElementType SCENARIO_HEADING = new SpecTokenType("Scenario Heading");
     IElementType SPEC_HEADING = new SpecTokenType("Spec Heading");
+    IElementType STEP_IDENTIFIER = new SpecTokenType("Step Identifier");
     IElementType STEP = new SpecTokenType("Step");
     IElementType TABLE = new SpecTokenType("Table");
     IElementType TABLE_HEADER = new SpecTokenType("Table Header");

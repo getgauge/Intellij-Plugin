@@ -22,7 +22,7 @@ scenario ::= scenarioHeading (step | comment)*
 private comment ::= COMMENT
 private specHeading ::= SPEC_HEADING
 private scenarioHeading ::= SCENARIO_HEADING
-step ::= (arg|STEP)+ table?    {mixin="com.thoughtworks.gauge.language.psi.impl.SpecStepImpl"
+step ::= STEP_IDENTIFIER (arg|STEP)+ table?    {mixin="com.thoughtworks.gauge.language.psi.impl.SpecStepImpl"
                                    implements="com.thoughtworks.gauge.language.psi.SpecNamedElement" methods = [getStepName]}
 arg ::= (DYNAMIC_ARG_START DYNAMIC_ARG DYNAMIC_ARG_END) | (ARG_START ARG ARG_END)
 table ::= TABLE_HEADER TABLE_ROW*

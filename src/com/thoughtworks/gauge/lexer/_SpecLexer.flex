@@ -33,7 +33,7 @@ TableSeparator = [-|]
 <YYINITIAL> {
   {ScenarioHeading} {return SCENARIO_HEADING;}
   {SpecHeading}     {return SPEC_HEADING;}
-  "*"               {yybegin(INSTEP);return STEP;}
+  "*"               {yybegin(INSTEP);return STEP_IDENTIFER;}
   {TableHeader}     {yybegin(INTABLE);return TABLE_HEADER;}
   [^]               {return COMMENT;}
 }
