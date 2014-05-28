@@ -16,7 +16,7 @@ import static com.thoughtworks.gauge.language.token.SpecTokenTypes.*;
 %function advance
 %type IElementType
 %unicode
-%state INTABLE
+%state INTABLE,INSTEP,INARG,INDYNAMIC
 
 LineTerminator = \r|\n|\r\n
 InputCharacter = [^\r\n]
@@ -33,9 +33,26 @@ TableSeparator = [-|]
 <YYINITIAL> {
   {ScenarioHeading} {return SCENARIO_HEADING;}
   {SpecHeading}     {return SPEC_HEADING;}
-  {Step}            {return STEP;}
+  "*"               {yybegin(INSTEP);return STEP;}
   {TableHeader}     {yybegin(INTABLE);return TABLE_HEADER;}
-  {Comment}         {return COMMENT;}
+  [^]               {return COMMENT;}
+}
+
+<INSTEP> {
+  [^*<\"\r\n]*         {yybegin(INSTEP); return STEP;}
+  [\"]                 {yybegin(INARG); return ARG_START; }
+  [<]                  {yybegin(INDYNAMIC); return DYNAMIC_ARG_START;}
+  {LineTerminator}?     {yybegin(YYINITIAL); return STEP;}
+}
+
+<INARG> {
+  (\\\"|[^\"])*        {return ARG; }
+  [\"]                 {yybegin(INSTEP); return ARG_END;}
+}
+
+<INDYNAMIC> {
+  (\\<|\\>|[^\>])*     {return DYNAMIC_ARG; }
+  [>]                 {yybegin(INSTEP); return DYNAMIC_ARG_END;}
 }
 
 <INTABLE> {

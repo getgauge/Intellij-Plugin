@@ -7,6 +7,10 @@ import com.intellij.psi.PsiElement;
 
 public class SpecVisitor extends PsiElementVisitor {
 
+  public void visitArg(@NotNull SpecArg o) {
+    visitPsiElement(o);
+  }
+
   public void visitScenario(@NotNull SpecScenario o) {
     visitPsiElement(o);
   }

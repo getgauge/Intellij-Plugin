@@ -22,6 +22,8 @@ public class SpecSyntaxHighlighter extends SyntaxHighlighterBase {
     public static final TextAttributesKey COMMENT = createTextAttributesKey("COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT);
     public static final TextAttributesKey TABLE_HEADER = createTextAttributesKey("TABLE_HEADER", DefaultLanguageHighlighterColors.CONSTANT);
     public static final TextAttributesKey TABLE_ROW = createTextAttributesKey("TABLE_ROW", DefaultLanguageHighlighterColors.DOC_COMMENT);
+    public static final TextAttributesKey ARG = createTextAttributesKey("ARG", DefaultLanguageHighlighterColors.STRING);
+    public static final TextAttributesKey DYNAMIC_ARG = createTextAttributesKey("DYNAMIC ARG", DefaultLanguageHighlighterColors.CONSTANT);
 
     static final TextAttributesKey BAD_CHARACTER = createTextAttributesKey("SIMPLE_BAD_CHARACTER",
             new TextAttributes(Color.RED, null, null, null, Font.BOLD));
@@ -34,6 +36,8 @@ public class SpecSyntaxHighlighter extends SyntaxHighlighterBase {
     private static final TextAttributesKey[] COMMENT_ATTRIBUTE = new TextAttributesKey[]{COMMENT};
     private static final TextAttributesKey[] TABLE_HEADER_ATTRIBUTE = new TextAttributesKey[]{TABLE_HEADER};
     private static final TextAttributesKey[] TABLE_ROW_ATTRIBUTE = new TextAttributesKey[]{TABLE_ROW};
+    private static final TextAttributesKey[] ARG_ATTRIBUTE = new TextAttributesKey[]{ARG};
+    private static final TextAttributesKey[] DYNAMIC_ARG_ATTRIBUTE = new TextAttributesKey[]{DYNAMIC_ARG};
 
     @NotNull
     @Override
@@ -57,6 +61,10 @@ public class SpecSyntaxHighlighter extends SyntaxHighlighterBase {
             return TABLE_HEADER_ATTRIBUTE;
         } else if (tokenType.equals(SpecTokenTypes.TABLE_ROW)) {
             return TABLE_ROW_ATTRIBUTE;
+        } else if (tokenType.equals(SpecTokenTypes.ARG_START) || tokenType.equals(SpecTokenTypes.ARG) || tokenType.equals(SpecTokenTypes.ARG_END)) {
+            return ARG_ATTRIBUTE;
+        }else if (tokenType.equals(SpecTokenTypes.DYNAMIC_ARG_START) || tokenType.equals(SpecTokenTypes.DYNAMIC_ARG) || tokenType.equals(SpecTokenTypes.DYNAMIC_ARG_END)) {
+            return DYNAMIC_ARG_ATTRIBUTE;
         } else if (tokenType.equals(TokenType.BAD_CHARACTER)) {
             return BAD_CHAR_KEYS;
         } else {
