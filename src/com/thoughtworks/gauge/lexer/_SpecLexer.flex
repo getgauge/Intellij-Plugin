@@ -31,31 +31,32 @@ Comment = {InputCharacter}*? {LineTerminator}*?
 TableSeparator = [-|]
 %%
 <YYINITIAL> {
-  {ScenarioHeading} {return SCENARIO_HEADING;}
-  {SpecHeading}     {return SPEC_HEADING;}
-  "*"               {yybegin(INSTEP);return STEP_IDENTIFER;}
-  {TableHeader}     {yybegin(INTABLE);return TABLE_HEADER;}
-  [^]               {return COMMENT;}
+  {ScenarioHeading}             {return SCENARIO_HEADING;}
+  {SpecHeading}                 {return SPEC_HEADING;}
+  "*"                           {yybegin(INSTEP);return STEP_IDENTIFIER;}
+  "*" {WhiteSpace}* "*"         {return COMMENT;}
+  {TableHeader}                 {yybegin(INTABLE);return TABLE_HEADER;}
+  [^]                           {return COMMENT;}
 }
 
 <INSTEP> {
-  [^*<\"\r\n]*         {yybegin(INSTEP); return STEP;}
-  [\"]                 {yybegin(INARG); return ARG_START; }
-  [<]                  {yybegin(INDYNAMIC); return DYNAMIC_ARG_START;}
-  {LineTerminator}?     {yybegin(YYINITIAL); return STEP;}
+  [^*<\"\r\n]*                  {yybegin(INSTEP); return STEP;}
+  [\"]                          {yybegin(INARG); return ARG_START; }
+  [<]                           {yybegin(INDYNAMIC); return DYNAMIC_ARG_START;}
+  {LineTerminator}?             {yybegin(YYINITIAL); return STEP;}
 }
 
 <INARG> {
-  (\\\"|[^\"])*        {return ARG; }
-  [\"]                 {yybegin(INSTEP); return ARG_END;}
+  (\\\"|[^\"])*                 {return ARG; }
+  [\"]                          {yybegin(INSTEP); return ARG_END;}
 }
 
 <INDYNAMIC> {
-  (\\<|\\>|[^\>])*     {return DYNAMIC_ARG; }
-  [>]                 {yybegin(INSTEP); return DYNAMIC_ARG_END;}
+  (\\<|\\>|[^\>])*              {return DYNAMIC_ARG; }
+  [>]                           {yybegin(INSTEP); return DYNAMIC_ARG_END;}
 }
 
 <INTABLE> {
-  {TableRow}         {yybegin(INTABLE);return TABLE_ROW;}
-  [^]                {yypushback(1); yybegin(YYINITIAL);}
+  {TableRow}                    {yybegin(INTABLE);return TABLE_ROW;}
+  [^]                           {yypushback(1); yybegin(YYINITIAL);}
 }
