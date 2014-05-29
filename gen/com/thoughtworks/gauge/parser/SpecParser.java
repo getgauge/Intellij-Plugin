@@ -23,11 +23,17 @@ public class SpecParser implements PsiParser {
     if (root_ == ARG) {
       result_ = arg(builder_, 0);
     }
+    else if (root_ == DYNAMIC_ARG) {
+      result_ = dynamicArg(builder_, 0);
+    }
     else if (root_ == SCENARIO) {
       result_ = scenario(builder_, 0);
     }
     else if (root_ == SPEC_DETAIL) {
       result_ = specDetail(builder_, 0);
+    }
+    else if (root_ == STATIC_ARG) {
+      result_ = staticArg(builder_, 0);
     }
     else if (root_ == STEP) {
       result_ = step(builder_, 0);
@@ -56,35 +62,15 @@ public class SpecParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // (DYNAMIC_ARG_START DYNAMIC_ARG DYNAMIC_ARG_END) | (ARG_START ARG ARG_END)
+  // dynamicArg | staticArg
   public static boolean arg(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "arg")) return false;
     if (!nextTokenIs(builder_, "<arg>", ARG_START, DYNAMIC_ARG_START)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<arg>");
-    result_ = arg_0(builder_, level_ + 1);
-    if (!result_) result_ = arg_1(builder_, level_ + 1);
+    result_ = dynamicArg(builder_, level_ + 1);
+    if (!result_) result_ = staticArg(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, ARG, result_, false, null);
-    return result_;
-  }
-
-  // DYNAMIC_ARG_START DYNAMIC_ARG DYNAMIC_ARG_END
-  private static boolean arg_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "arg_0")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = consumeTokens(builder_, 0, DYNAMIC_ARG_START, DYNAMIC_ARG, DYNAMIC_ARG_END);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // ARG_START ARG ARG_END
-  private static boolean arg_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "arg_1")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = consumeTokens(builder_, 0, ARG_START, ARG, ARG_END);
-    exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
@@ -92,6 +78,18 @@ public class SpecParser implements PsiParser {
   // COMMENT
   static boolean comment(PsiBuilder builder_, int level_) {
     return consumeToken(builder_, COMMENT);
+  }
+
+  /* ********************************************************** */
+  // DYNAMIC_ARG_START DYNAMIC_ARG DYNAMIC_ARG_END
+  public static boolean dynamicArg(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "dynamicArg")) return false;
+    if (!nextTokenIs(builder_, DYNAMIC_ARG_START)) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeTokens(builder_, 0, DYNAMIC_ARG_START, DYNAMIC_ARG, DYNAMIC_ARG_END);
+    exit_section_(builder_, marker_, DYNAMIC_ARG, result_);
+    return result_;
   }
 
   /* ********************************************************** */
@@ -236,6 +234,18 @@ public class SpecParser implements PsiParser {
   // SPEC_HEADING
   static boolean specHeading(PsiBuilder builder_, int level_) {
     return consumeToken(builder_, SPEC_HEADING);
+  }
+
+  /* ********************************************************** */
+  // ARG_START ARG ARG_END
+  public static boolean staticArg(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "staticArg")) return false;
+    if (!nextTokenIs(builder_, ARG_START)) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeTokens(builder_, 0, ARG_START, ARG, ARG_END);
+    exit_section_(builder_, marker_, STATIC_ARG, result_);
+    return result_;
   }
 
   /* ********************************************************** */

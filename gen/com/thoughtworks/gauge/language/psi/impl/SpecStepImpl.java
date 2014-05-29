@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SpecStepImpl extends SpecNamedElementImpl implements SpecStep {
@@ -58,5 +59,19 @@ public class SpecStepImpl extends SpecNamedElementImpl implements SpecStep {
     @NotNull
     public List<SpecArg> getArgList() {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, SpecArg.class);
+    }
+
+    @Override
+    public List<SpecStaticArg> getStaticArgList() {
+        List<SpecArg> argList = getArgList();
+
+        List<SpecStaticArg> specStaticArgs = new ArrayList<SpecStaticArg>();
+        for (SpecArg arg : argList) {
+            SpecStaticArg staticArg = PsiTreeUtil.getChildOfType(arg, SpecStaticArg.class);
+            if (staticArg != null) {
+                specStaticArgs.add(staticArg);
+            }
+        }
+        return specStaticArgs;
     }
 }

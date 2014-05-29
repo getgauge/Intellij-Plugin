@@ -8,11 +8,8 @@ import com.intellij.codeInsight.template.TemplateBuilderFactory;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import com.thoughtworks.gauge.language.Specification;
-import com.thoughtworks.gauge.language.psi.SpecDetail;
-import com.thoughtworks.gauge.language.psi.SpecTable;
 import com.thoughtworks.gauge.language.token.SpecTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,29 +57,13 @@ public class StepCompletionContributor extends CompletionContributor {
         );
 
 
-        extend(CompletionType.BASIC, PlatformPatterns.psiElement(SpecTokenTypes.DYNAMIC_ARG).withLanguage(Specification.INSTANCE), getDynamicParamCompletionProvider());
-    }
-
-    private CompletionProvider<CompletionParameters> getDynamicParamCompletionProvider() {
-        return new CompletionProvider<CompletionParameters>() {
-            public void addCompletions(@NotNull CompletionParameters parameters,
-                                       ProcessingContext context,
-                                       @NotNull CompletionResultSet resultSet) {
-                SpecDetail specDetail = PsiTreeUtil.getChildOfType(parameters.getOriginalFile(), SpecDetail.class);
-                SpecTable table = specDetail.getDataTable();
-                if (table != null) {
-                    List<String> headers = table.getTableHeader().getHeaders();
-                    for (String header : headers) {
-                        LookupElementBuilder item = LookupElementBuilder.create(header);
-                        resultSet.addElement(item);
-                    }
-                }
-            }
-
-        };
+        extend(CompletionType.BASIC, PlatformPatterns.psiElement(SpecTokenTypes.DYNAMIC_ARG).withLanguage(Specification.INSTANCE), new DynamicArgCompletionProvider());
+        extend(CompletionType.BASIC, PlatformPatterns.psiElement(SpecTokenTypes.ARG).withLanguage(Specification.INSTANCE), new StaticArgCompletionProvider());
     }
 
     private List<String> getStepsInProject() {
         return ALL_STEPS;
     }
+
+
 }
