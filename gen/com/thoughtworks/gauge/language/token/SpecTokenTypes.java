@@ -8,45 +8,55 @@ import com.thoughtworks.gauge.language.psi.impl.*;
 
 public interface SpecTokenTypes {
 
-    IElementType COMMENT = new SpecTokenType("Comment");
-    IElementType SCENARIO = new SpecTokenType("Scenario");
-    IElementType SCENARIO_HEADING = new SpecTokenType("Scenario Heading");
-    IElementType SPEC_HEADING = new SpecTokenType("Spec Heading");
-    IElementType STEP_IDENTIFIER = new SpecTokenType("Step Identifier");
-    IElementType STEP = new SpecTokenType("Step");
-    IElementType TABLE = new SpecTokenType("Table");
-    IElementType ARG_START = new SpecTokenType("Step arg start");
-    IElementType ARG_END = new SpecTokenType("Step arg end");
-    IElementType ARG = new SpecTokenType("Step arg");
-    IElementType DYNAMIC_ARG_START = new SpecTokenType("Step dynamic arg start");
-    IElementType DYNAMIC_ARG_END = new SpecTokenType("Step dynamic arg end");
-    IElementType DYNAMIC_ARG = new SpecTokenType("Step dynamic arg");
-    IElementType TABLE_BORDER = new SpecTokenType("Table Border");
-    IElementType TABLE_HEADER = new SpecTokenType("Table header item");
-    IElementType TABLE_ROW = new SpecTokenType("Table row item");
-    IElementType TABLE_BODY = new SpecTokenType("Table body");
-    IElementType NEW_LINE = new SpecTokenType("new line");
-    IElementType SPEC_DETAIL = new SpecTokenType("Spec detail section");
+  IElementType SCENARIO = new SpecElementType("SCENARIO");
+  IElementType SPEC_DETAIL = new SpecElementType("SPEC_DETAIL");
+  IElementType TABLE = new SpecElementType("TABLE");
+  IElementType TABLE_BODY = new SpecElementType("TABLE_BODY");
+  IElementType ARG = new SpecTokenType("ARG");
+  IElementType ARG_END = new SpecTokenType("ARG_END");
+  IElementType ARG_START = new SpecTokenType("ARG_START");
+  IElementType COMMENT = new SpecTokenType("COMMENT");
+  IElementType DYNAMIC_ARG = new SpecTokenType("DYNAMIC_ARG");
+  IElementType DYNAMIC_ARG_END = new SpecTokenType("DYNAMIC_ARG_END");
+  IElementType DYNAMIC_ARG_START = new SpecTokenType("DYNAMIC_ARG_START");
+  IElementType NEW_LINE = new SpecTokenType("NEW_LINE");
+  IElementType SCENARIO_HEADING = new SpecTokenType("SCENARIO_HEADING");
+  IElementType SPEC_HEADING = new SpecTokenType("SPEC_HEADING");
+  IElementType STEP = new SpecTokenType("STEP");
+  IElementType STEP_IDENTIFIER = new SpecTokenType("STEP_IDENTIFIER");
+  IElementType TABLE_BORDER = new SpecTokenType("TABLE_BORDER");
+  IElementType TABLE_HEADER = new SpecTokenType("TABLE_HEADER");
+  IElementType TABLE_ROW_VALUE = new SpecTokenType("TABLE_ROW_VALUE");
+  IElementType WHITESPACE = new SpecTokenType("WHITESPACE");
 
-    class Factory {
-        public static PsiElement createElement(ASTNode node) {
-            IElementType type = node.getElementType();
-            if (type == STEP) {
-                return new SpecStepImpl(node);
-            } else if (type == SCENARIO) {
-                return new SpecScenarioImpl(node);
-            } else if (type == TABLE) {
-                return new SpecTableImpl(node);
-            } else if (type == ARG) {
-                return new SpecArgImpl(node);
-            } else if (type == TABLE_HEADER) {
-                return new SpecTableHeaderImpl(node);
-            } else if (type == TABLE_BODY) {
-                return new SpecTableBodyImpl(node);
-            } else if (type == SPEC_DETAIL) {
-                return new SpecDetailImpl(node);
-            }
-            throw new AssertionError("Unknown element type: " + type);
-        }
+  class Factory {
+    public static PsiElement createElement(ASTNode node) {
+      IElementType type = node.getElementType();
+       if (type == ARG) {
+        return new SpecArgImpl(node);
+      }
+      else if (type == SCENARIO) {
+        return new SpecScenarioImpl(node);
+      }
+      else if (type == SPEC_DETAIL) {
+        return new SpecDetailImpl(node);
+      }
+      else if (type == STEP) {
+        return new SpecStepImpl(node);
+      }
+      else if (type == TABLE) {
+        return new SpecTableImpl(node);
+      }
+      else if (type == TABLE_BODY) {
+        return new SpecTableBodyImpl(node);
+      }
+      else if (type == TABLE_HEADER) {
+        return new SpecTableHeaderImpl(node);
+      }
+      else if (type == TABLE_ROW_VALUE) {
+        return new SpecTableRowValueImpl(node);
+      }
+      throw new AssertionError("Unknown element type: " + type);
     }
+  }
 }

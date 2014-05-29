@@ -41,6 +41,9 @@ public class SpecParser implements PsiParser {
     else if (root_ == TABLE_HEADER) {
       result_ = tableHeader(builder_, 0);
     }
+    else if (root_ == TABLE_ROW_VALUE) {
+      result_ = tableRowValue(builder_, 0);
+    }
     else {
       result_ = parse_root_(root_, builder_, 0);
     }
@@ -297,7 +300,7 @@ public class SpecParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // (TABLE_BORDER (TABLE_ROW TABLE_BORDER)+ NEW_LINE)*
+  // (TABLE_BORDER (WHITESPACE* tableRowValue WHITESPACE* TABLE_BORDER)+ NEW_LINE)*
   public static boolean tableBody(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "tableBody")) return false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<table body>");
@@ -311,7 +314,7 @@ public class SpecParser implements PsiParser {
     return true;
   }
 
-  // TABLE_BORDER (TABLE_ROW TABLE_BORDER)+ NEW_LINE
+  // TABLE_BORDER (WHITESPACE* tableRowValue WHITESPACE* TABLE_BORDER)+ NEW_LINE
   private static boolean tableBody_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "tableBody_0")) return false;
     boolean result_ = false;
@@ -323,7 +326,7 @@ public class SpecParser implements PsiParser {
     return result_;
   }
 
-  // (TABLE_ROW TABLE_BORDER)+
+  // (WHITESPACE* tableRowValue WHITESPACE* TABLE_BORDER)+
   private static boolean tableBody_0_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "tableBody_0_1")) return false;
     boolean result_ = false;
@@ -339,14 +342,41 @@ public class SpecParser implements PsiParser {
     return result_;
   }
 
-  // TABLE_ROW TABLE_BORDER
+  // WHITESPACE* tableRowValue WHITESPACE* TABLE_BORDER
   private static boolean tableBody_0_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "tableBody_0_1_0")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
-    result_ = consumeTokens(builder_, 0, TABLE_ROW, TABLE_BORDER);
+    result_ = tableBody_0_1_0_0(builder_, level_ + 1);
+    result_ = result_ && tableRowValue(builder_, level_ + 1);
+    result_ = result_ && tableBody_0_1_0_2(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, TABLE_BORDER);
     exit_section_(builder_, marker_, null, result_);
     return result_;
+  }
+
+  // WHITESPACE*
+  private static boolean tableBody_0_1_0_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "tableBody_0_1_0_0")) return false;
+    int pos_ = current_position_(builder_);
+    while (true) {
+      if (!consumeToken(builder_, WHITESPACE)) break;
+      if (!empty_element_parsed_guard_(builder_, "tableBody_0_1_0_0", pos_)) break;
+      pos_ = current_position_(builder_);
+    }
+    return true;
+  }
+
+  // WHITESPACE*
+  private static boolean tableBody_0_1_0_2(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "tableBody_0_1_0_2")) return false;
+    int pos_ = current_position_(builder_);
+    while (true) {
+      if (!consumeToken(builder_, WHITESPACE)) break;
+      if (!empty_element_parsed_guard_(builder_, "tableBody_0_1_0_2", pos_)) break;
+      pos_ = current_position_(builder_);
+    }
+    return true;
   }
 
   /* ********************************************************** */
@@ -401,6 +431,19 @@ public class SpecParser implements PsiParser {
       pos_ = current_position_(builder_);
     }
     return true;
+  }
+
+  /* ********************************************************** */
+  // TABLE_ROW_VALUE | DYNAMIC_ARG_START DYNAMIC_ARG DYNAMIC_ARG_END
+  public static boolean tableRowValue(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "tableRowValue")) return false;
+    if (!nextTokenIs(builder_, "<table row value>", DYNAMIC_ARG_START, TABLE_ROW_VALUE)) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<table row value>");
+    result_ = consumeToken(builder_, TABLE_ROW_VALUE);
+    if (!result_) result_ = parseTokens(builder_, 0, DYNAMIC_ARG_START, DYNAMIC_ARG, DYNAMIC_ARG_END);
+    exit_section_(builder_, level_, marker_, TABLE_ROW_VALUE, result_, false, null);
+    return result_;
   }
 
 }

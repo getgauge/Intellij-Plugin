@@ -60,26 +60,26 @@ public class StepCompletionContributor extends CompletionContributor {
         );
 
 
-        extend(CompletionType.BASIC,
-                PlatformPatterns.psiElement(SpecTokenTypes.DYNAMIC_ARG).withLanguage(Specification.INSTANCE),
-                new CompletionProvider<CompletionParameters>() {
-                    public void addCompletions(@NotNull CompletionParameters parameters,
-                                               ProcessingContext context,
-                                               @NotNull CompletionResultSet resultSet) {
-                        SpecDetail specDetail = PsiTreeUtil.getChildOfType(parameters.getOriginalFile(), SpecDetail.class);
-                        SpecTable table = specDetail.getDataTable();
-                        if (table != null) {
-                            List<String> headers = table.getTableHeader().getHeaders();
-                            for (String header : headers) {
-                                LookupElementBuilder item = LookupElementBuilder.create(header);
-                                resultSet.addElement(item);
-                            }
-                        }
+        extend(CompletionType.BASIC, PlatformPatterns.psiElement(SpecTokenTypes.DYNAMIC_ARG).withLanguage(Specification.INSTANCE), getDynamicParamCompletionProvider());
+    }
+
+    private CompletionProvider<CompletionParameters> getDynamicParamCompletionProvider() {
+        return new CompletionProvider<CompletionParameters>() {
+            public void addCompletions(@NotNull CompletionParameters parameters,
+                                       ProcessingContext context,
+                                       @NotNull CompletionResultSet resultSet) {
+                SpecDetail specDetail = PsiTreeUtil.getChildOfType(parameters.getOriginalFile(), SpecDetail.class);
+                SpecTable table = specDetail.getDataTable();
+                if (table != null) {
+                    List<String> headers = table.getTableHeader().getHeaders();
+                    for (String header : headers) {
+                        LookupElementBuilder item = LookupElementBuilder.create(header);
+                        resultSet.addElement(item);
                     }
-
                 }
+            }
 
-        );
+        };
     }
 
     private List<String> getStepsInProject() {

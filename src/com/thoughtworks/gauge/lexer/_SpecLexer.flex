@@ -16,7 +16,7 @@ import static com.thoughtworks.gauge.language.token.SpecTokenTypes.*;
 %function advance
 %type IElementType
 %unicode
-%state INSTEP,INARG,INDYNAMIC,INTABLEHEADER,INTABLEBODY,INTABLEBODYROW
+%state INSTEP,INARG,INDYNAMIC,INTABLEHEADER,INTABLEBODY,INTABLEBODYROW,INDYNAMICTABLEITEM
 
 LineTerminator = \r|\n|\r\n
 InputCharacter = [^\r\n]
@@ -51,6 +51,11 @@ SpecHeading = {WhiteSpace}* "#" {InputCharacter}* {LineTerminator}? | {WhiteSpac
   [>]                           {yybegin(INSTEP); return DYNAMIC_ARG_END;}
 }
 
+<INDYNAMICTABLEITEM> {
+  (\\<|\\>|[^\>])*              {return DYNAMIC_ARG; }
+  [>]                           {yybegin(INTABLEBODYROW); return DYNAMIC_ARG_END;}
+}
+
 <INTABLEHEADER> {
     (\\\||[^|\r\n])*                        {yybegin(INTABLEHEADER); return TABLE_HEADER;}
     {TableIdentifier}                       {yybegin(INTABLEHEADER); return TABLE_BORDER;}
@@ -63,8 +68,10 @@ SpecHeading = {WhiteSpace}* "#" {InputCharacter}* {LineTerminator}? | {WhiteSpac
 
 
 <INTABLEBODYROW> {
-    (\\\||[^-|\r\n])*                       {yybegin(INTABLEBODYROW); return TABLE_ROW;}
+    {WhiteSpace}*                           {yybegin(INTABLEBODYROW); return WHITESPACE;}
+    (\\\||[^-<|\r\n])*                      {yybegin(INTABLEBODYROW); return TABLE_ROW_VALUE;}
     [-]*                                    {yybegin(INTABLEBODYROW); return TABLE_BORDER;}
+    [<]                                     {yybegin(INDYNAMICTABLEITEM); return DYNAMIC_ARG_START;}
     {TableIdentifier}                       {yybegin(INTABLEBODYROW); return TABLE_BORDER;}
     {LineTerminator}{WhiteSpace}*           {yybegin(INTABLEBODY); return NEW_LINE;}
 }

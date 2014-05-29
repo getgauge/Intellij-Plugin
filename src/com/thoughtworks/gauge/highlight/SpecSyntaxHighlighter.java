@@ -59,7 +59,7 @@ public class SpecSyntaxHighlighter extends SyntaxHighlighterBase {
             return COMMENT_ATTRIBUTE;
         } else if (tokenType.equals(SpecTokenTypes.TABLE_HEADER)) {
             return TABLE_HEADER_ATTRIBUTE;
-        } else if (tokenType.equals(SpecTokenTypes.TABLE_ROW)) {
+        } else if (tokenType.equals(SpecTokenTypes.TABLE_ROW_VALUE)) {
             return TABLE_ROW_ATTRIBUTE;
         } else if (tokenType.equals(SpecTokenTypes.ARG_START) || tokenType.equals(SpecTokenTypes.ARG) || tokenType.equals(SpecTokenTypes.ARG_END)) {
             return ARG_ATTRIBUTE;
