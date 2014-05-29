@@ -3,9 +3,11 @@ package com.thoughtworks.gauge.language.psi.impl;
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.thoughtworks.gauge.language.psi.SpecTableHeader;
 import com.thoughtworks.gauge.language.psi.SpecVisitor;
+import com.thoughtworks.gauge.language.token.SpecTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -17,12 +19,12 @@ public class SpecTableHeaderImpl extends ASTWrapperPsiElement implements SpecTab
         super(node);
     }
 
+    @Override
     public List<String> getHeaders() {
-        SpecTableHeader[] headers = findChildrenByClass(SpecTableHeader.class);
+        List<PsiElement> headers = findChildrenByType(SpecTokenTypes.TABLE_HEADER);
         List<String> headerValue = new ArrayList<String>();
-        for (int i = 0; i < headers.length; i++) {
-            headerValue.add(headers[i].getText());
-
+        for (PsiElement header : headers) {
+            headerValue.add(header.getText().trim());
         }
         return headerValue;
     }

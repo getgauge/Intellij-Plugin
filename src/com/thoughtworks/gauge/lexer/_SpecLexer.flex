@@ -16,20 +16,14 @@ import static com.thoughtworks.gauge.language.token.SpecTokenTypes.*;
 %function advance
 %type IElementType
 %unicode
-%state INTABLE,INSTEP,INARG,INDYNAMIC,INTABLEHEADER,INTABLEBODY,INTABLEBODYROW
+%state INSTEP,INARG,INDYNAMIC,INTABLEHEADER,INTABLEBODY,INTABLEBODYROW
 
 LineTerminator = \r|\n|\r\n
 InputCharacter = [^\r\n]
-TableInputCharacter = [^|\r\n]
 WhiteSpace = [ \t\f]
 TableIdentifier = [|]
 ScenarioHeading = {WhiteSpace}* "##" {InputCharacter}* {LineTerminator}? | {WhiteSpace}* {InputCharacter}* {LineTerminator} [-]+ {LineTerminator}?
 SpecHeading = {WhiteSpace}* "#" {InputCharacter}* {LineTerminator}? | {WhiteSpace}* {InputCharacter}* {LineTerminator} [=]+ {LineTerminator}?
-Step = {WhiteSpace}* "*" [^*] {InputCharacter}* {LineTerminator}*
-TableHeader = {WhiteSpace}* ("|" {TableInputCharacter}*)+ "|" {LineTerminator} | {WhiteSpace}* ("|" {TableInputCharacter}*)+ "|" {LineTerminator} {WhiteSpace}* {TableSeparator}+ {LineTerminator}+
-TableRow={WhiteSpace}* ("|" {TableInputCharacter}*)+ "|" {LineTerminator}
-Comment = {InputCharacter}*? {LineTerminator}*?
-TableSeparator = [-|]
 %%
 <YYINITIAL> {
   {ScenarioHeading}             {return SCENARIO_HEADING;}

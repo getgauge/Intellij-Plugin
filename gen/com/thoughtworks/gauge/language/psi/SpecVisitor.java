@@ -1,6 +1,7 @@
 // This is a generated file. Not intended for manual editing.
 package com.thoughtworks.gauge.language.psi;
 
+import com.thoughtworks.gauge.language.psi.impl.SpecDetailImpl;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiElement;
@@ -39,4 +40,7 @@ public class SpecVisitor extends PsiElementVisitor {
         visitElement(o);
     }
 
+    public void visitSpecDetail(SpecDetailImpl o) {
+        visitPsiElement(o);
+    }
 }

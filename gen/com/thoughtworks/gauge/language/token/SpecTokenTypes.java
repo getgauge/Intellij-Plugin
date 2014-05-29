@@ -26,6 +26,7 @@ public interface SpecTokenTypes {
     IElementType TABLE_ROW = new SpecTokenType("Table row item");
     IElementType TABLE_BODY = new SpecTokenType("Table body");
     IElementType NEW_LINE = new SpecTokenType("new line");
+    IElementType SPEC_DETAIL = new SpecTokenType("Spec detail section");
 
     class Factory {
         public static PsiElement createElement(ASTNode node) {
@@ -42,6 +43,8 @@ public interface SpecTokenTypes {
                 return new SpecTableHeaderImpl(node);
             } else if (type == TABLE_BODY) {
                 return new SpecTableBodyImpl(node);
+            } else if (type == SPEC_DETAIL) {
+                return new SpecDetailImpl(node);
             }
             throw new AssertionError("Unknown element type: " + type);
         }
