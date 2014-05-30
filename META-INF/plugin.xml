@@ -43,6 +43,11 @@
 
   <actions>
     <!-- Add your actions here -->
+      <action id="Gauge.Format"
+              class="com.thoughtworks.gauge.formatter.SpecFormatter"
+              text="spec format" description="Format spec files">
+      <keyboard-shortcut first-keystroke="ctrl alt shift f" keymap="$default"/>
+      </action>
   </actions>
 
 </idea-plugin>
