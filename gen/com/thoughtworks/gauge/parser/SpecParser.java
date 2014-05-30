@@ -390,7 +390,7 @@ public class SpecParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // TABLE_BORDER (TABLE_HEADER TABLE_BORDER)+ NEW_LINE (TABLE_BORDER)* NEW_LINE
+  // TABLE_BORDER (TABLE_HEADER TABLE_BORDER)+ NEW_LINE ((TABLE_BORDER)* NEW_LINE)?
   public static boolean tableHeader(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "tableHeader")) return false;
     if (!nextTokenIs(builder_, TABLE_BORDER)) return false;
@@ -400,7 +400,6 @@ public class SpecParser implements PsiParser {
     result_ = result_ && tableHeader_1(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, NEW_LINE);
     result_ = result_ && tableHeader_3(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, NEW_LINE);
     exit_section_(builder_, marker_, TABLE_HEADER, result_);
     return result_;
   }
@@ -431,13 +430,31 @@ public class SpecParser implements PsiParser {
     return result_;
   }
 
-  // (TABLE_BORDER)*
+  // ((TABLE_BORDER)* NEW_LINE)?
   private static boolean tableHeader_3(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "tableHeader_3")) return false;
+    tableHeader_3_0(builder_, level_ + 1);
+    return true;
+  }
+
+  // (TABLE_BORDER)* NEW_LINE
+  private static boolean tableHeader_3_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "tableHeader_3_0")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = tableHeader_3_0_0(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, NEW_LINE);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // (TABLE_BORDER)*
+  private static boolean tableHeader_3_0_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "tableHeader_3_0_0")) return false;
     int pos_ = current_position_(builder_);
     while (true) {
       if (!consumeToken(builder_, TABLE_BORDER)) break;
-      if (!empty_element_parsed_guard_(builder_, "tableHeader_3", pos_)) break;
+      if (!empty_element_parsed_guard_(builder_, "tableHeader_3_0_0", pos_)) break;
       pos_ = current_position_(builder_);
     }
     return true;
