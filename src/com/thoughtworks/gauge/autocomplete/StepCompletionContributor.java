@@ -1,69 +1,38 @@
 package com.thoughtworks.gauge.autocomplete;
 
-import com.intellij.codeInsight.completion.*;
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.codeInsight.template.TemplateBuilder;
-import com.intellij.codeInsight.template.TemplateBuilderFactory;
-import com.intellij.openapi.util.TextRange;
+import com.intellij.codeInsight.completion.CompletionContributor;
+import com.intellij.codeInsight.completion.CompletionType;
+import com.intellij.ide.DataManager;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.DataKeys;
+import com.intellij.openapi.project.Project;
 import com.intellij.patterns.PlatformPatterns;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.ProcessingContext;
+import com.thoughtworks.gauge.core.GaugeConnection;
 import com.thoughtworks.gauge.language.Specification;
 import com.thoughtworks.gauge.language.token.SpecTokenTypes;
-import org.jetbrains.annotations.NotNull;
+import com.thoughtworks.gauge.util.SocketUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.File;
+import java.io.IOException;
 
 public class StepCompletionContributor extends CompletionContributor {
 
-    private static final List<String> ALL_STEPS = new ArrayList<String>() {{
-        add("enter {} and {}");
-        add("login");
-        add("add detail for user {}");
-        add("{} is expected");
-    }};
 
-    public StepCompletionContributor() {
-        extend(CompletionType.BASIC,
-                PlatformPatterns.psiElement(SpecTokenTypes.STEP).withLanguage(Specification.INSTANCE),
-                new CompletionProvider<CompletionParameters>() {
-                    public void addCompletions(@NotNull CompletionParameters parameters,
-                                               ProcessingContext context,
-                                               @NotNull CompletionResultSet resultSet) {
-                        for (String step : getStepsInProject()) {
-                            LookupElementBuilder element = LookupElementBuilder.create(step);
-                            resultSet.addElement(element.withInsertHandler(new InsertHandler<LookupElement>() {
-                                @Override
-                                public void handleInsert(InsertionContext context, LookupElement item) {
-                                    PsiElement stepElement = context.getFile().findElementAt(context.getStartOffset());
-                                    final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(stepElement);
-                                    Pattern pattern = Pattern.compile("\\{\\}");
-                                    if (stepElement != null) {
-                                        Matcher matcher = pattern.matcher(stepElement.getText());
-                                        while (matcher.find()) {
-                                            builder.replaceRange(new TextRange(matcher.start(), matcher.end()), "\"arg\"");
-                                        }
-                                        builder.run(context.getEditor(), false);
-                                    }
-                                }
-                            }));
-                        }
-                    }
-                }
-        );
+    public StepCompletionContributor() throws IOException {
+        int freePort = SocketUtils.findFreePort();
 
+        ProcessBuilder gauge = new ProcessBuilder("gauge", "--daemonize");
+        gauge.environment().put("GAUGE_API_PORT", String.valueOf(freePort));
+        DataContext dataContext = DataManager.getInstance().getDataContext();
+        Project project = DataKeys.PROJECT.getData(dataContext);
+        gauge.directory(new File(project.getBasePath()));
+        Process process = gauge.start();
 
+        GaugeConnection gaugeConnection = new GaugeConnection(freePort);
+
+        extend(CompletionType.BASIC, PlatformPatterns.psiElement(SpecTokenTypes.STEP).withLanguage(Specification.INSTANCE), new StepCompletionProvider(gaugeConnection));
         extend(CompletionType.BASIC, PlatformPatterns.psiElement(SpecTokenTypes.DYNAMIC_ARG).withLanguage(Specification.INSTANCE), new DynamicArgCompletionProvider());
         extend(CompletionType.BASIC, PlatformPatterns.psiElement(SpecTokenTypes.ARG).withLanguage(Specification.INSTANCE), new StaticArgCompletionProvider());
     }
-
-    private List<String> getStepsInProject() {
-        return ALL_STEPS;
-    }
-
 
 }
