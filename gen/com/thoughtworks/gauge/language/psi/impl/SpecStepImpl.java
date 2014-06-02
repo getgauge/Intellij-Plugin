@@ -4,8 +4,10 @@ import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.thoughtworks.gauge.language.psi.*;
+import com.thoughtworks.gauge.reference.StepReference;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -73,5 +75,10 @@ public class SpecStepImpl extends SpecNamedElementImpl implements SpecStep {
             }
         }
         return specStaticArgs;
+    }
+
+    @Override
+    public PsiReference getReference() {
+        return new StepReference(this);
     }
 }
