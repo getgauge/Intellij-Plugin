@@ -26,8 +26,8 @@ step ::= STEP_IDENTIFIER (arg|STEP)+ table?    {mixin="com.thoughtworks.gauge.la
                                    implements="com.thoughtworks.gauge.language.psi.SpecNamedElement" methods = [getStepName]}
 arg ::= dynamicArg | staticArg
 dynamicArg ::= DYNAMIC_ARG_START DYNAMIC_ARG DYNAMIC_ARG_END
-staticArg ::= ARG_START ARG ARG_END
+staticArg ::= ARG_START ARG? ARG_END
 table ::= tableHeader tableBody
 tableHeader ::= TABLE_BORDER (TABLE_HEADER TABLE_BORDER)+ NEW_LINE ((TABLE_BORDER)* NEW_LINE)?
-tableBody ::=(TABLE_BORDER (WHITESPACE* tableRowValue WHITESPACE* TABLE_BORDER)+ NEW_LINE)*
+tableBody ::=(TABLE_BORDER (WHITESPACE* tableRowValue? WHITESPACE* TABLE_BORDER)+ NEW_LINE)*
 tableRowValue ::= TABLE_ROW_VALUE | DYNAMIC_ARG_START DYNAMIC_ARG DYNAMIC_ARG_END

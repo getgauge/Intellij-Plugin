@@ -237,15 +237,24 @@ public class SpecParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // ARG_START ARG ARG_END
+  // ARG_START ARG? ARG_END
   public static boolean staticArg(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "staticArg")) return false;
     if (!nextTokenIs(builder_, ARG_START)) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
-    result_ = consumeTokens(builder_, 0, ARG_START, ARG, ARG_END);
+    result_ = consumeToken(builder_, ARG_START);
+    result_ = result_ && staticArg_1(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, ARG_END);
     exit_section_(builder_, marker_, STATIC_ARG, result_);
     return result_;
+  }
+
+  // ARG?
+  private static boolean staticArg_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "staticArg_1")) return false;
+    consumeToken(builder_, ARG);
+    return true;
   }
 
   /* ********************************************************** */
@@ -310,7 +319,7 @@ public class SpecParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // (TABLE_BORDER (WHITESPACE* tableRowValue WHITESPACE* TABLE_BORDER)+ NEW_LINE)*
+  // (TABLE_BORDER (WHITESPACE* tableRowValue? WHITESPACE* TABLE_BORDER)+ NEW_LINE)*
   public static boolean tableBody(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "tableBody")) return false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<table body>");
@@ -324,7 +333,7 @@ public class SpecParser implements PsiParser {
     return true;
   }
 
-  // TABLE_BORDER (WHITESPACE* tableRowValue WHITESPACE* TABLE_BORDER)+ NEW_LINE
+  // TABLE_BORDER (WHITESPACE* tableRowValue? WHITESPACE* TABLE_BORDER)+ NEW_LINE
   private static boolean tableBody_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "tableBody_0")) return false;
     boolean result_ = false;
@@ -336,7 +345,7 @@ public class SpecParser implements PsiParser {
     return result_;
   }
 
-  // (WHITESPACE* tableRowValue WHITESPACE* TABLE_BORDER)+
+  // (WHITESPACE* tableRowValue? WHITESPACE* TABLE_BORDER)+
   private static boolean tableBody_0_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "tableBody_0_1")) return false;
     boolean result_ = false;
@@ -352,13 +361,13 @@ public class SpecParser implements PsiParser {
     return result_;
   }
 
-  // WHITESPACE* tableRowValue WHITESPACE* TABLE_BORDER
+  // WHITESPACE* tableRowValue? WHITESPACE* TABLE_BORDER
   private static boolean tableBody_0_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "tableBody_0_1_0")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = tableBody_0_1_0_0(builder_, level_ + 1);
-    result_ = result_ && tableRowValue(builder_, level_ + 1);
+    result_ = result_ && tableBody_0_1_0_1(builder_, level_ + 1);
     result_ = result_ && tableBody_0_1_0_2(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, TABLE_BORDER);
     exit_section_(builder_, marker_, null, result_);
@@ -374,6 +383,13 @@ public class SpecParser implements PsiParser {
       if (!empty_element_parsed_guard_(builder_, "tableBody_0_1_0_0", pos_)) break;
       pos_ = current_position_(builder_);
     }
+    return true;
+  }
+
+  // tableRowValue?
+  private static boolean tableBody_0_1_0_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "tableBody_0_1_0_1")) return false;
+    tableRowValue(builder_, level_ + 1);
     return true;
   }
 
