@@ -16,7 +16,7 @@ public class SpecFileType extends LanguageFileType {
     @NotNull
     @Override
     public String getName() {
-        return "Specification file";
+        return "Specification";
     }
 
     @NotNull

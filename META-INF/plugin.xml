@@ -36,6 +36,8 @@
       <colorSettingsPage implementation="com.thoughtworks.gauge.highlight.SpecColorSettingsPage"/>
       <annotator language="Specification" implementationClass="com.thoughtworks.gauge.annotator.StepAnnotator"/>
       <completion.contributor language="Specification" implementationClass="com.thoughtworks.gauge.autocomplete.StepCompletionContributor"/>
+      <quoteHandler fileType="Specification" className="com.thoughtworks.gauge.autocomplete.ArgQuoteHandler"/>
+      <lang.braceMatcher language="Specification" implementationClass="com.thoughtworks.gauge.autocomplete.PairMatcher"/>
   </extensions>
 
   <application-components>
