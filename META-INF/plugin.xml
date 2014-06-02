@@ -22,6 +22,11 @@
   <!-- uncomment to enable plugin in all products
   <depends>com.intellij.modules.lang</depends>
   -->
+    <project-components>
+        <component>
+            <implementation-class>com.thoughtworks.gauge.plugin.GaugeProjectComponent</implementation-class>
+        </component>
+    </project-components>
 
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
