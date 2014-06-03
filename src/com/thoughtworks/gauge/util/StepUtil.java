@@ -21,7 +21,7 @@ public class StepUtil {
     }
 
     private static PsiMethod filter(Collection<PsiMethod> stepMethods, SpecStep step) {
-        String stepText = step.getStepName();
+        String stepText = step.getStepValue().getValue();
 
         for (PsiMethod stepMethod : stepMethods) {
             final PsiModifierList modifierList = stepMethod.getModifierList();

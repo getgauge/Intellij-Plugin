@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.thoughtworks.gauge.StepValue;
 import com.thoughtworks.gauge.language.psi.*;
 import com.thoughtworks.gauge.reference.StepReference;
 import org.jetbrains.annotations.NonNls;
@@ -27,12 +28,12 @@ public class SpecStepImpl extends SpecNamedElementImpl implements SpecStep {
     }
 
     @Override
-    public String getStepName() {
-        return SpecPsiImplUtil.getStepName(this);
+    public StepValue getStepValue() {
+        return SpecPsiImplUtil.getStepValue(this);
     }
 
     public String getName() {
-        return SpecPsiImplUtil.getStepName(this);
+        return SpecPsiImplUtil.getStepValue(this).getValue();
     }
 
     @Nullable

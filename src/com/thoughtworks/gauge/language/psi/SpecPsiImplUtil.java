@@ -2,6 +2,7 @@ package com.thoughtworks.gauge.language.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
+import com.thoughtworks.gauge.StepValue;
 import com.thoughtworks.gauge.StepValueExtractor;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import org.jetbrains.annotations.Nullable;
@@ -12,7 +13,7 @@ public class SpecPsiImplUtil {
 
     private static StepValueExtractor stepValueExtractor = new StepValueExtractor();
 
-    public static String getStepName(SpecStep element) {
+    public static StepValue getStepValue(SpecStep element) {
         ASTNode step = element.getNode();
         String stepText = step.getText().trim();
         int newLineIndex = stepText.indexOf("\n");
@@ -20,9 +21,9 @@ public class SpecPsiImplUtil {
         SpecTable inlineTable = element.getInlineTable();
         stepText = stepText.substring(1, endIndex).trim();
         if (inlineTable != null) {
-            return stepValueExtractor.getValueWithTable(stepText).getValue();
+            return stepValueExtractor.getValueWithTable(stepText);
         } else {
-            return stepValueExtractor.getValue(stepText).getValue();
+            return stepValueExtractor.getValue(stepText);
         }
 
     }
