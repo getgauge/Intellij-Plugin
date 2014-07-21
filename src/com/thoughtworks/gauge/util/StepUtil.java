@@ -22,17 +22,23 @@ public class StepUtil {
 
     private static PsiMethod filter(Collection<PsiMethod> stepMethods, SpecStep step) {
         String stepText = step.getStepValue().getValue();
-
         for (PsiMethod stepMethod : stepMethods) {
-            final PsiModifierList modifierList = stepMethod.getModifierList();
-            final PsiAnnotation[] annotations = modifierList.getAnnotations();
-            for (PsiAnnotation annotation : annotations) {
-                if (annotationTextMatches(annotation, stepText)) {
-                    return stepMethod;
-                }
+            if (isMatch(stepMethod, stepText)) {
+                return stepMethod;
             }
         }
         return null;
+    }
+
+    public static boolean isMatch(PsiMethod stepMethod, String stepText) {
+        final PsiModifierList modifierList = stepMethod.getModifierList();
+        final PsiAnnotation[] annotations = modifierList.getAnnotations();
+        for (PsiAnnotation annotation : annotations) {
+            if (annotationTextMatches(annotation, stepText)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean annotationTextMatches(PsiAnnotation annotation, String stepValue) {
