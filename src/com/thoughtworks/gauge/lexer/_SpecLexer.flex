@@ -22,14 +22,14 @@ LineTerminator = \r|\n|\r\n
 InputCharacter = [^\r\n]
 WhiteSpace = [ \t\f]
 TableIdentifier = [|]
+StepIdentifier = [*]
 ScenarioHeading = {WhiteSpace}* "##" {InputCharacter}* {LineTerminator}? | {WhiteSpace}* {InputCharacter}* {LineTerminator} [-]+ {LineTerminator}?
 SpecHeading = {WhiteSpace}* "#" {InputCharacter}* {LineTerminator}? | {WhiteSpace}* {InputCharacter}* {LineTerminator} [=]+ {LineTerminator}?
 %%
 <YYINITIAL> {
   {ScenarioHeading}             {return SCENARIO_HEADING;}
   {SpecHeading}                 {return SPEC_HEADING;}
-  "*"                           {yybegin(INSTEP);return STEP_IDENTIFIER;}
-  "*" {WhiteSpace}* "*"         {return COMMENT;}
+  {StepIdentifier}              {yybegin(INSTEP);return STEP_IDENTIFIER;}
   {TableIdentifier}             {yybegin(INTABLEHEADER);return TABLE_BORDER;}
   [^]                           {return COMMENT;}
 }
