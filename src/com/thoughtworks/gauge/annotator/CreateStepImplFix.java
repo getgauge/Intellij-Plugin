@@ -6,7 +6,9 @@ import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
 import com.intellij.codeInsight.template.TemplateBuilder;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.DataManager;
 import com.intellij.ide.highlighter.JavaFileType;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
@@ -27,16 +29,12 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.indexing.FileBasedIndex;
-import com.thoughtworks.gauge.StepParam;
-import com.thoughtworks.gauge.StepParamType;
-import com.thoughtworks.gauge.StepValue;
+import com.thoughtworks.gauge.*;
 import com.thoughtworks.gauge.language.psi.SpecStep;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class CreateStepImplFix extends BaseIntentionAction {
     private static final PsiFile NEW_FILE_HOLDER = null;
@@ -70,13 +68,21 @@ public class CreateStepImplFix extends BaseIntentionAction {
             public void run() {
                 Collection<VirtualFile> javaVirtualFiles = FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, JavaFileType.INSTANCE, GlobalSearchScope.projectScope(project));
                 List<PsiFile> javaFiles = new ArrayList<PsiFile>();
-                javaFiles.add(NEW_FILE_HOLDER);
+
                 for (VirtualFile javaVFile : javaVirtualFiles) {
                     PsiFile file = PsiManager.getInstance(project).findFile(javaVFile);
                     if (file != null) {
                         javaFiles.add(file);
                     }
                 }
+                Collections.sort(javaFiles, new Comparator<PsiFile>() {
+                    @Override
+                    public int compare(PsiFile o1, PsiFile o2) {
+                        return getJavaFileName(o1).compareToIgnoreCase(getJavaFileName(o2));
+                    }
+                });
+
+                javaFiles.add(0, NEW_FILE_HOLDER);
                 ListPopup stepImplChooser = JBPopupFactory.getInstance().createListPopup(new BaseListPopupStep<PsiFile>("Choose implementation class", javaFiles) {
                     @Override
                     public boolean isSpeedSearchEnabled() {
@@ -88,7 +94,7 @@ public class CreateStepImplFix extends BaseIntentionAction {
                         return doFinalStep(new Runnable() {
                             public void run() {
                                 if (selectedValue == NEW_FILE_HOLDER) {
-                                    createFileAndAddImpl(project);
+                                    createFileAndAddImpl();
                                 } else {
                                     addImpl(project, selectedValue.getVirtualFile());
                                 }
@@ -107,21 +113,38 @@ public class CreateStepImplFix extends BaseIntentionAction {
                         if (value == null) {
                             return "Create new file";
                         } else {
-                            PsiJavaFile javaFile = (PsiJavaFile) value;
-                            return javaFile.getPackageName() + "." + javaFile.getName();
+                            return getJavaFileName((PsiJavaFile) value);
                         }
 
                     }
                 });
                 stepImplChooser.showCenteredInCurrentWindow(step.getProject());
             }
+
+            private String getJavaFileName(PsiFile value) {
+                PsiJavaFile javaFile = (PsiJavaFile) value;
+                if (!javaFile.getPackageName().equals("")) {
+                    return javaFile.getPackageName() + "." + javaFile.getName();
+                }
+                return javaFile.getName();
+            }
         });
     }
 
-    private void createFileAndAddImpl(Project project) {
-//        todo : java creation dialog
-//        CreateFileFromTemplateDialog.Builder javaFileBuilder = CreateFileFromTemplateDialog.createDialog(project);
-//        javaFileBuilder.addKind("Java", JavaFileType.INSTANCE.getIcon(), JavaTemplateUtil.INTERNAL_CLASS_TEMPLATE_NAME);
+    private void createFileAndAddImpl() {
+
+        ActionManager instance = ActionManager.getInstance();
+        DataContext dataContext = DataManager.getInstance().getDataContext();
+        GaugeDataContext gaugeDataContext = new GaugeDataContext(dataContext);
+        AnActionEvent anActionEvent = new AnActionEvent(null, gaugeDataContext, ActionPlaces.UNKNOWN, new Presentation("Create Class"), instance, 0);
+
+        GaugeCreateClassAction createClassAction = new GaugeCreateClassAction();
+        createClassAction.actionPerformed(anActionEvent);
+        VirtualFile createdFile = createClassAction.getCreatedFile();
+        if (createdFile != null) {
+            addImpl(LangDataKeys.PROJECT.getData(dataContext), createdFile);
+        }
+
     }
 
     private void addImpl(final Project project, final VirtualFile file) {
