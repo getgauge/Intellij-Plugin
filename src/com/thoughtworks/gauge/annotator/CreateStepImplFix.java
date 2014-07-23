@@ -29,7 +29,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.indexing.FileBasedIndex;
-import com.thoughtworks.gauge.*;
+import com.thoughtworks.gauge.StepValue;
 import com.thoughtworks.gauge.language.psi.SpecStep;
 import org.jetbrains.annotations.NotNull;
 
@@ -113,7 +113,7 @@ public class CreateStepImplFix extends BaseIntentionAction {
                         if (value == null) {
                             return "Create new file";
                         } else {
-                            return getJavaFileName((PsiJavaFile) value);
+                            return getJavaFileName(value);
                         }
 
                     }
@@ -161,10 +161,13 @@ public class CreateStepImplFix extends BaseIntentionAction {
 
                         PsiMethod addedStepImpl = addStepImplMethod(psifile);
                         final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(addedStepImpl);
+                        templateMethodName(addedStepImpl, builder);
                         templateParams(addedStepImpl, builder);
                         templateBody(addedStepImpl, builder);
                         userTemplateModify(builder);
                     }
+
+
                 }.execute();
             }
 
@@ -174,8 +177,8 @@ public class CreateStepImplFix extends BaseIntentionAction {
                 PsiDocumentManager.getInstance(project).commitAllDocuments();
 
                 StepValue stepValue = step.getStepValue();
-                final StringBuilder text = new StringBuilder(String.format("@Step(\"%s\")\n", stepValue.getStepAnnotation()));
-                text.append(String.format("public void %s(%s){\n\n", stepValue.getMethodName(), getParamList(stepValue.getParams())));
+                final StringBuilder text = new StringBuilder(String.format("@Step(\"%s\")\n", stepValue.getStepAnnotationText()));
+                text.append(String.format("public void %s(%s){\n\n", "methodName", getParamList(stepValue.getParameters())));
                 text.append("}\n");
                 final PsiMethod stepMethod = JavaPsiFacade.getElementFactory(project).createMethodFromText(text.toString(), psiClass);
                 PsiMethod addedElement = (PsiMethod) psiClass.add(stepMethod);
@@ -185,15 +188,10 @@ public class CreateStepImplFix extends BaseIntentionAction {
                 return addedElement;
             }
 
-            private String getParamList(List<StepParam> params) {
+            private String getParamList(List<String> params) {
                 StringBuilder paramlistBuilder = new StringBuilder();
                 for (int i = 0; i < params.size(); i++) {
-                    StepParam param = params.get(i);
-                    if (param.getType() == StepParamType.string) {
-                        paramlistBuilder.append("String arg").append(i);
-                    } else {
-                        paramlistBuilder.append("Table arg").append(i);
-                    }
+                    paramlistBuilder.append("Object arg").append(i);
                     if (i != params.size() - 1) {
                         paramlistBuilder.append(", ");
                     }
@@ -202,12 +200,19 @@ public class CreateStepImplFix extends BaseIntentionAction {
                 return paramlistBuilder.toString();
             }
 
+            private void templateMethodName(PsiMethod addedStepImpl, TemplateBuilder builder) {
+                PsiIdentifier methodName = addedStepImpl.getNameIdentifier();
+                builder.replaceElement(methodName, methodName.getText());
+            }
+
             private void templateParams(PsiMethod addedElement, TemplateBuilder builder) {
                 PsiParameterList paramsList = addedElement.getParameterList();
                 PsiParameter[] parameters = paramsList.getParameters();
                 for (PsiParameter parameter : parameters) {
                     PsiElement nameIdentifier = parameter.getNameIdentifier();
+                    PsiTypeElement typeElement = parameter.getTypeElement();
                     if (nameIdentifier != null) {
+                        builder.replaceElement(typeElement, typeElement.getText());
                         builder.replaceElement(nameIdentifier, nameIdentifier.getText());
                     }
                 }

@@ -3,15 +3,15 @@ package com.thoughtworks.gauge.language.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.thoughtworks.gauge.StepValue;
-import com.thoughtworks.gauge.StepValueExtractor;
+import com.thoughtworks.gauge.core.Gauge;
+import com.thoughtworks.gauge.core.GaugeConnection;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.ArrayList;
 
 public class SpecPsiImplUtil {
-
-    private static StepValueExtractor stepValueExtractor = new StepValueExtractor();
 
     public static StepValue getStepValue(SpecStep element) {
         ASTNode step = element.getNode();
@@ -20,10 +20,14 @@ public class SpecPsiImplUtil {
         int endIndex = newLineIndex == -1 ? stepText.length() : newLineIndex;
         SpecTable inlineTable = element.getInlineTable();
         stepText = stepText.substring(1, endIndex).trim();
+        GaugeConnection apiConnection = Gauge.getGaugeService(element.getProject()).getGaugeConnection();
+        if (apiConnection == null) {
+            return new StepValue(element.getText(), element.getText(), new ArrayList<String>());
+        }
         if (inlineTable != null) {
-            return stepValueExtractor.getValueWithTable(stepText);
+            return apiConnection.getStepValue(stepText, true);
         } else {
-            return stepValueExtractor.getValue(stepText);
+            return apiConnection.getStepValue(stepText);
         }
 
     }

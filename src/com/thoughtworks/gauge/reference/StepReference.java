@@ -37,7 +37,7 @@ public class StepReference extends PsiReferenceBase<SpecStep> {
     public boolean isReferenceTo(PsiElement element) {
         if (element instanceof PsiMethod) {
             PsiMethod method = (PsiMethod) element;
-            return StepUtil.isMatch(method, this.myElement.getStepValue().getValue());
+            return StepUtil.isMatch(method, this.myElement.getStepValue().getStepText());
         } else {
             return false;
         }

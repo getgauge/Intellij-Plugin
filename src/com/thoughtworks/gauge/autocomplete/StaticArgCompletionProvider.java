@@ -29,8 +29,10 @@ public class StaticArgCompletionProvider extends CompletionProvider<CompletionPa
 
         Set<String> staticArgs = getArgsFromSteps(stepsInFile);
         for (String arg : staticArgs) {
-            LookupElementBuilder item = LookupElementBuilder.create(arg);
-            resultSet.addElement(item);
+            if (arg != null) {
+                LookupElementBuilder item = LookupElementBuilder.create(arg);
+                resultSet.addElement(item);
+            }
         }
     }
 
@@ -42,7 +44,8 @@ public class StaticArgCompletionProvider extends CompletionProvider<CompletionPa
     }
 
     private void addContextSteps(SpecDetail specDetail, List<SpecStep> stepsInFile) {
-        stepsInFile.addAll(specDetail.getContextSteps());
+        if (specDetail != null)
+            stepsInFile.addAll(specDetail.getContextSteps());
     }
 
     private Set<String> getArgsFromSteps(List<SpecStep> steps) {
@@ -50,7 +53,8 @@ public class StaticArgCompletionProvider extends CompletionProvider<CompletionPa
         for (SpecStep step : steps) {
             List<SpecStaticArg> args = step.getStaticArgList();
             for (SpecStaticArg arg : args) {
-                staticArgs.add(arg.getText());
+                if (arg.getText() != null)
+                    staticArgs.add(arg.getText());
             }
         }
         return staticArgs;

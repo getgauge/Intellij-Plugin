@@ -33,7 +33,7 @@ public class SpecStepImpl extends SpecNamedElementImpl implements SpecStep {
     }
 
     public String getName() {
-        return SpecPsiImplUtil.getStepValue(this).getValue();
+        return SpecPsiImplUtil.getStepValue(this).getStepText();
     }
 
     @Nullable

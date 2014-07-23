@@ -9,6 +9,7 @@ import com.intellij.util.Query;
 import com.thoughtworks.gauge.StepValueExtractor;
 import com.thoughtworks.gauge.language.psi.SpecStep;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class StepUtil {
@@ -21,7 +22,7 @@ public class StepUtil {
     }
 
     private static PsiMethod filter(Collection<PsiMethod> stepMethods, SpecStep step) {
-        String stepText = step.getStepValue().getValue();
+        String stepText = step.getStepValue().getStepText();
         for (PsiMethod stepMethod : stepMethods) {
             if (isMatch(stepMethod, stepText)) {
                 return stepMethod;
@@ -49,7 +50,10 @@ public class StepUtil {
 
     public static Collection<PsiMethod> getStepMethods(Project project) {
         final PsiClass step = JavaPsiFacade.getInstance(project).findClass("com.thoughtworks.gauge.Step", GlobalSearchScope.allScope(project));
-        final Query<PsiMethod> psiMethods = AnnotatedElementsSearch.searchPsiMethods(step, GlobalSearchScope.allScope(project));
-        return psiMethods.findAll();
+        if (step != null) {
+            final Query<PsiMethod> psiMethods = AnnotatedElementsSearch.searchPsiMethods(step, GlobalSearchScope.allScope(project));
+            return psiMethods.findAll();
+        }
+        return new ArrayList<PsiMethod>();
     }
 }

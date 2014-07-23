@@ -5,9 +5,12 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.template.TemplateBuilder;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
+import com.thoughtworks.gauge.GaugeService;
+import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeConnection;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,15 +22,9 @@ import java.util.regex.Pattern;
 
 public class StepCompletionProvider extends CompletionProvider<CompletionParameters> {
 
-    private final GaugeConnection gaugeConnection;
-
-    public StepCompletionProvider(GaugeConnection gaugeConnection) {
-        this.gaugeConnection = gaugeConnection;
-    }
-
     public void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet resultSet) {
-
-        for (String step : getStepsInProject()) {
+        resultSet.withPrefixMatcher(new PlainPrefixMatcher(resultSet.getPrefixMatcher().getPrefix()));
+        for (String step : getStepsInProject(parameters.getOriginalFile().getProject())) {
             LookupElementBuilder element = LookupElementBuilder.create(step);
             resultSet.addElement(element.withInsertHandler(new InsertHandler<LookupElement>() {
                 @Override
@@ -47,9 +44,13 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
         }
     }
 
-    private List<String> getStepsInProject() {
+    private List<String> getStepsInProject(Project project) {
         try {
-            return gaugeConnection.fetchAllSteps();
+            GaugeService gaugeService = Gauge.getGaugeService(project);
+            GaugeConnection gaugeConnection = gaugeService.getGaugeConnection();
+            if (gaugeConnection != null) {
+                return gaugeConnection.fetchAllSteps();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

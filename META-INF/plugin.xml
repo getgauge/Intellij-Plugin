@@ -38,6 +38,8 @@
       <completion.contributor language="Specification" implementationClass="com.thoughtworks.gauge.autocomplete.StepCompletionContributor"/>
       <quoteHandler fileType="Specification" className="com.thoughtworks.gauge.autocomplete.ArgQuoteHandler"/>
       <lang.braceMatcher language="Specification" implementationClass="com.thoughtworks.gauge.autocomplete.PairMatcher"/>
+      <moduleType id="Gauge_Module" implementationClass="com.thoughtworks.gauge.module.GaugeModuleType"/>
+      <moduleConfigurationEditorProvider implementation="com.thoughtworks.gauge.module.GaugeModuleConfigurationProvider"/>
   </extensions>
 
   <application-components>
