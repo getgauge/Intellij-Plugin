@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
-import com.thoughtworks.gauge.GaugeService;
+import com.thoughtworks.gauge.core.GaugeService;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeConnection;
 import org.jetbrains.annotations.NotNull;
@@ -23,10 +23,10 @@ import java.util.regex.Pattern;
 public class StepCompletionProvider extends CompletionProvider<CompletionParameters> {
 
     public void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet resultSet) {
-        resultSet.withPrefixMatcher(new PlainPrefixMatcher(resultSet.getPrefixMatcher().getPrefix()));
+        resultSet.withPrefixMatcher(new PlainPrefixMatcher(""));
         for (String step : getStepsInProject(parameters.getOriginalFile().getProject())) {
             LookupElementBuilder element = LookupElementBuilder.create(step);
-            resultSet.addElement(element.withInsertHandler(new InsertHandler<LookupElement>() {
+            LookupElementBuilder element1 = element.withInsertHandler(new InsertHandler<LookupElement>() {
                 @Override
                 public void handleInsert(InsertionContext context, LookupElement item) {
                     PsiElement stepElement = context.getFile().findElementAt(context.getStartOffset());
@@ -40,7 +40,8 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
                         builder.run(context.getEditor(), false);
                     }
                 }
-            }));
+            });
+            resultSet.addElement(element);
         }
     }
 

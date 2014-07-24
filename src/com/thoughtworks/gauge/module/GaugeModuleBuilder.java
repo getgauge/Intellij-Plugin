@@ -4,14 +4,16 @@ import com.intellij.ide.util.projectWizard.JavaModuleBuilder;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.thoughtworks.gauge.GaugeConstant;
+import com.thoughtworks.gauge.GaugeProjectComponent;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeConnection;
+import com.thoughtworks.gauge.core.GaugeService;
 import org.jetbrains.annotations.NonNls;
 
 import java.io.File;
@@ -19,7 +21,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.thoughtworks.gauge.GaugeConstant.GAUGE;
+import static com.thoughtworks.gauge.GaugeConstant.INIT_FLAG;
+
 public class GaugeModuleBuilder extends JavaModuleBuilder {
+
     @Override
     public void setupRootModel(ModifiableRootModel modifiableRootModel) throws ConfigurationException {
         super.setupRootModel(modifiableRootModel);
@@ -31,8 +37,8 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
         final String path = getPathForInitialization(modifiableRootModel);
 
         final String[] init = {
-                GaugeConstant.GAUGE,
-                "--init", getLanguage()
+                GAUGE,
+                INIT_FLAG, getLanguage()
         };
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(init);
@@ -52,7 +58,10 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
     private void addGaugeLibToModule(ModifiableRootModel modifiableRootModel) {
         File installationRoot;
         try {
-            GaugeConnection gaugeConnection = Gauge.getGaugeService(modifiableRootModel.getProject()).getGaugeConnection();
+            Project project = modifiableRootModel.getProject();
+            GaugeService gaugeService = GaugeProjectComponent.createGaugeService(project);
+            Gauge.addProject(project,gaugeService);
+            GaugeConnection gaugeConnection = gaugeService.getGaugeConnection();
             if (gaugeConnection == null) {
                 throw new IOException("Gauge api connection not established");
             }
@@ -62,7 +71,7 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
             return;
         }
         final Library library = modifiableRootModel.getModuleLibraryTable().createLibrary("twist-lib");
-        final File libsDir = new File(installationRoot.getAbsolutePath(), File.separator + "lib" + File.separator + GaugeConstant.GAUGE + File.separator + "java");
+        final File libsDir = new File(installationRoot.getAbsolutePath(), File.separator + "lib" + File.separator + GAUGE + File.separator + "java");
         final VirtualFile libDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(libsDir);
         final Library.ModifiableModel libModel = library.getModifiableModel();
         libModel.addJarDirectory(libDir, true);

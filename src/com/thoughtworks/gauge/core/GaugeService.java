@@ -1,6 +1,4 @@
-package com.thoughtworks.gauge;
-
-import com.thoughtworks.gauge.core.GaugeConnection;
+package com.thoughtworks.gauge.core;
 
 public class GaugeService {
     private final Process gaugeProcess;
@@ -13,5 +11,9 @@ public class GaugeService {
 
     public GaugeConnection getGaugeConnection() {
         return gaugeConnection;
+    }
+
+    public Process getGaugeProcess() {
+        return gaugeProcess;
     }
 }

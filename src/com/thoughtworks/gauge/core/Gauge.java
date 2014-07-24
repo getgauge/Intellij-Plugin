@@ -1,7 +1,6 @@
 package com.thoughtworks.gauge.core;
 
 import com.intellij.openapi.project.Project;
-import com.thoughtworks.gauge.GaugeService;
 
 import java.util.Hashtable;
 

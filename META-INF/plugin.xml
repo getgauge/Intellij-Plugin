@@ -24,7 +24,7 @@
   -->
     <project-components>
         <component>
-            <implementation-class>com.thoughtworks.gauge.plugin.GaugeProjectComponent</implementation-class>
+            <implementation-class>com.thoughtworks.gauge.GaugeProjectComponent</implementation-class>
         </component>
     </project-components>
 
