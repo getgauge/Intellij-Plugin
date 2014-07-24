@@ -40,6 +40,9 @@
       <lang.braceMatcher language="Specification" implementationClass="com.thoughtworks.gauge.autocomplete.PairMatcher"/>
       <moduleType id="Gauge_Module" implementationClass="com.thoughtworks.gauge.module.GaugeModuleType"/>
       <moduleConfigurationEditorProvider implementation="com.thoughtworks.gauge.module.GaugeModuleConfigurationProvider"/>
+      <configurationType implementation="com.thoughtworks.gauge.execution.GaugeRunTaskConfigurationType"/>
+      <programRunner implementation="com.thoughtworks.gauge.execution.GaugeTestRunner"/>
+      <runConfigurationProducer implementation="com.thoughtworks.gauge.execution.GaugeExecutionProducer"/>
   </extensions>
 
   <application-components>
