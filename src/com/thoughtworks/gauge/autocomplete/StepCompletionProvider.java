@@ -23,10 +23,10 @@ import java.util.regex.Pattern;
 public class StepCompletionProvider extends CompletionProvider<CompletionParameters> {
 
     public void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet resultSet) {
-        resultSet.withPrefixMatcher(new PlainPrefixMatcher(""));
+        resultSet = resultSet.withPrefixMatcher(new PlainPrefixMatcher(""));
         for (String step : getStepsInProject(parameters.getOriginalFile().getProject())) {
             LookupElementBuilder element = LookupElementBuilder.create(step);
-            LookupElementBuilder element1 = element.withInsertHandler(new InsertHandler<LookupElement>() {
+            element = element.withInsertHandler(new InsertHandler<LookupElement>() {
                 @Override
                 public void handleInsert(InsertionContext context, LookupElement item) {
                     PsiElement stepElement = context.getFile().findElementAt(context.getStartOffset());

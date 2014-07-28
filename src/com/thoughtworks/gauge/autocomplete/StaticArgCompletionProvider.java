@@ -3,6 +3,7 @@ package com.thoughtworks.gauge.autocomplete;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.CompletionResultSet;
+import com.intellij.codeInsight.completion.PlainPrefixMatcher;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -21,6 +22,7 @@ import java.util.Set;
 public class StaticArgCompletionProvider extends CompletionProvider<CompletionParameters> {
     @Override
     protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet resultSet) {
+        resultSet = resultSet.withPrefixMatcher(new PlainPrefixMatcher(""));
         PsiFile specFile = parameters.getOriginalFile();
         SpecDetail specDetail = PsiTreeUtil.getChildOfType(specFile, SpecDetail.class);
         List<SpecStep> stepsInFile = new ArrayList<SpecStep>();
