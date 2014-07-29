@@ -73,19 +73,4 @@ public class GaugeProjectComponent implements ProjectComponent {
         return new GaugeService(initializeGaugeProcess(freePortForApi, project), initializeGaugeConnection(freePortForApi));
     }
 
-    public String string(InputStream in) throws IOException {
-        InputStreamReader is = new InputStreamReader(in);
-        StringBuilder sb = new StringBuilder();
-        BufferedReader br = new BufferedReader(is);
-        String read = br.readLine();
-
-        while (read != null) {
-
-            sb.append(read);
-            read = br.readLine();
-
-        }
-        System.out.println(read);
-        return sb.toString();
-    }
 }
