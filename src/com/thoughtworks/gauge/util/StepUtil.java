@@ -6,15 +6,17 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.AnnotatedElementsSearch;
 import com.intellij.util.Query;
-import com.thoughtworks.gauge.StepValueExtractor;
+import com.thoughtworks.gauge.GaugeConnection;
+import com.thoughtworks.gauge.core.Gauge;
+import com.thoughtworks.gauge.core.GaugeService;
 import com.thoughtworks.gauge.language.psi.SpecStep;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class StepUtil {
+import static com.thoughtworks.gauge.GaugeConstant.STEP_ANNOTATION_QUALIFIER;
 
-    private static StepValueExtractor stepValueExtractor = new StepValueExtractor();
+public class StepUtil {
 
     public static PsiMethod findStepImpl(SpecStep step, Project project) {
         Collection<PsiMethod> stepMethods = getStepMethods(project);
@@ -43,17 +45,57 @@ public class StepUtil {
     }
 
     private static boolean annotationTextMatches(PsiAnnotation annotation, String stepValue) {
-        String annotationValue = AnnotationUtil.getStringAttributeValue(annotation, "value");
-        String methodValue = stepValueExtractor.getValue(annotationValue).getValue();
-        return methodValue.equals(stepValue);
+        GaugeService gaugeService = Gauge.getGaugeService(annotation.getProject());
+        if (gaugeService != null) {
+            String annotationValue = AnnotationUtil.getStringAttributeValue(annotation, "value");
+            GaugeConnection gaugeConnection = gaugeService.getGaugeConnection();
+            String methodValue = gaugeConnection.getStepValue(annotationValue).getStepText();
+            return methodValue.equals(stepValue);
+        }
+        return false;
     }
 
     public static Collection<PsiMethod> getStepMethods(Project project) {
-        final PsiClass step = JavaPsiFacade.getInstance(project).findClass("com.thoughtworks.gauge.Step", GlobalSearchScope.allScope(project));
+        final PsiClass step = JavaPsiFacade.getInstance(project).findClass(STEP_ANNOTATION_QUALIFIER, GlobalSearchScope.allScope(project));
         if (step != null) {
             final Query<PsiMethod> psiMethods = AnnotatedElementsSearch.searchPsiMethods(step, GlobalSearchScope.allScope(project));
             return psiMethods.findAll();
         }
         return new ArrayList<PsiMethod>();
     }
+
+    public static boolean isStepImplementation(PsiElement element) {
+        if (element instanceof PsiMethod) {
+            PsiMethod method = (PsiMethod) element;
+            PsiModifierList modifierList = method.getModifierList();
+            PsiAnnotation[] annotations = modifierList.getAnnotations();
+            for (PsiAnnotation annotation : annotations) {
+                if (STEP_ANNOTATION_QUALIFIER.equals(annotation.getQualifiedName())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static String getMethodAnnotationText(PsiElement element) {
+        if (element instanceof PsiMethod) {
+            PsiMethod method = (PsiMethod) element;
+            PsiModifierList modifierList = method.getModifierList();
+            PsiAnnotation[] annotations = modifierList.getAnnotations();
+            for (PsiAnnotation annotation : annotations) {
+                if (STEP_ANNOTATION_QUALIFIER.equals(annotation.getQualifiedName())) {
+                    String attributeValue = AnnotationUtil.getStringAttributeValue(annotation, "value");
+                    GaugeService gaugeService = Gauge.getGaugeService(element.getProject());
+                    if (gaugeService != null) {
+                        return gaugeService.getGaugeConnection().getStepValue(attributeValue).getStepText();
+                    } else {
+                        return attributeValue;
+                    }
+                }
+            }
+        }
+        return "";
+    }
+
 }

@@ -3,12 +3,12 @@ package com.thoughtworks.gauge;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.thoughtworks.gauge.core.Gauge;
-import com.thoughtworks.gauge.core.GaugeConnection;
 import com.thoughtworks.gauge.core.GaugeService;
 import com.thoughtworks.gauge.util.SocketUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 
 
 public class GaugeProjectComponent implements ProjectComponent {

@@ -9,9 +9,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
+import com.thoughtworks.gauge.StepValue;
 import com.thoughtworks.gauge.core.GaugeService;
 import com.thoughtworks.gauge.core.Gauge;
-import com.thoughtworks.gauge.core.GaugeConnection;
+import com.thoughtworks.gauge.GaugeConnection;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -46,15 +47,20 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
     }
 
     private List<String> getStepsInProject(Project project) {
+        List<String> steps = new ArrayList<String>();
         try {
             GaugeService gaugeService = Gauge.getGaugeService(project);
             GaugeConnection gaugeConnection = gaugeService.getGaugeConnection();
             if (gaugeConnection != null) {
-                return gaugeConnection.fetchAllSteps();
+                List<StepValue> stepValues = gaugeConnection.fetchAllSteps();
+                for (StepValue stepValue : stepValues) {
+                    steps.add(stepValue.getStepAnnotationText());
+                }
+                return steps;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return new ArrayList<String>();
+        return steps;
     }
 }

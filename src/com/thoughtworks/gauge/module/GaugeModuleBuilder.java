@@ -12,7 +12,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.thoughtworks.gauge.GaugeProjectComponent;
 import com.thoughtworks.gauge.core.Gauge;
-import com.thoughtworks.gauge.core.GaugeConnection;
+import com.thoughtworks.gauge.GaugeConnection;
 import com.thoughtworks.gauge.core.GaugeService;
 import org.jetbrains.annotations.NonNls;
 

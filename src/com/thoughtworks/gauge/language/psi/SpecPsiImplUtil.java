@@ -2,9 +2,10 @@ package com.thoughtworks.gauge.language.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
+import com.thoughtworks.gauge.GaugeConnection;
 import com.thoughtworks.gauge.StepValue;
 import com.thoughtworks.gauge.core.Gauge;
-import com.thoughtworks.gauge.core.GaugeConnection;
+import com.thoughtworks.gauge.core.GaugeService;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,9 +21,13 @@ public class SpecPsiImplUtil {
         int endIndex = newLineIndex == -1 ? stepText.length() : newLineIndex;
         SpecTable inlineTable = element.getInlineTable();
         stepText = stepText.substring(1, endIndex).trim();
-        GaugeConnection apiConnection = Gauge.getGaugeService(element.getProject()).getGaugeConnection();
+        GaugeService gaugeService = Gauge.getGaugeService(element.getProject());
+        if (gaugeService == null) {
+            return getDefaultStepValue(element);
+        }
+        GaugeConnection apiConnection = gaugeService.getGaugeConnection();
         if (apiConnection == null) {
-            return new StepValue(element.getText(), element.getText(), new ArrayList<String>());
+            return getDefaultStepValue(element);
         }
         if (inlineTable != null) {
             return apiConnection.getStepValue(stepText, true);
@@ -30,6 +35,10 @@ public class SpecPsiImplUtil {
             return apiConnection.getStepValue(stepText);
         }
 
+    }
+
+    private static StepValue getDefaultStepValue(SpecStep element) {
+        return new StepValue(element.getText(), element.getText(), new ArrayList<String>());
     }
 
     public static ItemPresentation getPresentation(final SpecStepImpl element) {
