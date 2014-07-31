@@ -35,7 +35,7 @@
       <lang.syntaxHighlighterFactory key="Specification" implementationClass="com.thoughtworks.gauge.highlight.SpecSyntaxHighlighterFactory"/>
       <colorSettingsPage implementation="com.thoughtworks.gauge.highlight.SpecColorSettingsPage"/>
       <annotator language="Specification" implementationClass="com.thoughtworks.gauge.annotator.StepAnnotator"/>
-      <completion.contributor language="Specification" implementationClass="com.thoughtworks.gauge.autocomplete.StepCompletionContributor"/>
+      <completion.contributor language="Specification" implementationClass="com.thoughtworks.gauge.autocomplete.StepCompletionContributor" order="first,before liveTemplates"/>
       <quoteHandler fileType="Specification" className="com.thoughtworks.gauge.autocomplete.ArgQuoteHandler"/>
       <lang.braceMatcher language="Specification" implementationClass="com.thoughtworks.gauge.autocomplete.PairMatcher"/>
       <moduleType id="Gauge_Module" implementationClass="com.thoughtworks.gauge.module.GaugeModuleType"/>
