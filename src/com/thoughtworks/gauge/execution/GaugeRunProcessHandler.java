@@ -12,8 +12,8 @@ public class GaugeRunProcessHandler extends ColoredProcessHandler {
     }
 
     public static GaugeRunProcessHandler runCommandLine(final GeneralCommandLine commandLine) throws ExecutionException {
-        final GaugeRunProcessHandler twistAppProcess = new GaugeRunProcessHandler(commandLine.createProcess(),commandLine.getCommandLineString());
-        ProcessTerminatedListener.attach(twistAppProcess);
-        return twistAppProcess;
+        final GaugeRunProcessHandler gaugeRunProcess = new GaugeRunProcessHandler(commandLine.createProcess(),commandLine.getCommandLineString());
+        ProcessTerminatedListener.attach(gaugeRunProcess);
+        return gaugeRunProcess;
     }
 }
