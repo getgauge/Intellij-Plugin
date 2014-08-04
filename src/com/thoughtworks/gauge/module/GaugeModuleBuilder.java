@@ -1,20 +1,27 @@
 package com.thoughtworks.gauge.module;
 
 import com.intellij.ide.util.projectWizard.JavaModuleBuilder;
+import com.intellij.ide.util.projectWizard.ModuleWizardStep;
+import com.intellij.ide.util.projectWizard.ProjectWizardStepFactory;
+import com.intellij.ide.util.projectWizard.SettingsStep;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.SdkTypeId;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.thoughtworks.gauge.GaugeConnection;
 import com.thoughtworks.gauge.GaugeProjectComponent;
 import com.thoughtworks.gauge.core.Gauge;
-import com.thoughtworks.gauge.GaugeConnection;
 import com.thoughtworks.gauge.core.GaugeService;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +38,17 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
         super.setupRootModel(modifiableRootModel);
         gaugeInit(modifiableRootModel);
         addGaugeLibToModule(modifiableRootModel);
+    }
+
+    @Nullable
+    @Override
+    public ModuleWizardStep modifySettingsStep(@NotNull SettingsStep settingsStep) {
+        return ProjectWizardStepFactory.getInstance().createJavaSettingsStep(settingsStep, this, new Condition<SdkTypeId>() {
+            @Override
+            public boolean value(SdkTypeId sdkType) {
+                return isSuitableSdkType(sdkType);
+            }
+        });
     }
 
     private void gaugeInit(ModifiableRootModel modifiableRootModel) {
@@ -70,7 +88,7 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
             System.out.println("Could not add gauge lib, add it manually: " + e.getMessage());
             return;
         }
-        final Library library = modifiableRootModel.getModuleLibraryTable().createLibrary("twist-lib");
+        final Library library = modifiableRootModel.getModuleLibraryTable().createLibrary("gauge-lib");
         final File libsDir = new File(installationRoot.getAbsolutePath(), File.separator + "lib" + File.separator + GAUGE + File.separator + "java");
         final VirtualFile libDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(libsDir);
         final Library.ModifiableModel libModel = library.getModifiableModel();
