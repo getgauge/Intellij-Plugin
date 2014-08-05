@@ -6,13 +6,12 @@ import com.intellij.execution.configuration.ConfigurationFactoryEx;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.openapi.components.PathMacroManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.util.JDOMExternalizer;
 import com.intellij.openapi.util.WriteExternalException;
-import com.intellij.util.xmlb.XmlSerializer;
 import com.jgoodies.common.base.Strings;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -58,16 +57,16 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
 
     @Override
     public void readExternal(Element element) throws InvalidDataException {
-        PathMacroManager.getInstance(getProject()).expandPaths(element);
         super.readExternal(element);
-        XmlSerializer.deserializeInto(this, element);
+        environment = JDOMExternalizer.readString(element, "environment");
+        specsToExecute = JDOMExternalizer.readString(element, "specsToExecute");
     }
 
     @Override
     public void writeExternal(Element element) throws WriteExternalException {
         super.writeExternal(element);
-        XmlSerializer.serializeInto(this, element);
-        PathMacroManager.getInstance(getProject()).collapsePathsRecursively(element);
+        JDOMExternalizer.write(element, "environment", environment);
+        JDOMExternalizer.write(element, "specsToExecute", specsToExecute);
     }
 
     @NotNull
