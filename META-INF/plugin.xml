@@ -22,11 +22,11 @@
   <!-- uncomment to enable plugin in all products
   <depends>com.intellij.modules.lang</depends>
   -->
-    <project-components>
+    <module-components>
         <component>
-            <implementation-class>com.thoughtworks.gauge.GaugeProjectComponent</implementation-class>
+            <implementation-class>com.thoughtworks.gauge.GaugeModuleComponent</implementation-class>
         </component>
-    </project-components>
+    </module-components>
 
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
@@ -43,6 +43,9 @@
       <configurationType implementation="com.thoughtworks.gauge.execution.GaugeRunTaskConfigurationType"/>
       <programRunner implementation="com.thoughtworks.gauge.execution.GaugeTestRunner"/>
       <runConfigurationProducer implementation="com.thoughtworks.gauge.execution.GaugeExecutionProducer"/>
+      <lang.findUsagesProvider implementationClass="com.thoughtworks.gauge.usage.FindUsagesProvider" language="Specification"/>
+      <referencesSearch implementation="com.thoughtworks.gauge.usage.StepDefinitionSearch"/>
+      <methodReferencesSearch implementation="com.thoughtworks.gauge.usage.MethodReferenceSearch"/>
   </extensions>
 
   <application-components>

@@ -7,7 +7,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class GaugeModuleType extends ModuleType<GaugeModuleBuilder> {
-    private static final String MODULE_TYPE_ID = "Gauge_Module";
+    public static final String MODULE_TYPE_ID = "Gauge_Module";
+    private static final String GAUGE_MODULE = "Gauge Module";
 
     public GaugeModuleType() {
         super(MODULE_TYPE_ID);
@@ -26,7 +27,7 @@ public class GaugeModuleType extends ModuleType<GaugeModuleBuilder> {
     @NotNull
     @Override
     public String getName() {
-        return "Gauge Module";
+        return GAUGE_MODULE;
     }
 
     @NotNull

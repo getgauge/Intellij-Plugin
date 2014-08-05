@@ -5,7 +5,8 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.template.TemplateBuilder;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -26,7 +27,11 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
     public void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet resultSet) {
         resultSet.stopHere();
         resultSet = resultSet.withPrefixMatcher(new PlainPrefixMatcher(""));
-        for (String step : getStepsInProject(parameters.getOriginalFile().getProject())) {
+        Module moduleForPsiElement = ModuleUtil.findModuleForPsiElement(parameters.getPosition());
+        if (moduleForPsiElement == null) {
+            return;
+        }
+        for (String step : getStepsInModule(moduleForPsiElement)) {
             LookupElementBuilder element = LookupElementBuilder.create(step);
             element = element.withInsertHandler(new InsertHandler<LookupElement>() {
                 @Override
@@ -48,10 +53,10 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
         return new TextRange(arg.getStartOffsetInParent(), arg.getStartOffsetInParent() + arg.getTextLength());
     }
 
-    private List<String> getStepsInProject(Project project) {
+    private List<String> getStepsInModule(Module module) {
         List<String> steps = new ArrayList<String>();
         try {
-            GaugeService gaugeService = Gauge.getGaugeService(project);
+            GaugeService gaugeService = Gauge.getGaugeService(module);
             GaugeConnection gaugeConnection = gaugeService.getGaugeConnection();
             if (gaugeConnection != null) {
                 List<StepValue> stepValues = gaugeConnection.fetchAllSteps();

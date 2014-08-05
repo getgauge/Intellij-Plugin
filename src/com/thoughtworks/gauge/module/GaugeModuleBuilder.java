@@ -7,7 +7,6 @@ import com.intellij.ide.util.projectWizard.SettingsStep;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.SdkTypeId;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.libraries.Library;
@@ -16,7 +15,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.thoughtworks.gauge.GaugeConnection;
-import com.thoughtworks.gauge.GaugeProjectComponent;
+import com.thoughtworks.gauge.GaugeModuleComponent;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
 import org.jetbrains.annotations.NonNls;
@@ -76,9 +75,9 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
     private void addGaugeLibToModule(ModifiableRootModel modifiableRootModel) {
         File installationRoot;
         try {
-            Project project = modifiableRootModel.getProject();
-            GaugeService gaugeService = GaugeProjectComponent.createGaugeService(project);
-            Gauge.addProject(project,gaugeService);
+            Module module = modifiableRootModel.getModule();
+            GaugeService gaugeService = GaugeModuleComponent.createGaugeService(module);
+            Gauge.addModule(module, gaugeService);
             GaugeConnection gaugeConnection = gaugeService.getGaugeConnection();
             if (gaugeConnection == null) {
                 throw new IOException("Gauge api connection not established");

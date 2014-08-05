@@ -1,6 +1,8 @@
 package com.thoughtworks.gauge.util;
 
 import com.intellij.codeInsight.AnnotationUtil;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -45,7 +47,8 @@ public class StepUtil {
     }
 
     private static boolean annotationTextMatches(PsiAnnotation annotation, String stepValue) {
-        GaugeService gaugeService = Gauge.getGaugeService(annotation.getProject());
+        Module moduleForPsiElement = ModuleUtil.findModuleForPsiElement(annotation);
+        GaugeService gaugeService = Gauge.getGaugeService(moduleForPsiElement);
         if (gaugeService != null) {
             String annotationValue = AnnotationUtil.getStringAttributeValue(annotation, "value");
             GaugeConnection gaugeConnection = gaugeService.getGaugeConnection();
@@ -86,7 +89,8 @@ public class StepUtil {
             for (PsiAnnotation annotation : annotations) {
                 if (STEP_ANNOTATION_QUALIFIER.equals(annotation.getQualifiedName())) {
                     String attributeValue = AnnotationUtil.getStringAttributeValue(annotation, "value");
-                    GaugeService gaugeService = Gauge.getGaugeService(element.getProject());
+                    Module moduleForElement = ModuleUtil.findModuleForPsiElement(element);
+                    GaugeService gaugeService = Gauge.getGaugeService(moduleForElement);
                     if (gaugeService != null) {
                         return gaugeService.getGaugeConnection().getStepValue(attributeValue).getStepText();
                     } else {

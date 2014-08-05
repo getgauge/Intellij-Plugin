@@ -2,6 +2,8 @@ package com.thoughtworks.gauge.language.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.thoughtworks.gauge.GaugeConnection;
 import com.thoughtworks.gauge.StepValue;
 import com.thoughtworks.gauge.core.Gauge;
@@ -21,7 +23,8 @@ public class SpecPsiImplUtil {
         int endIndex = newLineIndex == -1 ? stepText.length() : newLineIndex;
         SpecTable inlineTable = element.getInlineTable();
         stepText = stepText.substring(1, endIndex).trim();
-        GaugeService gaugeService = Gauge.getGaugeService(element.getProject());
+        Module moduleForElement = ModuleUtil.findModuleForPsiElement(element);
+        GaugeService gaugeService = Gauge.getGaugeService(moduleForElement);
         if (gaugeService == null) {
             return getDefaultStepValue(element);
         }
