@@ -27,8 +27,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.thoughtworks.gauge.GaugeConstant.GAUGE;
 import static com.thoughtworks.gauge.GaugeConstant.INIT_FLAG;
+import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeExecPath;
 
 public class GaugeModuleBuilder extends JavaModuleBuilder {
 
@@ -54,7 +54,7 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
         final String path = getPathForInitialization(modifiableRootModel);
 
         final String[] init = {
-                GAUGE,
+                getGaugeExecPath(),
                 INIT_FLAG, getLanguage()
         };
         try {
@@ -73,7 +73,7 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
     }
 
     private void addGaugeLibToModule(ModifiableRootModel modifiableRootModel) {
-        File installationRoot;
+        String libRoot;
         try {
             Module module = modifiableRootModel.getModule();
             GaugeService gaugeService = GaugeModuleComponent.createGaugeService(module);
@@ -82,13 +82,16 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
             if (gaugeConnection == null) {
                 throw new IOException("Gauge api connection not established");
             }
-            installationRoot = gaugeConnection.getInstallationRoot();
+            libRoot = gaugeConnection.getLibPath(getLanguage());
+            if (!new File(libRoot).exists()) {
+                throw new IOException(libRoot + "does not exist");
+            }
         } catch (IOException e) {
             System.out.println("Could not add gauge lib, add it manually: " + e.getMessage());
             return;
         }
         final Library library = modifiableRootModel.getModuleLibraryTable().createLibrary("gauge-lib");
-        final File libsDir = new File(installationRoot.getAbsolutePath(), File.separator + "lib" + File.separator + GAUGE + File.separator + "java");
+        final File libsDir = new File(libRoot);
         final VirtualFile libDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(libsDir);
         final Library.ModifiableModel libModel = library.getModifiableModel();
         libModel.addJarDirectory(libDir, true);

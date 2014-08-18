@@ -12,6 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 
+import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeExecPath;
+
 
 public class GaugeModuleComponent implements ModuleComponent {
     private final Module module;
@@ -73,7 +75,8 @@ public class GaugeModuleComponent implements ModuleComponent {
     }
 
     private static Process initializeGaugeProcess(int apiPort, Module module) {
-        ProcessBuilder gauge = new ProcessBuilder("gauge", "--daemonize");
+        String path = getGaugeExecPath();
+        ProcessBuilder gauge = new ProcessBuilder(path, "--daemonize");
         gauge.environment().put("GAUGE_API_PORT", String.valueOf(apiPort));
         gauge.directory(new File(module.getModuleFilePath()).getParentFile());
         try {

@@ -6,11 +6,17 @@
 
   <description><![CDATA[
       Plugin for writing Gauge tests
+      <p>The plugin provides the following features:</p>
+        <ul>
+            <li>Basic language parsing and highlighting</li>
+            <li>Project Creation</li>
+            <li>Auto completion </li>
+            <li> Navigation from step to implementation </li>
+            <li> Quick Fix for unimplemented steps </li>
+        </ul>
     ]]></description>
 
   <change-notes><![CDATA[
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>
     ]]>
   </change-notes>
 
@@ -44,8 +50,8 @@
       <programRunner implementation="com.thoughtworks.gauge.execution.GaugeTestRunner"/>
       <runConfigurationProducer implementation="com.thoughtworks.gauge.execution.GaugeExecutionProducer"/>
       <lang.findUsagesProvider implementationClass="com.thoughtworks.gauge.usage.FindUsagesProvider" language="Specification"/>
-      <referencesSearch implementation="com.thoughtworks.gauge.usage.StepDefinitionSearch"/>
-      <methodReferencesSearch implementation="com.thoughtworks.gauge.usage.MethodReferenceSearch"/>
+      <!--<referencesSearch implementation="com.thoughtworks.gauge.usage.StepDefinitionSearch"/>-->
+      <!--<methodReferencesSearch implementation="com.thoughtworks.gauge.usage.MethodReferenceSearch"/>-->
   </extensions>
 
   <application-components>

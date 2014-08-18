@@ -16,6 +16,7 @@
 
  * Project Creation
  * Syntax Highlighting
+ * Auto completion
  * Navigation from step to implementation
  * Quick Fix for unimplemented steps
 

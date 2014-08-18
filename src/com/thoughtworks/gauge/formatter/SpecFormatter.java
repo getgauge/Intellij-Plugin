@@ -13,6 +13,8 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 
 import java.io.File;
 
+import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeExecPath;
+
 public class SpecFormatter extends AnAction {
     @Override
     public void actionPerformed(AnActionEvent anActionEvent) {
@@ -33,7 +35,7 @@ public class SpecFormatter extends AnAction {
             FileDocumentManager.getInstance().saveDocument(doc);
         }
 
-        ProcessBuilder processBuilder = new ProcessBuilder("gauge", "--format", fileName);
+        ProcessBuilder processBuilder = new ProcessBuilder(getGaugeExecPath(), "--format", fileName);
         processBuilder.directory(new File(projectDir));
         try {
             Process process = processBuilder.start();
@@ -44,7 +46,7 @@ public class SpecFormatter extends AnAction {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Messages.showErrorDialog("Error on formatting spec","Format Error");
+            Messages.showErrorDialog("Error on formatting spec", "Format Error");
         }
     }
 }
