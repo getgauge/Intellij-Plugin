@@ -4,6 +4,7 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configuration.ConfigurationFactoryEx;
 import com.intellij.execution.configurations.*;
+import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.module.Module;
@@ -17,11 +18,11 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.thoughtworks.gauge.GaugeConstant.ENV_FLAG;
-import static com.thoughtworks.gauge.GaugeConstant.GAUGE;
+import static com.thoughtworks.gauge.GaugeConstant.*;
 
 public class GaugeRunConfiguration extends LocatableConfigurationBase implements RunProfileWithCompileBeforeLaunchOption {
 
+    public static final String JAVA_DEBUG_PORT = "50005";
     private String specsToExecute;
     private Module module;
     private String environment;
@@ -50,6 +51,9 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
                     commandLine.addParameters(ENV_FLAG, environment);
                 }
                 commandLine.addParameter(specsToExecute);
+                if (DefaultDebugExecutor.EXECUTOR_ID.equals(env.getExecutor().getId())) {
+                    commandLine.getEnvironment().put(GAUGE_DEBUG_OPTS_ENV, JAVA_DEBUG_PORT);
+                }
                 return GaugeRunProcessHandler.runCommandLine(commandLine);
             }
         };

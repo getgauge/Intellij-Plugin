@@ -5,14 +5,11 @@ import java.net.ServerSocket;
 
 public class SocketUtils {
 
-    private static int apiPort;
-
     public static int findFreePortForApi() {
         ServerSocket socket = null;
         try {
             socket = new ServerSocket(0);
-            apiPort = socket.getLocalPort();
-            return apiPort;
+            return socket.getLocalPort();
         } catch (IOException e) {
 
         } finally {
@@ -26,10 +23,4 @@ public class SocketUtils {
         return -1;
     }
 
-    public static int getApiPort() {
-        if (apiPort == 0) {
-            apiPort = findFreePortForApi();
-        }
-        return apiPort;
-    }
 }
