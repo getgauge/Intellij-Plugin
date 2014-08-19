@@ -23,8 +23,15 @@
 
 ##Interacting with the core
 
-Auto completion,step value extraction and other api calls are made from the plugin. Each project is associated with an api connection(GaugeConnection). 
-This Gauge connection is created during the project initialization phase after the gauge process is started in background. Gauge connection talks to the core using protobuff. 
+Auto completion,step value extraction and other api calls are made from the plugin. Each module is associated with an api connection(GaugeConnection). 
+This Gauge connection is created during the module initialization phase after the gauge process is started in background. Gauge connection talks to the core using protobuff. 
+
+
+##Debugging specs
+
+* Create a remote run configuration which attaches on port 50005
+* Right click on the spec -> Choose Debug specification (this will wait for a debugger to get attached, currently waits for 30 seconds)
+* Choose the previously created remote run configuration and run it (this will attach to the gauge process)
 
 
 ##Some useful links

@@ -76,8 +76,8 @@ public class GaugeModuleComponent implements ModuleComponent {
 
     private static Process initializeGaugeProcess(int apiPort, Module module) {
         String path = getGaugeExecPath();
-        ProcessBuilder gauge = new ProcessBuilder(path, "--daemonize");
-        gauge.environment().put("GAUGE_API_PORT", String.valueOf(apiPort));
+        ProcessBuilder gauge = new ProcessBuilder(path, GaugeConstant.DAEMONIZE);
+        gauge.environment().put(GaugeConstant.GAUGE_API_PORT, String.valueOf(apiPort));
         gauge.directory(new File(module.getModuleFilePath()).getParentFile());
         try {
             return gauge.start();
