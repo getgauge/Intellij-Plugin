@@ -26,7 +26,8 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
 
     public void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet resultSet) {
         resultSet.stopHere();
-        resultSet = resultSet.withPrefixMatcher(new PlainPrefixMatcher(""));
+        String prefix = parameters.getPosition().getText().replace("IntellijIdeaRulezzz ", "").trim();
+        resultSet = resultSet.withPrefixMatcher(new PlainPrefixMatcher(prefix));
         Module moduleForPsiElement = ModuleUtil.findModuleForPsiElement(parameters.getPosition());
         if (moduleForPsiElement == null) {
             return;
