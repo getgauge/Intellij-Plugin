@@ -19,16 +19,19 @@ public class GaugeUtil {
             File bin = new File(gaugeHome, "bin");
             File gaugeExec = new File(bin, GaugeConstant.GAUGE);
             if (gaugeExec.exists()) {
+                LOG.info("executable path: " + gaugeExec.getAbsolutePath());
                 return gaugeExec.getAbsolutePath();
             }
         } else if (!StringUtils.isEmpty(path)) {
             for (String entry : path.split(File.pathSeparator)) {
                 File gaugeExec = new File(entry, GaugeConstant.GAUGE);
                 if (gaugeExec.exists()) {
+                    LOG.info("executable path: " + gaugeExec.getAbsolutePath());
                     return gaugeExec.getAbsolutePath();
                 }
             }
         }
+        LOG.warn("Could not find executable in PATH or GAUGE_ROOT");
         return GaugeConstant.GAUGE;
     }
 
