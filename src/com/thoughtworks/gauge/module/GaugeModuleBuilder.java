@@ -7,6 +7,9 @@ import com.intellij.ide.util.projectWizard.SettingsStep;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.projectRoots.SdkTypeId;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.libraries.Library;
@@ -16,6 +19,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.thoughtworks.gauge.GaugeConnection;
 import com.thoughtworks.gauge.GaugeModuleComponent;
+import com.thoughtworks.gauge.PluginNotInstalledException;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
 import org.jetbrains.annotations.NonNls;
@@ -50,45 +54,50 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
         });
     }
 
-    private void gaugeInit(ModifiableRootModel modifiableRootModel) {
-        final String path = getPathForInitialization(modifiableRootModel);
-
-        final String[] init = {
-                getGaugeExecPath(),
-                INIT_FLAG, getLanguage()
-        };
-        try {
-            ProcessBuilder processBuilder = new ProcessBuilder(init);
-            processBuilder.directory(new File(path, getName()));
-            Process process = processBuilder.start();
-            final int exitCode = process.waitFor();
-            if (exitCode != 0) {
-                System.out.println("Failed to initialize project");
+    private void gaugeInit(final ModifiableRootModel modifiableRootModel) {
+        ProgressManager.getInstance().run(new Task.Modal(modifiableRootModel.getProject(), "Initializing gauge-" + getLanguage() + " project", false) {
+            public void run(@NotNull ProgressIndicator progressIndicator) {
+                progressIndicator.setIndeterminate(true);
+                progressIndicator.setText2("This might a few minutes if gauge-" + getLanguage() + " runner is not installed");
+                final String path = getPathForInitialization(modifiableRootModel);
+                final String[] init = {
+                        getGaugeExecPath(),
+                        INIT_FLAG, getLanguage()
+                };
+                String failureMessage = "project initialization unsuccessful";
+                try {
+                    ProcessBuilder processBuilder = new ProcessBuilder(init);
+                    processBuilder.directory(new File(path, getName()));
+                    Process process = processBuilder.start();
+                    final int exitCode = process.waitFor();
+                    if (exitCode != 0) {
+                        throw new RuntimeException(failureMessage);
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(failureMessage, e);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(failureMessage, e);
+                }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        });
     }
 
     private void addGaugeLibToModule(ModifiableRootModel modifiableRootModel) {
         String libRoot;
+        Module module = modifiableRootModel.getModule();
+        GaugeService gaugeService = GaugeModuleComponent.createGaugeService(module);
+        Gauge.addModule(module, gaugeService);
+        GaugeConnection gaugeConnection = gaugeService.getGaugeConnection();
         try {
-            Module module = modifiableRootModel.getModule();
-            GaugeService gaugeService = GaugeModuleComponent.createGaugeService(module);
-            Gauge.addModule(module, gaugeService);
-            GaugeConnection gaugeConnection = gaugeService.getGaugeConnection();
             if (gaugeConnection == null) {
                 throw new IOException("Gauge api connection not established");
             }
             libRoot = gaugeConnection.getLibPath(getLanguage());
-            if (!new File(libRoot).exists()) {
-                throw new IOException(libRoot + "does not exist");
-            }
         } catch (IOException e) {
             System.out.println("Could not add gauge lib, add it manually: " + e.getMessage());
             return;
+        } catch (PluginNotInstalledException e) {
+            throw new RuntimeException(getLanguage() + "could not be installed, try it manually");
         }
         final Library library = modifiableRootModel.getModuleLibraryTable().createLibrary("gauge-lib");
         final File libsDir = new File(libRoot);

@@ -49,9 +49,6 @@
       <configurationType implementation="com.thoughtworks.gauge.execution.GaugeRunTaskConfigurationType"/>
       <programRunner implementation="com.thoughtworks.gauge.execution.GaugeTestRunner"/>
       <runConfigurationProducer implementation="com.thoughtworks.gauge.execution.GaugeExecutionProducer"/>
-      <lang.findUsagesProvider implementationClass="com.thoughtworks.gauge.usage.FindUsagesProvider" language="Specification"/>
-      <!--<referencesSearch implementation="com.thoughtworks.gauge.usage.StepDefinitionSearch"/>-->
-      <!--<methodReferencesSearch implementation="com.thoughtworks.gauge.usage.MethodReferenceSearch"/>-->
   </extensions>
 
   <application-components>
