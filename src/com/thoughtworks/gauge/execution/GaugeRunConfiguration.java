@@ -14,6 +14,7 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizer;
 import com.intellij.openapi.util.WriteExternalException;
 import com.jgoodies.common.base.Strings;
+import com.thoughtworks.gauge.util.GaugeUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,7 +47,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
             @Override
             protected ProcessHandler startProcess() throws ExecutionException {
                 GeneralCommandLine commandLine = new GeneralCommandLine();
-                commandLine.setExePath(GAUGE);
+                commandLine.setExePath(GaugeUtil.getGaugeExecPath());
                 commandLine.addParameter(SIMPLE_CONSOLE_FLAG);
                 commandLine.setWorkDirectory(getProject().getBaseDir().getPath());
                 if (!Strings.isBlank(environment)) {
