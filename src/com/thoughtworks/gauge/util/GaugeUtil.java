@@ -9,8 +9,16 @@ import java.io.File;
 
 public class GaugeUtil {
     private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.GaugeUtil");
+    private static String gaugePath = null;
 
     public static String getGaugeExecPath() {
+        if (gaugePath == null) {
+            gaugePath = getPath();
+        }
+        return gaugePath;
+    }
+
+    private static String getPath() {
         String path = EnvironmentUtil.getValue("PATH");
         LOG.info("PATH => " + path);
         String gaugeHome = EnvironmentUtil.getValue("GAUGE_ROOT");
