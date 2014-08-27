@@ -23,6 +23,7 @@ import static com.thoughtworks.gauge.GaugeConstant.*;
 public class GaugeRunConfiguration extends LocatableConfigurationBase implements RunProfileWithCompileBeforeLaunchOption {
 
     public static final String JAVA_DEBUG_PORT = "50005";
+    public static final String SIMPLE_CONSOLE_FLAG = "--simple-console";
     private String specsToExecute;
     private Module module;
     private String environment;
@@ -46,6 +47,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
             protected ProcessHandler startProcess() throws ExecutionException {
                 GeneralCommandLine commandLine = new GeneralCommandLine();
                 commandLine.setExePath(GAUGE);
+                commandLine.addParameter(SIMPLE_CONSOLE_FLAG);
                 commandLine.setWorkDirectory(getProject().getBaseDir().getPath());
                 if (!Strings.isBlank(environment)) {
                     commandLine.addParameters(ENV_FLAG, environment);
