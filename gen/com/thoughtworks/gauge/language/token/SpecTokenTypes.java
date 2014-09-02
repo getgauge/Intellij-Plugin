@@ -24,6 +24,7 @@ public interface SpecTokenTypes {
     IElementType SCENARIO_HEADING = new SpecTokenType("SCENARIO_HEADING");
     IElementType SPEC_HEADING = new SpecTokenType("SPEC_HEADING");
     IElementType STEP = new SpecTokenType("STEP");
+    IElementType TAGS = new SpecTokenType("TAGS");
     IElementType STEP_IDENTIFIER = new SpecTokenType("STEP_IDENTIFIER");
     IElementType TABLE_BORDER = new SpecTokenType("TABLE_BORDER");
     IElementType TABLE_HEADER = new SpecTokenType("TABLE_HEADER");
@@ -45,8 +46,8 @@ public interface SpecTokenTypes {
                 return new SpecDetailImpl(node);
             } else if (type == STEP) {
                 return new SpecStepImpl(node);
-            } else if (type == TABLE) {
-                return new SpecTableImpl(node);
+            } else if (type == TAGS) {
+                return new SpecTagsImpl(node);
             } else if (type == TABLE_BODY) {
                 return new SpecTableBodyImpl(node);
             } else if (type == TABLE_HEADER) {

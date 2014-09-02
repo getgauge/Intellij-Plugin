@@ -3,6 +3,7 @@ package com.thoughtworks.gauge.highlight;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.editor.markup.EffectType;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.TokenType;
@@ -25,16 +26,17 @@ public class SpecSyntaxHighlighter extends SyntaxHighlighterBase {
     public static final TextAttributesKey ARG = createTextAttributesKey("ARG", DefaultLanguageHighlighterColors.STRING);
     public static final TextAttributesKey DYNAMIC_ARG = createTextAttributesKey("DYNAMIC ARG", DefaultLanguageHighlighterColors.CONSTANT);
     public static final TextAttributesKey TABLE_BORDER = createTextAttributesKey("TABLE BORDER", DefaultLanguageHighlighterColors.LOCAL_VARIABLE);
+    public static final TextAttributesKey TAGS = createTextAttributesKey("TAGS", DefaultLanguageHighlighterColors.STATIC_FIELD);
 
     static final TextAttributesKey BAD_CHARACTER = createTextAttributesKey("SIMPLE_BAD_CHARACTER",
             new TextAttributes(Color.RED, null, null, null, Font.BOLD));
-
     private static final TextAttributesKey[] BAD_CHAR_KEYS = new TextAttributesKey[]{BAD_CHARACTER};
     private static final TextAttributesKey[] EMPTY_KEYS = new TextAttributesKey[0];
     private static final TextAttributesKey[] SPEC_HEADING_ATTRIBUTE = new TextAttributesKey[]{SPEC_HEADING};
     private static final TextAttributesKey[] SCENARIO_HEADING_ATTRIBUTE = new TextAttributesKey[]{SCENARIO_HEADING};
     private static final TextAttributesKey[] STEP_ATTRIBUTE = new TextAttributesKey[]{STEP};
     private static final TextAttributesKey[] COMMENT_ATTRIBUTE = new TextAttributesKey[]{COMMENT};
+    private static final TextAttributesKey[] TAGS_ATTRIBUTE = new TextAttributesKey[]{TAGS};
     private static final TextAttributesKey[] TABLE_HEADER_ATTRIBUTE = new TextAttributesKey[]{TABLE_HEADER};
     private static final TextAttributesKey[] TABLE_ROW_ATTRIBUTE = new TextAttributesKey[]{TABLE_ROW};
     private static final TextAttributesKey[] ARG_ATTRIBUTE = new TextAttributesKey[]{ARG};
@@ -63,6 +65,8 @@ public class SpecSyntaxHighlighter extends SyntaxHighlighterBase {
             return TABLE_HEADER_ATTRIBUTE;
         } else if (tokenType.equals(SpecTokenTypes.TABLE_ROW_VALUE)) {
             return TABLE_ROW_ATTRIBUTE;
+        } else if (tokenType.equals(SpecTokenTypes.TAGS)) {
+            return TAGS_ATTRIBUTE;
         } else if (tokenType.equals(SpecTokenTypes.TABLE_BORDER)) {
             return TABLE_BORDER_ATTRIBUTE;
         } else if (tokenType.equals(SpecTokenTypes.ARG_START) || tokenType.equals(SpecTokenTypes.ARG) || tokenType.equals(SpecTokenTypes.ARG_END)) {

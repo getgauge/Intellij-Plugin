@@ -2,6 +2,7 @@
 package com.thoughtworks.gauge.language.psi;
 
 import com.thoughtworks.gauge.language.psi.impl.SpecDetailImpl;
+import com.thoughtworks.gauge.language.psi.impl.SpecTagsImpl;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiElement;
@@ -41,6 +42,10 @@ public class SpecVisitor extends PsiElementVisitor {
     }
 
     public void visitSpecDetail(SpecDetailImpl o) {
+        visitPsiElement(o);
+    }
+
+    public void visitTags(SpecTagsImpl o) {
         visitPsiElement(o);
     }
 }

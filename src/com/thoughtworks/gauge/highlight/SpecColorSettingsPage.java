@@ -22,6 +22,8 @@ public class SpecColorSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor("Table Header", SpecSyntaxHighlighter.TABLE_HEADER),
             new AttributesDescriptor("Table Border", SpecSyntaxHighlighter.TABLE_BORDER),
             new AttributesDescriptor("Table Item", SpecSyntaxHighlighter.TABLE_ROW),
+            new AttributesDescriptor("Tags", SpecSyntaxHighlighter.TAGS),
+
     };
 
     @Nullable
@@ -40,6 +42,7 @@ public class SpecColorSettingsPage implements ColorSettingsPage {
     @Override
     public String getDemoText() {
         return "# Specification Heading\n" +
+                "tags: first, second" +
                 "This comment explains what the spec intends to test\n" +
                 "in multi line\n" +
                 "|name                                     |type |\n" +
@@ -48,6 +51,7 @@ public class SpecColorSettingsPage implements ColorSettingsPage {
                 "|specs                                    |dir  |\n" +
                 "* This is a context\n" +
                 "## Scenario Heading\n" +
+                "Tags: tag3, tag4" +
                 "* Step 1 with \"arg\"\n" +
                 "* Step 2 with <dynamic arg>\n" +
                 "comments between steps\n" +

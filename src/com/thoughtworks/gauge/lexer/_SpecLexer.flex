@@ -16,6 +16,7 @@ import static com.thoughtworks.gauge.language.token.SpecTokenTypes.*;
 %function advance
 %type IElementType
 %unicode
+%caseless
 %state INSTEP,INARG,INDYNAMIC,INTABLEHEADER,INTABLEBODY,INTABLEBODYROW,INDYNAMICTABLEITEM
 
 LineTerminator = \r|\n|\r\n
@@ -25,10 +26,12 @@ TableIdentifier = [|]
 StepIdentifier = [*]
 ScenarioHeading = {WhiteSpace}* "##" {InputCharacter}* {LineTerminator}? | {WhiteSpace}* {InputCharacter}* {LineTerminator} [-]+ {LineTerminator}?
 SpecHeading = {WhiteSpace}* "#" {InputCharacter}* {LineTerminator}? | {WhiteSpace}* {InputCharacter}* {LineTerminator} [=]+ {LineTerminator}?
+Tags = {WhiteSpace}* tags {WhiteSpace}? ":" {InputCharacter}* {LineTerminator}?
 %%
 <YYINITIAL> {
   {ScenarioHeading}             {return SCENARIO_HEADING;}
   {SpecHeading}                 {return SPEC_HEADING;}
+  {Tags}                        {return TAGS;}
   {StepIdentifier}              {yybegin(INSTEP);return STEP_IDENTIFIER;}
   {TableIdentifier}             {yybegin(INTABLEHEADER);return TABLE_BORDER;}
   [^]                           {return COMMENT;}
