@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="gauge-java-intellij" default="all">
   
-  
+
+  <property file="gauge-java-intellij-ci.properties"/>
   <property file="gauge-java-intellij.properties"/>
   <!-- Uncomment the following property if no tests compilation is needed -->
   <!-- 
