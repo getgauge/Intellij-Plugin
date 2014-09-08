@@ -13,9 +13,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import static com.thoughtworks.gauge.autocomplete.StepCompletionContributor.getPrefix;
+
 public class DynamicArgCompletionProvider extends CompletionProvider<CompletionParameters> {
     public void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet resultSet) {
-        resultSet = resultSet.withPrefixMatcher(new PlainPrefixMatcher(""));
+        String prefix = getPrefix(parameters);
+        resultSet = resultSet.withPrefixMatcher(new PlainPrefixMatcher(prefix));
         SpecDetail specDetail = PsiTreeUtil.getChildOfType(parameters.getOriginalFile(), SpecDetail.class);
         SpecTable table = specDetail.getDataTable();
         if (table != null) {

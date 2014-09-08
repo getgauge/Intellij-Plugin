@@ -22,11 +22,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.thoughtworks.gauge.autocomplete.StepCompletionContributor.getPrefix;
+
 public class StepCompletionProvider extends CompletionProvider<CompletionParameters> {
 
     public void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet resultSet) {
         resultSet.stopHere();
-        String prefix = parameters.getPosition().getText().replace("IntellijIdeaRulezzz ", "").trim();
+        String prefix = getPrefix(parameters);
         resultSet = resultSet.withPrefixMatcher(new PlainPrefixMatcher(prefix));
         Module moduleForPsiElement = ModuleUtil.findModuleForPsiElement(parameters.getPosition());
         if (moduleForPsiElement == null) {

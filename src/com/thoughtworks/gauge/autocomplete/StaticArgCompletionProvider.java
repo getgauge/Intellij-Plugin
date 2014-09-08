@@ -19,10 +19,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.thoughtworks.gauge.autocomplete.StepCompletionContributor.getPrefix;
+
 public class StaticArgCompletionProvider extends CompletionProvider<CompletionParameters> {
     @Override
     protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet resultSet) {
-        resultSet = resultSet.withPrefixMatcher(new PlainPrefixMatcher(""));
+        String prefix = getPrefix(parameters);
+        resultSet = resultSet.withPrefixMatcher(new PlainPrefixMatcher(prefix));
         PsiFile specFile = parameters.getOriginalFile();
         SpecDetail specDetail = PsiTreeUtil.getChildOfType(specFile, SpecDetail.class);
         List<SpecStep> stepsInFile = new ArrayList<SpecStep>();
