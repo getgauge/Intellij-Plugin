@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="gauge-java-intellij" default="all">
   
-
-  <property file="gauge-java-intellij-ci.properties"/>
+  
   <property file="gauge-java-intellij.properties"/>
   <!-- Uncomment the following property if no tests compilation is needed -->
   <!-- 
@@ -178,23 +177,23 @@
       <include name="plugins/CSS/lib/resources_en.jar"/>
       <include name="plugins/uml/lib/diagram-api.jar"/>
       <include name="plugins/Spring/lib/spring-api.jar"/>
-      <include name="${java.home}/Contents/Home/lib/deploy.jar"/>
-      <include name="${java.home}/Contents/Home/lib/dt.jar"/>
-      <include name="${java.home}/Contents/Home/lib/javaws.jar"/>
-      <include name="${java.home}/Contents/Home/lib/jce.jar"/>
-      <include name="${java.home}/Contents/Home/lib/jconsole.jar"/>
-      <include name="${java.home}/Contents/Home/lib/management-agent.jar"/>
-      <include name="${java.home}/Contents/Home/lib/plugin.jar"/>
-      <include name="${java.home}/Contents/Home/lib/sa-jdi.jar"/>
-      <include name="${java.home}/Contents/Classes/charsets.jar"/>
-      <include name="${java.home}/Contents/Classes/classes.jar"/>
-      <include name="${java.home}/Contents/Classes/jsse.jar"/>
-      <include name="${java.home}/Contents/Classes/ui.jar"/>
-      <include name="${java.home}/Contents/Home/lib/ext/apple_provider.jar"/>
-      <include name="${java.home}/Contents/Home/lib/ext/dnsns.jar"/>
-      <include name="${java.home}/Contents/Home/lib/ext/localedata.jar"/>
-      <include name="${java.home}/Contents/Home/lib/ext/sunjce_provider.jar"/>
-      <include name="${java.home}/Contents/Home/lib/ext/sunpkcs11.jar"/>
+      <include name="${gauge.java.home}/Contents/Home/lib/deploy.jar"/>
+      <include name="${gauge.java.home}/Contents/Home/lib/dt.jar"/>
+      <include name="${gauge.java.home}/Contents/Home/lib/javaws.jar"/>
+      <include name="${gauge.java.home}/Contents/Home/lib/jce.jar"/>
+      <include name="${gauge.java.home}/Contents/Home/lib/jconsole.jar"/>
+      <include name="${gauge.java.home}/Contents/Home/lib/management-agent.jar"/>
+      <include name="${gauge.java.home}/Contents/Home/lib/plugin.jar"/>
+      <include name="${gauge.java.home}/Contents/Home/lib/sa-jdi.jar"/>
+      <include name="${gauge.java.home}/Contents/Classes/charsets.jar"/>
+      <include name="${gauge.java.home}/Contents/Classes/classes.jar"/>
+      <include name="${gauge.java.home}/Contents/Classes/jsse.jar"/>
+      <include name="${gauge.java.home}/Contents/Classes/ui.jar"/>
+      <include name="${gauge.java.home}/Contents/Home/lib/ext/apple_provider.jar"/>
+      <include name="${gauge.java.home}/Contents/Home/lib/ext/dnsns.jar"/>
+      <include name="${gauge.java.home}/Contents/Home/lib/ext/localedata.jar"/>
+      <include name="${gauge.java.home}/Contents/Home/lib/ext/sunjce_provider.jar"/>
+      <include name="${gauge.java.home}/Contents/Home/lib/ext/sunpkcs11.jar"/>
     </fileset>
   </path>
   
@@ -213,10 +212,134 @@
   
   
   <!-- Global Libraries -->
+  <!-- Register Custom Compiler Taskdefs -->
+  <property name="javac2.home" value="${jdk.home.idea_iu-135.1230}/lib"/>
+  <path id="javac2.classpath">
+      <pathelement location="${javac2.home}/asm.jar"/>
+      <pathelement location="${javac2.home}/asm-all.jar"/>
+      <pathelement location="${javac2.home}/javac2.jar"/>
+      <pathelement location="${javac2.home}/jdom.jar"/>
+      <pathelement location="${javac2.home}/asm-commons.jar"/>
+      <pathelement location="${javac2.home}/jgoodies-forms.jar"/>
+  </path>
+  <target name="register.custom.compilers">
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
+    <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions" classpathref="javac2.classpath"/>
+  </target>
   
   <!-- Modules -->
   
-  <import file="${basedir}/module_gauge-java-intellij.xml"/>
+  
+  <!-- Module Gauge-Java-Intellij -->
+  
+  <dirname property="module.gauge-java-intellij.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.gauge-java-intellij" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.gauge-java-intellij" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.gauge-java-intellij" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.gauge-java-intellij" value="-encoding UTF-8 -source 1.6 ${compiler.args}"/>
+  
+  <property name="gauge-java-intellij.output.dir" value="${module.gauge-java-intellij.basedir}/production"/>
+  <property name="gauge-java-intellij.testoutput.dir" value="${module.gauge-java-intellij.basedir}/production-test"/>
+  
+  <path id="gauge-java-intellij.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="gauge-java-intellij.module.production.classpath">
+    <path refid="${module.jdk.classpath.gauge-java-intellij}"/>
+    <path refid="library.lib.classpath"/>
+  </path>
+  
+  <path id="gauge-java-intellij.runtime.production.module.classpath">
+    <pathelement location="${gauge-java-intellij.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+  </path>
+  
+  <path id="gauge-java-intellij.module.classpath">
+    <path refid="${module.jdk.classpath.gauge-java-intellij}"/>
+    <pathelement location="${gauge-java-intellij.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+  </path>
+  
+  <path id="gauge-java-intellij.runtime.module.classpath">
+    <pathelement location="${gauge-java-intellij.testoutput.dir}"/>
+    <pathelement location="${gauge-java-intellij.output.dir}"/>
+    <path refid="library.lib.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.gauge-java-intellij">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.gauge-java-intellij">
+    <patternset refid="excluded.from.module.gauge-java-intellij"/>
+  </patternset>
+  
+  <path id="gauge-java-intellij.module.sourcepath">
+    <dirset dir="${module.gauge-java-intellij.basedir}">
+      <include name="src"/>
+      <include name="gen"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.gauge-java-intellij" depends="compile.module.gauge-java-intellij.production,compile.module.gauge-java-intellij.tests" description="Compile module Gauge-Java-Intellij"/>
+  
+  <target name="compile.module.gauge-java-intellij.production" depends="register.custom.compilers" description="Compile module Gauge-Java-Intellij; production classes">
+    <mkdir dir="${gauge-java-intellij.output.dir}"/>
+    <javac2 destdir="${gauge-java-intellij.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.gauge-java-intellij}/javac">
+      <compilerarg line="${compiler.args.gauge-java-intellij}"/>
+      <bootclasspath refid="gauge-java-intellij.module.bootclasspath"/>
+      <classpath refid="gauge-java-intellij.module.production.classpath"/>
+      <src refid="gauge-java-intellij.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.gauge-java-intellij"/>
+    </javac2>
+    
+    <copy todir="${gauge-java-intellij.output.dir}">
+      <fileset dir="${module.gauge-java-intellij.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.gauge-java-intellij.basedir}/gen">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.gauge-java-intellij.tests" depends="register.custom.compilers,compile.module.gauge-java-intellij.production" description="compile module Gauge-Java-Intellij; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.gauge-java-intellij" description="cleanup module">
+    <delete dir="${gauge-java-intellij.output.dir}"/>
+    <delete dir="${gauge-java-intellij.testoutput.dir}"/>
+  </target>
+  
+  <property name="gauge-java-intellij.plugin.path.jar" value="${module.gauge-java-intellij.basedir}/Gauge-Java-Intellij.zip"/>
+  
+  <!-- Build archive for plugin 'Gauge-Java-Intellij' -->
+  <target name="plugin.build.jar.gauge-java-intellij" depends="compile.module.gauge-java-intellij" description="Build plugin archive for module &#39;Gauge-Java-Intellij&#39;">
+    <property name="tmp.dir.gauge-java-intellij" value="${module.gauge-java-intellij.basedir}/../temp"/>
+    <mkdir dir="${tmp.dir.gauge-java-intellij}"/>
+    <mkdir dir="${tmp.dir.gauge-java-intellij}/Gauge-Java-Intellij"/>
+    <mkdir dir="${tmp.dir.gauge-java-intellij}/Gauge-Java-Intellij/lib"/>
+    <jar destfile="${tmp.dir.gauge-java-intellij}/Gauge-Java-Intellij/lib/Gauge-Java-Intellij.jar" duplicate="preserve">
+      <zipfileset dir="${module.gauge-java-intellij.basedir}/production"/>
+      <zipfileset file="${module.gauge-java-intellij.basedir}/META-INF/plugin.xml" prefix="META-INF"/>
+      <manifest>
+        <attribute name="Created-By" value="IntelliJ IDEA"/>
+        <attribute name="Manifest-Version" value="1.0"/>
+      </manifest>
+    </jar>
+    <copy file="${module.gauge-java-intellij.basedir}/lib/gaugert-0.0.2.jar" tofile="${tmp.dir.gauge-java-intellij}/Gauge-Java-Intellij/lib/gaugert-0.0.2.jar"/>
+    <zip destfile="${gauge-java-intellij.plugin.path.jar}">
+      <fileset dir="${module.gauge-java-intellij.basedir}/../temp"/>
+    </zip>
+    <delete dir="${tmp.dir.gauge-java-intellij}"/>
+  </target>
   
   <target name="init" description="Build initialization">
     <!-- Perform any build initialization in this target -->
