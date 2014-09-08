@@ -46,6 +46,8 @@ public interface SpecTokenTypes {
                 return new SpecDetailImpl(node);
             } else if (type == STEP) {
                 return new SpecStepImpl(node);
+            } else if (type == TABLE) {
+                return new SpecTableImpl(node);
             } else if (type == TAGS) {
                 return new SpecTagsImpl(node);
             } else if (type == TABLE_BODY) {
