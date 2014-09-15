@@ -58,7 +58,7 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
         ProgressManager.getInstance().run(new Task.Modal(modifiableRootModel.getProject(), "Initializing gauge-" + getLanguage() + " project", false) {
             public void run(@NotNull ProgressIndicator progressIndicator) {
                 progressIndicator.setIndeterminate(true);
-                progressIndicator.setText2("This might a few minutes if gauge-" + getLanguage() + " runner is not installed");
+                progressIndicator.setText2("This might take a few minutes if gauge-" + getLanguage() + " runner is not installed");
                 final String path = getPathForInitialization(modifiableRootModel);
                 final String[] init = {
                         getGaugeExecPath(),
