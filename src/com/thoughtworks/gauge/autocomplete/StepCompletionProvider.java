@@ -11,6 +11,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
+import com.thoughtworks.gauge.ConceptInfo;
 import com.thoughtworks.gauge.GaugeConnection;
 import com.thoughtworks.gauge.StepValue;
 import com.thoughtworks.gauge.core.Gauge;
@@ -65,6 +66,9 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
                 List<StepValue> stepValues = gaugeConnection.fetchAllSteps();
                 for (StepValue stepValue : stepValues) {
                     steps.add(stepValue.getStepAnnotationText());
+                }
+                for (ConceptInfo conceptInfo : gaugeConnection.fetchAllConcepts()) {
+                    steps.add(conceptInfo.getStepValue().getStepAnnotationText());
                 }
                 return steps;
             }
