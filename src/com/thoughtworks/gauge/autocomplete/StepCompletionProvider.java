@@ -27,6 +27,9 @@ import static com.thoughtworks.gauge.autocomplete.StepCompletionContributor.getP
 
 public class StepCompletionProvider extends CompletionProvider<CompletionParameters> {
 
+    public static final String STEP = "step";
+    public static final String CONCEPT = "concept";
+
     public void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet resultSet) {
         resultSet.stopHere();
         String prefix = getPrefix(parameters);
@@ -35,8 +38,8 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
         if (moduleForPsiElement == null) {
             return;
         }
-        for (String step : getStepsInModule(moduleForPsiElement)) {
-            LookupElementBuilder element = LookupElementBuilder.create(step);
+        for (Type item : getStepsInModule(moduleForPsiElement)) {
+            LookupElementBuilder element = LookupElementBuilder.create(item.getText()).withTypeText(item.getType(), true);
             element = element.withInsertHandler(new InsertHandler<LookupElement>() {
                 @Override
                 public void handleInsert(InsertionContext context, LookupElement item) {
@@ -57,18 +60,36 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
         return new TextRange(arg.getStartOffsetInParent(), arg.getStartOffsetInParent() + arg.getTextLength());
     }
 
-    private List<String> getStepsInModule(Module module) {
-        List<String> steps = new ArrayList<String>();
+    private class Type{
+        private String text;
+        private String type;
+
+        public Type(String text, String type) {
+            this.text = text;
+            this.type = type;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public String getType() {
+            return type;
+        }
+    }
+
+    private List<Type> getStepsInModule(Module module) {
+        List<Type> steps = new ArrayList<Type>();
         try {
             GaugeService gaugeService = Gauge.getGaugeService(module);
             GaugeConnection gaugeConnection = gaugeService.getGaugeConnection();
             if (gaugeConnection != null) {
                 List<StepValue> stepValues = gaugeConnection.fetchAllSteps();
                 for (StepValue stepValue : stepValues) {
-                    steps.add(stepValue.getStepAnnotationText());
+                    steps.add(new Type(stepValue.getStepAnnotationText(), STEP));
                 }
                 for (ConceptInfo conceptInfo : gaugeConnection.fetchAllConcepts()) {
-                    steps.add(conceptInfo.getStepValue().getStepAnnotationText());
+                    steps.add(new Type(conceptInfo.getStepValue().getStepAnnotationText(), CONCEPT));
                 }
                 return steps;
             }
