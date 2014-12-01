@@ -8,5 +8,9 @@ public class SpecFileTypeFactory extends FileTypeFactory {
     @Override
     public void createFileTypes(@NotNull FileTypeConsumer fileTypeConsumer) {
         fileTypeConsumer.consume(SpecFileType.INSTANCE, "spec");
+        fileTypeConsumer.consume(SpecFileType.INSTANCE, "md");
+        fileTypeConsumer.consume(ConceptFileType.INSTANCE, "cpt");
     }
+
+
 }
