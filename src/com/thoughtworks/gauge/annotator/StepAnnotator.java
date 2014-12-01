@@ -14,8 +14,7 @@ public class StepAnnotator implements Annotator {
 
         if (element instanceof SpecStep) {
             SpecStep step = (SpecStep) element;
-            PsiMethod stepImpl = StepUtil.findStepImpl(step, element.getProject());
-            if (stepImpl == null) {
+            if (!StepUtil.isImplementedStep(step, element.getProject())) {
                 holder.createWeakWarningAnnotation(element.getTextRange(), "Undefined Step").registerFix(new CreateStepImplFix(step));
             }
         }

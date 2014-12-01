@@ -8,13 +8,16 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.AnnotatedElementsSearch;
 import com.intellij.util.Query;
+import com.thoughtworks.gauge.ConceptInfo;
 import com.thoughtworks.gauge.GaugeConnection;
+import com.thoughtworks.gauge.StepValue;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
 import com.thoughtworks.gauge.language.psi.SpecStep;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import static com.thoughtworks.gauge.GaugeConstant.STEP_ANNOTATION_QUALIFIER;
 
@@ -102,4 +105,37 @@ public class StepUtil {
         return "";
     }
 
+
+    public static boolean isImplementedStep(SpecStep step, Project project) {
+        if (isConcept(step)) {
+            return true;
+        } else {
+            return findStepImpl(step, project) != null;
+        }
+    }
+
+    //Check if the step is a concept using list of concepts got from gauge API
+    private static boolean isConcept(SpecStep step) {
+            try {
+                Module module = ModuleUtil.findModuleForPsiElement(step);
+                GaugeService gaugeService = Gauge.getGaugeService(module);
+                if (gaugeService != null) {
+                    List<ConceptInfo> conceptInfos = gaugeService.getGaugeConnection().fetchAllConcepts();
+                    return conceptExists(conceptInfos, step.getStepValue());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+        return false;
+        }
+
+    private static boolean conceptExists(List<ConceptInfo> conceptInfos, StepValue stepValue) {
+        for (ConceptInfo conceptInfo : conceptInfos) {
+            if (conceptInfo.getStepValue().getStepText().trim().equals(stepValue.getStepText().trim())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
