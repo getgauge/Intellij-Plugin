@@ -53,13 +53,35 @@ public class StepUtil {
         Module moduleForPsiElement = ModuleUtil.findModuleForPsiElement(annotation);
         GaugeService gaugeService = Gauge.getGaugeService(moduleForPsiElement);
         if (gaugeService != null) {
-            String annotationValue = AnnotationUtil.getStringAttributeValue(annotation, "value");
             GaugeConnection gaugeConnection = gaugeService.getGaugeConnection();
-            String methodValue = gaugeConnection.getStepValue(annotationValue).getStepText();
-            return methodValue.equals(stepValue);
+            for (String annotationValue : getGaugeStepAnnotationValues(annotation)) {
+                String methodValue = gaugeConnection.getStepValue(annotationValue).getStepText();
+                if (methodValue.equals(stepValue)) {
+                    return true;
+                }
+            }
         }
         return false;
     }
+
+    private static List<String> getGaugeStepAnnotationValues(PsiAnnotation annotation) {
+        List<String> values = new ArrayList<String>();
+        PsiAnnotationMemberValue attributeValue = annotation.findAttributeValue("value");
+        Object value = JavaPsiFacade.getInstance(annotation.getProject()).getConstantEvaluationHelper().computeConstantExpression(attributeValue);
+        if (value != null && value instanceof String) {
+            values.add((String) value);
+        } else if (attributeValue instanceof PsiArrayInitializerMemberValue) {
+            PsiAnnotationMemberValue[] memberValues = ((PsiArrayInitializerMemberValue) attributeValue).getInitializers();
+            for (PsiAnnotationMemberValue memberValue : memberValues) {
+                Object val = JavaPsiFacade.getInstance(annotation.getProject()).getConstantEvaluationHelper().computeConstantExpression(memberValue);
+                if (val != null && val instanceof String) {
+                    values.add((String) val);
+                }
+            }
+        }
+        return values;
+    }
+
 
     public static Collection<PsiMethod> getStepMethods(Project project) {
         final PsiClass step = JavaPsiFacade.getInstance(project).findClass(STEP_ANNOTATION_QUALIFIER, GlobalSearchScope.allScope(project));
@@ -116,19 +138,19 @@ public class StepUtil {
 
     //Check if the step is a concept using list of concepts got from gauge API
     private static boolean isConcept(SpecStep step) {
-            try {
-                Module module = ModuleUtil.findModuleForPsiElement(step);
-                GaugeService gaugeService = Gauge.getGaugeService(module);
-                if (gaugeService != null) {
-                    List<ConceptInfo> conceptInfos = gaugeService.getGaugeConnection().fetchAllConcepts();
-                    return conceptExists(conceptInfos, step.getStepValue());
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
+        try {
+            Module module = ModuleUtil.findModuleForPsiElement(step);
+            GaugeService gaugeService = Gauge.getGaugeService(module);
+            if (gaugeService != null) {
+                List<ConceptInfo> conceptInfos = gaugeService.getGaugeConnection().fetchAllConcepts();
+                return conceptExists(conceptInfos, step.getStepValue());
             }
-        return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
+        return false;
+    }
 
     private static boolean conceptExists(List<ConceptInfo> conceptInfos, StepValue stepValue) {
         for (ConceptInfo conceptInfo : conceptInfos) {
