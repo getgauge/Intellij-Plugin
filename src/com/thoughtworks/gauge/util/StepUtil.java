@@ -5,6 +5,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
+import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.AnnotatedElementsSearch;
 import com.intellij.util.Query;
@@ -15,6 +16,8 @@ import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
 import com.thoughtworks.gauge.language.psi.SpecStep;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -23,9 +26,38 @@ import static com.thoughtworks.gauge.GaugeConstant.STEP_ANNOTATION_QUALIFIER;
 
 public class StepUtil {
 
-    public static PsiMethod findStepImpl(SpecStep step, Project project) {
+    public static PsiElement findStepImpl(SpecStep step, Project project) {
         Collection<PsiMethod> stepMethods = getStepMethods(project);
-        return filter(stepMethods, step);
+        PsiMethod method = filter(stepMethods, step);
+        if (method == null) {
+             return searchConceptsForImpl(step, project);
+        }
+        return method;
+    }
+
+    private static PsiElement searchConceptsForImpl(SpecStep step, Project project) {
+        try {
+            List<ConceptInfo> conceptInfos = fetchAllConcepts(ModuleUtil.findModuleForPsiElement(step));
+            for (ConceptInfo conceptInfo : conceptInfos) {
+                if (conceptInfo.getStepValue().getStepText().equals(step.getStepValue().getStepText())) {
+                    PsiFile[] conceptFiles = findConceptFiles(conceptInfo, project);
+                    if (conceptFiles.length > 0) {
+                        return conceptFiles[0].findElementAt(conceptInfo.getLineNumber());
+                    }
+                }
+            }
+        } catch (IOException e) {
+            return null;
+        }
+        return null;
+    }
+
+    private static PsiFile[] findConceptFiles(ConceptInfo conceptInfo, Project project) {
+        return FilenameIndex.getFilesByName(project, getConceptFileName(conceptInfo), GlobalSearchScope.allScope(project));
+    }
+
+    private static String getConceptFileName(ConceptInfo conceptInfo) {
+        return new File(conceptInfo.getFilePath()).getName();
     }
 
     private static PsiMethod filter(Collection<PsiMethod> stepMethods, SpecStep step) {
@@ -129,27 +161,28 @@ public class StepUtil {
 
 
     public static boolean isImplementedStep(SpecStep step, Project project) {
-        if (isConcept(step)) {
-            return true;
-        } else {
-            return findStepImpl(step, project) != null;
-        }
+        return isConcept(step) || findStepImpl(step, project) != null;
     }
 
     //Check if the step is a concept using list of concepts got from gauge API
     private static boolean isConcept(SpecStep step) {
         try {
             Module module = ModuleUtil.findModuleForPsiElement(step);
-            GaugeService gaugeService = Gauge.getGaugeService(module);
-            if (gaugeService != null) {
-                List<ConceptInfo> conceptInfos = gaugeService.getGaugeConnection().fetchAllConcepts();
-                return conceptExists(conceptInfos, step.getStepValue());
-            }
+            List<ConceptInfo> conceptInfos = fetchAllConcepts(module);
+            return conceptExists(conceptInfos, step.getStepValue());
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
-        return false;
+    }
+
+    private static List<ConceptInfo> fetchAllConcepts(Module module) throws IOException {
+        GaugeService gaugeService = Gauge.getGaugeService(module);
+        if (gaugeService != null) {
+            return gaugeService.getGaugeConnection().fetchAllConcepts();
+        }
+
+        return new ArrayList<ConceptInfo>();
     }
 
     private static boolean conceptExists(List<ConceptInfo> conceptInfos, StepValue stepValue) {

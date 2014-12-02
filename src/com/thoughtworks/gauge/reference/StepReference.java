@@ -1,7 +1,9 @@
 package com.thoughtworks.gauge.reference;
 
+import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReferenceBase;
 import com.thoughtworks.gauge.language.psi.SpecStep;
@@ -19,6 +21,7 @@ public class StepReference extends PsiReferenceBase<SpecStep> {
     @Nullable
     @Override
     public PsiElement resolve() {
+
         return StepUtil.findStepImpl(this.myElement, this.myElement.getProject());
     }
 
