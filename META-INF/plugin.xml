@@ -49,6 +49,7 @@
       <configurationType implementation="com.thoughtworks.gauge.execution.GaugeRunTaskConfigurationType"/>
       <programRunner implementation="com.thoughtworks.gauge.execution.GaugeTestRunner"/>
       <runConfigurationProducer implementation="com.thoughtworks.gauge.execution.GaugeExecutionProducer"/>
+      <runConfigurationProducer implementation="com.thoughtworks.gauge.execution.ScenarioExecutionProducer"/>
       <editorActionHandler action="EditorEnter" implementationClass="com.thoughtworks.gauge.GaugeEnterHandler"/>
   </extensions>
 

@@ -17,7 +17,7 @@ public class GaugeExecutionProducer extends RunConfigurationProducer {
 
 
     public GaugeExecutionProducer() {
-        super(GaugeRunTaskConfigurationType.getInstance());
+        super(new GaugeRunTaskConfigurationType());
     }
 
     protected GaugeExecutionProducer(ConfigurationFactory configurationFactory) {
@@ -45,7 +45,7 @@ public class GaugeExecutionProducer extends RunConfigurationProducer {
             Module module = ProjectRootManager.getInstance(project).getFileIndex().getModuleForFile(virtualFile);
             String name = file.getVirtualFile().getCanonicalPath();
 
-            configuration.setName("Execute " + file.getName());
+            configuration.setName(file.getName());
             ((GaugeRunConfiguration) configuration).setSpecsToExecute(name);
             ((GaugeRunConfiguration) configuration).setModule(module);
             return true;
