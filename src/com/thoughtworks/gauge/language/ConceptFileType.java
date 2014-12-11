@@ -35,6 +35,6 @@ public class ConceptFileType extends LanguageFileType{
     @Nullable
     @Override
     public Icon getIcon() {
-        return null;
+        return GaugeIcon.GAUGE_CONCEPT_FILE_ICON;
     }
 }

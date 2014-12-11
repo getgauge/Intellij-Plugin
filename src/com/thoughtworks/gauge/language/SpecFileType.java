@@ -34,7 +34,6 @@ public class SpecFileType extends LanguageFileType {
     @Nullable
     @Override
     public Icon getIcon() {
-        return null;
+        return GaugeIcon.GAUGE_SPEC_FILE_ICON;
     }
-
 }
