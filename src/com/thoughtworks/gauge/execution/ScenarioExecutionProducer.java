@@ -13,7 +13,6 @@ import com.thoughtworks.gauge.language.SpecFile;
 import com.thoughtworks.gauge.language.psi.impl.SpecScenarioImpl;
 import com.thoughtworks.gauge.language.psi.impl.SpecTableImpl;
 import com.thoughtworks.gauge.language.token.SpecTokenTypes;
-import com.yourkit.util.Strings;
 
 public class ScenarioExecutionProducer extends GaugeExecutionProducer {
     public ScenarioExecutionProducer() {
@@ -90,8 +89,8 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
         if(selectedElement.getClass().equals(SpecScenarioImpl.class)){
             scenarioName= selectedElement.getText();
         }else {
-            String text = getScenarioHeading(selectedElement);
-            if(Strings.trimEnd(text).equals("*")) {
+            String text = getScenarioHeading(selectedElement).trim();
+            if(text.equals("*")) {
                 scenarioName =  selectedElement.getParent().getParent().getNode().getFirstChildNode().getText();
             } else scenarioName = text;
         }

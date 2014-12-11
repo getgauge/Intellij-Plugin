@@ -31,6 +31,7 @@ public class GaugeTestRunner extends DefaultProgramRunner {
         }
 
         final RunContentBuilder contentBuilder = new RunContentBuilder(this, executionResult, env);
+        contentBuilder.setEnvironment(env);
 
         return contentBuilder.showRunContent(contentToReuse);
     }
