@@ -13,16 +13,16 @@ import java.util.Map;
 
 public class SpecColorSettingsPage implements ColorSettingsPage {
     private static final AttributesDescriptor[] DESCRIPTORS = new AttributesDescriptor[]{
-            new AttributesDescriptor("Specification Heading", SpecSyntaxHighlighter.SPEC_HEADING),
-            new AttributesDescriptor("Scenario Heading", SpecSyntaxHighlighter.SCENARIO_HEADING),
-            new AttributesDescriptor("Step", SpecSyntaxHighlighter.STEP),
-            new AttributesDescriptor("Comment", SpecSyntaxHighlighter.COMMENT),
-            new AttributesDescriptor("Arguments", SpecSyntaxHighlighter.ARG),
-            new AttributesDescriptor("Dynamic Arguments", SpecSyntaxHighlighter.DYNAMIC_ARG),
-            new AttributesDescriptor("Table Header", SpecSyntaxHighlighter.TABLE_HEADER),
-            new AttributesDescriptor("Table Border", SpecSyntaxHighlighter.TABLE_BORDER),
-            new AttributesDescriptor("Table Item", SpecSyntaxHighlighter.TABLE_ROW),
-            new AttributesDescriptor("Tags", SpecSyntaxHighlighter.TAGS),
+            new AttributesDescriptor("Specification Heading", HighlighterTokens.SPEC_HEADING),
+            new AttributesDescriptor("Scenario Heading", HighlighterTokens.SCENARIO_HEADING),
+            new AttributesDescriptor("Step", HighlighterTokens.STEP),
+            new AttributesDescriptor("Comment", HighlighterTokens.COMMENT),
+            new AttributesDescriptor("Arguments", HighlighterTokens.ARG),
+            new AttributesDescriptor("Dynamic Arguments", HighlighterTokens.DYNAMIC_ARG),
+            new AttributesDescriptor("Table Header", HighlighterTokens.TABLE_HEADER),
+            new AttributesDescriptor("Table Border", HighlighterTokens.TABLE_BORDER),
+            new AttributesDescriptor("Table Item", HighlighterTokens.TABLE_ROW),
+            new AttributesDescriptor("Tags", HighlighterTokens.TAGS),
 
     };
 
