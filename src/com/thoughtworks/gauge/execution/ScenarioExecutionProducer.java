@@ -1,8 +1,6 @@
 package com.thoughtworks.gauge.execution;
 
-import com.intellij.execution.Location;
 import com.intellij.execution.actions.ConfigurationContext;
-import com.intellij.execution.actions.RunConfigurationProducer;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.module.Module;
@@ -13,6 +11,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.thoughtworks.gauge.language.SpecFile;
 import com.thoughtworks.gauge.language.psi.impl.SpecScenarioImpl;
+import com.thoughtworks.gauge.language.psi.impl.SpecTableImpl;
+import com.thoughtworks.gauge.language.token.SpecTokenTypes;
+import com.yourkit.util.Strings;
 
 public class ScenarioExecutionProducer extends GaugeExecutionProducer {
     public ScenarioExecutionProducer() {
@@ -21,18 +22,33 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
     protected ScenarioExecutionProducer(ConfigurationFactory configurationFactory) {
         super(configurationFactory);
     }
+    public String SPEC_FILE = "Specification File";
+    public String SPEC_DETAIL = SpecTokenTypes.SPEC_DETAIL.toString();
+    public String SPEC_STEP = "Specification.STEP";
 
     @Override
     protected boolean setupConfigurationFromContext(RunConfiguration configuration, ConfigurationContext context, Ref sourceElement) {
         if (context.getPsiLocation() == null || !(context.getPsiLocation().getContainingFile() instanceof SpecFile) || context.getPsiLocation().getContainingFile().getVirtualFile() == null)
             return false;
+        if(context.getPsiLocation().getParent().toString().equals(SPEC_FILE)){
+            return false;
+        }
+        if(context.getPsiLocation().getParent().getNode().getElementType().toString().equals(SPEC_DETAIL) || isContextStep(context)){
+            return false;
+        }
+
+        if(isContextTable(context.getPsiLocation())){
+            return false;
+        }
+
         try {
             Project project = context.getPsiLocation().getContainingFile().getProject();
             Module module = ProjectRootManager.getInstance(project).getFileIndex().getModuleForFile(context.getPsiLocation().getContainingFile().getVirtualFile());
             String name = context.getPsiLocation().getContainingFile().getVirtualFile().getCanonicalPath();
             Integer scenarioIndex = getScenarioIndex(context, context.getPsiLocation().getContainingFile());
+            String scenarioName = getScenarioName(context);
 
-            configuration.setName("Scenario: " + scenarioIndex);
+            configuration.setName(scenarioName);
             ((GaugeRunConfiguration) configuration).setSpecsToExecute(name + ":" + scenarioIndex);
             ((GaugeRunConfiguration) configuration).setModule(module);
             return true;
@@ -40,6 +56,52 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
             ex.printStackTrace();
         }
         return true;
+    }
+
+    private boolean isContextTable(PsiElement selectedElement) {
+        PsiElement tableElement = getTable(selectedElement);
+        if(tableElement !=null)
+            if(tableElement.getParent().getNode().getElementType().toString().equals(SPEC_DETAIL))
+                return true;
+        return false;
+    }
+
+    private PsiElement getTable(PsiElement selectedElement) {
+        if(selectedElement.getClass().equals(SpecTableImpl.class)) return selectedElement;
+        if(selectedElement.getParent()==null) return null;
+        return getTable(selectedElement.getParent());
+    }
+
+
+    private boolean isContextStep(ConfigurationContext context) {
+        if(context.getPsiLocation().getParent().getParent().getNode().getElementType().toString().equals(SPEC_DETAIL)){
+            if(context.getPsiLocation().getParent().getNode().getElementType().toString().equals(SPEC_STEP)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String getScenarioName(ConfigurationContext context) {
+        PsiElement selectedElement = context.getPsiLocation();
+        String scenarioName = null;
+
+        if(selectedElement== null) return null;
+        if(selectedElement.getClass().equals(SpecScenarioImpl.class)){
+            scenarioName= selectedElement.getText();
+        }else {
+            String text = getScenarioHeading(selectedElement);
+            if(Strings.trimEnd(text).equals("*")) {
+                scenarioName =  selectedElement.getParent().getParent().getNode().getFirstChildNode().getText();
+            } else scenarioName = text;
+        }
+        if(scenarioName.startsWith("##"))
+            scenarioName = scenarioName.replaceFirst("##","");
+        scenarioName = scenarioName.trim();
+        if(scenarioName.contains("\n"))
+            return scenarioName.substring(0,scenarioName.indexOf("\n"));
+        else
+            return scenarioName;
     }
 
     private Integer getScenarioIndex(ConfigurationContext context, PsiFile file) {
