@@ -1,6 +1,7 @@
 package com.thoughtworks.gauge.util;
 
 import com.intellij.codeInsight.AnnotationUtil;
+import com.intellij.lang.ASTNode;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
@@ -15,6 +16,7 @@ import com.thoughtworks.gauge.StepValue;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
 import com.thoughtworks.gauge.language.psi.SpecStep;
+import com.thoughtworks.gauge.language.psi.impl.ConceptConceptImpl;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,10 +41,15 @@ public class StepUtil {
         try {
             List<ConceptInfo> conceptInfos = fetchAllConcepts(ModuleUtil.findModuleForPsiElement(step));
             for (ConceptInfo conceptInfo : conceptInfos) {
+                String conceptName = conceptInfo.getStepValue().getStepAnnotationText().trim();
                 if (conceptInfo.getStepValue().getStepText().equals(step.getStepValue().getStepText())) {
                     PsiFile[] conceptFiles = findConceptFiles(conceptInfo, project);
                     if (conceptFiles.length > 0) {
-                        return conceptFiles[0].findElementAt(conceptInfo.getLineNumber());
+                        for (PsiElement psiElement : conceptFiles[0].getChildren()) {
+                            boolean isConcept = psiElement.getClass().equals(ConceptConceptImpl.class);
+                            ASTNode conceptHeading = psiElement.getNode().getFirstChildNode();
+                            if (isConcept && conceptHeading.getText().replaceFirst("#", "").trim().equals(conceptName))  return psiElement;
+                        }
                     }
                 }
             }

@@ -16,6 +16,7 @@ import com.thoughtworks.gauge.GaugeConnection;
 import com.thoughtworks.gauge.StepValue;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
+import com.thoughtworks.gauge.language.psi.ConceptArg;
 import com.thoughtworks.gauge.language.psi.SpecArg;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,6 +30,11 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
 
     public static final String STEP = "step";
     public static final String CONCEPT = "concept";
+    private boolean isConcept = false;
+
+    public void setConcept(boolean isConcept) {
+        this.isConcept = isConcept;
+    }
 
     public void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet resultSet) {
         resultSet.stopHere();
@@ -44,20 +50,26 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
                 @Override
                 public void handleInsert(InsertionContext context, LookupElement item) {
                     PsiElement stepElement = context.getFile().findElementAt(context.getStartOffset()).getParent();
-                    final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(stepElement);
-                    List<SpecArg> args = PsiTreeUtil.getChildrenOfTypeAsList(stepElement, SpecArg.class);
-                    for (SpecArg arg : args) {
-                        builder.replaceRange(getRangeWithinElement(arg), arg.getText());
-                    }
-                    builder.run(context.getEditor(), false);
+                    (isConcept ? addConceptArgs(stepElement) : addSpecArgs(stepElement)).run(context.getEditor(), false);
                 }
             });
             resultSet.addElement(element);
         }
     }
 
-    private TextRange getRangeWithinElement(SpecArg arg) {
-        return new TextRange(arg.getStartOffsetInParent(), arg.getStartOffsetInParent() + arg.getTextLength());
+    private TemplateBuilder addSpecArgs(PsiElement stepElement) {
+        final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(stepElement);
+        List<SpecArg> args = PsiTreeUtil.getChildrenOfTypeAsList(stepElement, SpecArg.class);
+        for (SpecArg arg : args)
+            builder.replaceRange(new TextRange(arg.getStartOffsetInParent(), arg.getStartOffsetInParent() + arg.getTextLength()), arg.getText());
+        return builder;
+    }
+    private TemplateBuilder addConceptArgs(PsiElement stepElement) {
+        final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(stepElement);
+        List<ConceptArg> args = PsiTreeUtil.getChildrenOfTypeAsList(stepElement, ConceptArg.class);
+        for (ConceptArg arg : args)
+            builder.replaceRange(new TextRange(arg.getStartOffsetInParent(), arg.getStartOffsetInParent() + arg.getTextLength()), arg.getText());
+        return builder;
     }
 
     private class Type{

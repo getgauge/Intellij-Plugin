@@ -4,7 +4,9 @@ import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.patterns.PlatformPatterns;
+import com.thoughtworks.gauge.language.Concept;
 import com.thoughtworks.gauge.language.Specification;
+import com.thoughtworks.gauge.language.token.ConceptTokenTypes;
 import com.thoughtworks.gauge.language.token.SpecTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,6 +18,9 @@ public class StepCompletionContributor extends CompletionContributor {
         extend(CompletionType.BASIC, PlatformPatterns.psiElement(SpecTokenTypes.STEP).withLanguage(Specification.INSTANCE), new StepCompletionProvider());
         extend(CompletionType.BASIC, PlatformPatterns.psiElement(SpecTokenTypes.DYNAMIC_ARG).withLanguage(Specification.INSTANCE), new DynamicArgCompletionProvider());
         extend(CompletionType.BASIC, PlatformPatterns.psiElement(SpecTokenTypes.ARG).withLanguage(Specification.INSTANCE), new StaticArgCompletionProvider());
+        StepCompletionProvider provider = new StepCompletionProvider();
+        provider.setConcept(true);
+        extend(CompletionType.BASIC, PlatformPatterns.psiElement(ConceptTokenTypes.STEP).withLanguage(Concept.INSTANCE), provider);
     }
 
     public static String getPrefix(CompletionParameters parameters) {

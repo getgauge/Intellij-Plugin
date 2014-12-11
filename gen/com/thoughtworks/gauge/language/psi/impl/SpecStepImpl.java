@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SpecStepImpl extends SpecNamedElementImpl implements SpecStep {
+    private boolean isConcept = false;
 
     public SpecStepImpl(@NotNull ASTNode node) {
         super(node);
@@ -25,6 +26,10 @@ public class SpecStepImpl extends SpecNamedElementImpl implements SpecStep {
     public void accept(@NotNull PsiElementVisitor visitor) {
         if (visitor instanceof SpecVisitor) ((SpecVisitor) visitor).visitStep(this);
         else super.accept(visitor);
+    }
+
+    public void setConcept(boolean isConcept) {
+        this.isConcept = isConcept;
     }
 
     @Override
@@ -55,7 +60,12 @@ public class SpecStepImpl extends SpecNamedElementImpl implements SpecStep {
     @Override
     @Nullable
     public SpecTable getInlineTable() {
-        return findChildByClass(SpecTable.class);
+        return isConcept ? getSpecTableFromConceptStep() : findChildByClass(SpecTable.class);
+    }
+
+    private SpecTableImpl getSpecTableFromConceptStep() {
+        ConceptTable conceptTable = findChildByClass(ConceptTable.class);
+        return conceptTable == null ? null : new SpecTableImpl(conceptTable.getNode());
     }
 
     @Override
