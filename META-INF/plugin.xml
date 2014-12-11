@@ -42,6 +42,7 @@
       <lang.syntaxHighlighterFactory key="Specification" implementationClass="com.thoughtworks.gauge.highlight.SpecSyntaxHighlighterFactory"/>
       <lang.syntaxHighlighterFactory key="Concept" implementationClass="com.thoughtworks.gauge.highlight.ConceptSyntaxHighlighterFactory"/>
       <colorSettingsPage implementation="com.thoughtworks.gauge.highlight.SpecColorSettingsPage"/>
+      <colorSettingsPage implementation="com.thoughtworks.gauge.highlight.ConceptColorSettingsPage"/>
       <annotator language="Specification" implementationClass="com.thoughtworks.gauge.annotator.StepAnnotator"/>
       <annotator language="Concept" implementationClass="com.thoughtworks.gauge.annotator.StepAnnotator"/>
       <completion.contributor language="Specification" implementationClass="com.thoughtworks.gauge.autocomplete.StepCompletionContributor" order="first,before liveTemplates"/>
