@@ -32,6 +32,12 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
         if(context.getPsiLocation().getParent().toString().equals(SPEC_FILE)){
             return false;
         }
+        PsiElement table = getTable(context.getPsiLocation());
+        if(table!=null){
+            if (table.getParent().getParent().getNode().getElementType().toString().equals(SPEC_DETAIL) && table.getParent().getNode().getElementType().toString().equals(SPEC_STEP)){
+                return false;
+            }
+        }
         if(context.getPsiLocation().getParent().getNode().getElementType().toString().equals(SPEC_DETAIL) || isContextStep(context)){
             return false;
         }
