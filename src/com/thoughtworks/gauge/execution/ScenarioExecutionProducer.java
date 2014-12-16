@@ -15,47 +15,42 @@ import com.thoughtworks.gauge.language.psi.impl.SpecTableImpl;
 import com.thoughtworks.gauge.language.token.SpecTokenTypes;
 
 public class ScenarioExecutionProducer extends GaugeExecutionProducer {
+    Integer NO_SCENARIOS = -1;
+    Integer NON_SCENARIO_CONTEXT = -2;
+
     public ScenarioExecutionProducer() {
         super();
     }
     protected ScenarioExecutionProducer(ConfigurationFactory configurationFactory) {
         super(configurationFactory);
     }
-    public String SPEC_FILE = "Specification File";
-    public String SPEC_DETAIL = SpecTokenTypes.SPEC_DETAIL.toString();
-    public String SPEC_STEP = "Specification.STEP";
 
     @Override
     protected boolean setupConfigurationFromContext(RunConfiguration configuration, ConfigurationContext context, Ref sourceElement) {
+
         if (context.getPsiLocation() == null || !(context.getPsiLocation().getContainingFile() instanceof SpecFile) || context.getPsiLocation().getContainingFile().getVirtualFile() == null)
             return false;
-        if(context.getPsiLocation().getParent().toString().equals(SPEC_FILE)){
-            return false;
-        }
-        PsiElement table = getTable(context.getPsiLocation());
-        if(table!=null){
-            if (table.getParent().getParent().getNode().getElementType().toString().equals(SPEC_DETAIL) && table.getParent().getNode().getElementType().toString().equals(SPEC_STEP)){
-                return false;
-            }
-        }
-        if(context.getPsiLocation().getParent().getNode().getElementType().toString().equals(SPEC_DETAIL) || isContextStep(context)){
-            return false;
-        }
-
-        if(isContextTable(context.getPsiLocation())){
-            return false;
-        }
 
         try {
             Project project = context.getPsiLocation().getContainingFile().getProject();
             Module module = ProjectRootManager.getInstance(project).getFileIndex().getModuleForFile(context.getPsiLocation().getContainingFile().getVirtualFile());
             String name = context.getPsiLocation().getContainingFile().getVirtualFile().getCanonicalPath();
             Integer scenarioIndex = getScenarioIndex(context, context.getPsiLocation().getContainingFile());
-            String scenarioName = getScenarioName(context);
-
-            configuration.setName(scenarioName);
-            ((GaugeRunConfiguration) configuration).setSpecsToExecute(name + ":" + scenarioIndex);
-            ((GaugeRunConfiguration) configuration).setModule(module);
+            if(scenarioIndex == NO_SCENARIOS){
+                configuration.setName("Context step(s)");
+                ((GaugeRunConfiguration) configuration).setSpecsToExecute(name + ":0");
+                ((GaugeRunConfiguration) configuration).setModule(module);
+            } else if(scenarioIndex == NON_SCENARIO_CONTEXT){
+                configuration.setName("Scenario(default)");
+                ((GaugeRunConfiguration) configuration).setSpecsToExecute(name + ":0");
+                ((GaugeRunConfiguration) configuration).setModule(module);
+            }
+            else {
+                String scenarioName = getScenarioName(context);
+                configuration.setName(scenarioName);
+                ((GaugeRunConfiguration) configuration).setSpecsToExecute(name + ":" + scenarioIndex);
+                ((GaugeRunConfiguration) configuration).setModule(module);
+            }
             return true;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -63,29 +58,6 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
         return true;
     }
 
-    private boolean isContextTable(PsiElement selectedElement) {
-        PsiElement tableElement = getTable(selectedElement);
-        if(tableElement !=null)
-            if(tableElement.getParent().getNode().getElementType().toString().equals(SPEC_DETAIL))
-                return true;
-        return false;
-    }
-
-    private PsiElement getTable(PsiElement selectedElement) {
-        if(selectedElement.getClass().equals(SpecTableImpl.class)) return selectedElement;
-        if(selectedElement.getParent()==null) return null;
-        return getTable(selectedElement.getParent());
-    }
-
-
-    private boolean isContextStep(ConfigurationContext context) {
-        if(context.getPsiLocation().getParent().getParent().getNode().getElementType().toString().equals(SPEC_DETAIL)){
-            if(context.getPsiLocation().getParent().getNode().getElementType().toString().equals(SPEC_STEP)){
-                return true;
-            }
-        }
-        return false;
-    }
 
     private String getScenarioName(ConfigurationContext context) {
         PsiElement selectedElement = context.getPsiLocation();
@@ -110,7 +82,7 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
     }
 
     private Integer getScenarioIndex(ConfigurationContext context, PsiFile file) {
-        Integer count = -1;
+        Integer count = NO_SCENARIOS;
         PsiElement selectedElement = context.getPsiLocation();
         if (selectedElement == null)    return 0;
         String scenarioHeading = (!selectedElement.getClass().equals(SpecScenarioImpl.class)) ? getScenarioHeading(selectedElement) : selectedElement.getText();
@@ -119,11 +91,15 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
                 count++;
                 if (psiElement.getNode().getFirstChildNode().getText().equals(scenarioHeading)) return count;
             }
+        if(count == NO_SCENARIOS) return NO_SCENARIOS;
+        if(count == 1) return NON_SCENARIO_CONTEXT;
         return 0;
     }
 
     private String getScenarioHeading(PsiElement selectedElement) {
-        if (selectedElement.getClass().equals(SpecScenarioImpl.class))  return selectedElement.getNode().getFirstChildNode().getText();
+        if (selectedElement.getClass().equals(SpecScenarioImpl.class)) {
+            return selectedElement.getNode().getFirstChildNode().getText();
+        }
         if (selectedElement.getParent() == null) return "";
         return getScenarioHeading(selectedElement.getParent());
     }
