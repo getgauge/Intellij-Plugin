@@ -71,7 +71,7 @@
       <action id="Gauge.Format"
               class="com.thoughtworks.gauge.formatter.SpecFormatter"
               text="spec format" description="Format spec files">
-      <keyboard-shortcut first-keystroke="ctrl alt shift f" keymap="$default"/>
+      <keyboard-shortcut first-keystroke="ctrl alt shift l" keymap="$default"/>
       </action>
   </actions>
 
