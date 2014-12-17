@@ -8,6 +8,7 @@ import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
@@ -79,7 +80,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
     @NotNull
     @Override
     public Module[] getModules() {
-        return new Module[]{getModule()};
+        return ModuleManager.getInstance(getProject()).getModules();
     }
 
     public void setSpecsToExecute(String specsToExecute) {
