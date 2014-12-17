@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.thoughtworks.gauge</id>
   <name>Gauge</name>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <vendor email="support@thoughtworks.com" url="http://www.thoughtworks.com">Thoughtworks</vendor>
 
   <description><![CDATA[
