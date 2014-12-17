@@ -1,8 +1,8 @@
 <idea-plugin version="2">
-  <id>com.thoughtworks.gauge</id>
+  <id>com.thoughtworks.com/products</id>
   <name>Gauge</name>
   <version>0.0.2</version>
-  <vendor email="support@thoughtworks.com" url="http://www.thoughtworks.com">Thoughtworks</vendor>
+  <vendor email="getgauge@googlegroups.com" url="http://getgauge.io">Gauge</vendor>
 
   <description><![CDATA[
       Plugin for writing Gauge tests
@@ -11,8 +11,10 @@
             <li>Basic language parsing and highlighting</li>
             <li>Project Creation</li>
             <li>Auto completion </li>
-            <li> Navigation from step to implementation </li>
-            <li> Quick Fix for unimplemented steps </li>
+            <li>Navigation from step to implementation</li>
+            <li>Quick Fix for unimplemented steps </li>
+            <li>Execution and Debugging specs</li>
+            <li>Support for Concepts</li>
         </ul>
     ]]></description>
 
