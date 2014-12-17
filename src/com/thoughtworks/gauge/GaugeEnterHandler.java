@@ -15,6 +15,6 @@ public class GaugeEnterHandler extends EnterHandler {
     @Override
     public void executeWriteAction(Editor editor, Caret caret, DataContext dataContext) {
         super.executeWriteAction(editor, caret, dataContext);
-        FileDocumentManager.getInstance().saveDocument(editor.getDocument());
+        FileDocumentManager.getInstance().saveDocumentAsIs(editor.getDocument());
     }
 }
