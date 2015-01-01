@@ -92,8 +92,7 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
                 if (psiElement.getNode().getFirstChildNode().getText().equals(scenarioHeading)) return count;
             }
         if(count == NO_SCENARIOS) return NO_SCENARIOS;
-        if(count == 1) return NON_SCENARIO_CONTEXT;
-        return 0;
+        else return NON_SCENARIO_CONTEXT;
     }
 
     private String getScenarioHeading(PsiElement selectedElement) {
