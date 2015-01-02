@@ -11,12 +11,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.thoughtworks.gauge.language.SpecFile;
 import com.thoughtworks.gauge.language.psi.impl.SpecScenarioImpl;
-import com.thoughtworks.gauge.language.psi.impl.SpecTableImpl;
-import com.thoughtworks.gauge.language.token.SpecTokenTypes;
 
 public class ScenarioExecutionProducer extends GaugeExecutionProducer {
-    Integer NO_SCENARIOS = -1;
-    Integer NON_SCENARIO_CONTEXT = -2;
+    private final int NO_SCENARIOS = -1;
+    private final int NON_SCENARIO_CONTEXT = -2;
 
     public ScenarioExecutionProducer() {
         super();
@@ -27,7 +25,7 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
 
     @Override
     protected boolean setupConfigurationFromContext(RunConfiguration configuration, ConfigurationContext context, Ref sourceElement) {
-
+        
         if (context.getPsiLocation() == null || !(context.getPsiLocation().getContainingFile() instanceof SpecFile) || context.getPsiLocation().getContainingFile().getVirtualFile() == null)
             return false;
 
@@ -35,22 +33,19 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
             Project project = context.getPsiLocation().getContainingFile().getProject();
             Module module = ProjectRootManager.getInstance(project).getFileIndex().getModuleForFile(context.getPsiLocation().getContainingFile().getVirtualFile());
             String name = context.getPsiLocation().getContainingFile().getVirtualFile().getCanonicalPath();
-            Integer scenarioIndex = getScenarioIndex(context, context.getPsiLocation().getContainingFile());
+            int scenarioIndex = getScenarioIndex(context, context.getPsiLocation().getContainingFile());
             if(scenarioIndex == NO_SCENARIOS){
                 configuration.setName("Context step(s)");
                 ((GaugeRunConfiguration) configuration).setSpecsToExecute(name + ":0");
-                ((GaugeRunConfiguration) configuration).setModule(module);
             } else if(scenarioIndex == NON_SCENARIO_CONTEXT){
-                configuration.setName("Scenario(default)");
+                configuration.setName("Scenario (default)");
                 ((GaugeRunConfiguration) configuration).setSpecsToExecute(name + ":0");
-                ((GaugeRunConfiguration) configuration).setModule(module);
-            }
-            else {
+            } else {
                 String scenarioName = getScenarioName(context);
                 configuration.setName(scenarioName);
                 ((GaugeRunConfiguration) configuration).setSpecsToExecute(name + ":" + scenarioIndex);
-                ((GaugeRunConfiguration) configuration).setModule(module);
             }
+            ((GaugeRunConfiguration) configuration).setModule(module);
             return true;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -81,25 +76,43 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
             return scenarioName;
     }
 
-    private Integer getScenarioIndex(ConfigurationContext context, PsiFile file) {
-        Integer count = NO_SCENARIOS;
+    private int getScenarioIndex(ConfigurationContext context, PsiFile file) {
+        int count = NO_SCENARIOS;
         PsiElement selectedElement = context.getPsiLocation();
-        if (selectedElement == null)    return 0;
+        if (selectedElement == null)    return NON_SCENARIO_CONTEXT;
         String scenarioHeading = (!selectedElement.getClass().equals(SpecScenarioImpl.class)) ? getScenarioHeading(selectedElement) : selectedElement.getText();
-        for (PsiElement psiElement : file.getChildren())
+        if (scenarioHeading.equals("")) {
+            if (getNumberOfScenarios(file)==0)
+                return NO_SCENARIOS;
+            return NON_SCENARIO_CONTEXT;
+        }
+        for (PsiElement psiElement : file.getChildren()) {
             if (psiElement.getClass().equals(SpecScenarioImpl.class)) {
                 count++;
                 if (psiElement.getNode().getFirstChildNode().getText().equals(scenarioHeading)) return count;
             }
+        }
         if(count == NO_SCENARIOS) return NO_SCENARIOS;
         else return NON_SCENARIO_CONTEXT;
+    }
+
+    private int getNumberOfScenarios(PsiFile file) {
+        int count = 0;
+        for (PsiElement psiElement : file.getChildren()) {
+            if (psiElement.getClass().equals(SpecScenarioImpl.class)) {
+                count++;
+            }
+        }
+        return count;
     }
 
     private String getScenarioHeading(PsiElement selectedElement) {
         if (selectedElement.getClass().equals(SpecScenarioImpl.class)) {
             return selectedElement.getNode().getFirstChildNode().getText();
         }
-        if (selectedElement.getParent() == null) return "";
+        if (selectedElement.getClass().equals(SpecFile.class)) {
+            return "";
+        }
         return getScenarioHeading(selectedElement.getParent());
     }
 }
