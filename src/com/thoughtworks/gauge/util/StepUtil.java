@@ -17,6 +17,7 @@ import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
 import com.thoughtworks.gauge.language.psi.SpecStep;
 import com.thoughtworks.gauge.language.psi.impl.ConceptConceptImpl;
+import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,9 +33,13 @@ public class StepUtil {
         Collection<PsiMethod> stepMethods = getStepMethods(project);
         PsiMethod method = filter(stepMethods, step);
         if (method == null) {
-             return searchConceptsForImpl(step, project);
+            PsiElement psiElement = searchConceptsForImpl(step, project);
+            if (psiElement == null){
+                return null;
+            }
+            return new ConceptStepImpl(psiElement.getNode(),true);
         }
-        return method;
+        return method.getChildren()[0].getChildren()[0];
     }
 
     private static PsiElement searchConceptsForImpl(SpecStep step, Project project) {

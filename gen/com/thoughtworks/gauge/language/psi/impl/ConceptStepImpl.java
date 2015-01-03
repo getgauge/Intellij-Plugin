@@ -16,8 +16,15 @@ import com.thoughtworks.gauge.StepValue;
 
 public class ConceptStepImpl extends ConceptNamedElementImpl implements ConceptStep {
 
+  private boolean isConcept = false;
+
   public ConceptStepImpl(ASTNode node) {
     super(node);
+  }
+
+  public ConceptStepImpl(@NotNull ASTNode node, boolean isConcept) {
+    super(node);
+    this.isConcept = isConcept;
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -55,5 +62,10 @@ public class ConceptStepImpl extends ConceptNamedElementImpl implements ConceptS
   @Override
   public PsiReference getReference() {
     return new ConceptReference(this);
+  }
+
+  @Override
+  public String toString() {
+    return this.isConcept ? this.getText().split("\n")[0].replace("#","").trim() : super.toString();
   }
 }
