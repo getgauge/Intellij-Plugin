@@ -12,7 +12,7 @@ import com.intellij.refactoring.rename.RenameHandler;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
+import java.io.*;
 
 public class CustomRenameHandler implements RenameHandler {
 
@@ -69,10 +69,23 @@ public class CustomRenameHandler implements RenameHandler {
             try {
                 Process exec = Runtime.getRuntime().exec(commands, null, new File(project.getBaseDir().getPath()));
                 exec.waitFor();
+                String errorMessage = "";
+                errorMessage = getMessages(errorMessage, exec.getErrorStream());
+                errorMessage = getMessages(errorMessage, exec.getInputStream());
+                if (!errorMessage.equals(""))   Messages.showErrorDialog(errorMessage,"Refactoring Error");
+                return true;
             } catch (Exception e) {
+                Messages.showErrorDialog("Connot execute refactor command","Refactoring Error");
                 return false;
             }
-            return true;
         }
+    }
+
+    private static String getMessages(String errorMessage, InputStream stream) throws IOException {
+        String line;
+        BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+        while ((line = br.readLine()) != null)
+            errorMessage += line;
+        return errorMessage;
     }
 }
