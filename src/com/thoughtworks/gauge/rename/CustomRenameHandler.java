@@ -10,15 +10,29 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.rename.RenameHandler;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
+import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 
 public class CustomRenameHandler implements RenameHandler {
 
+    private PsiElement psiElement;
+
     public boolean isAvailableOnDataContext(DataContext dataContext) {
         PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
-        return CommonDataKeys.PROJECT.getData(dataContext) != null && element != null && (element.toString().equals("PsiAnnotation") || element.getClass().equals(ConceptStepImpl.class));
+        if (element == null) {
+            Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
+            if (editor == null) return false;
+            int offset = editor.getCaretModel().getOffset();
+            if (offset > 0 && offset == editor.getDocument().getTextLength()) offset--;
+            PsiFile data = CommonDataKeys.PSI_FILE.getData(dataContext);
+            if (data == null) return false;
+            psiElement = getStepElement(data.findElementAt(offset));
+            return psiElement != null && psiElement.getClass().equals(SpecStepImpl.class);
+        }
+        return CommonDataKeys.PROJECT.getData(dataContext) != null && (element.toString().equals("PsiAnnotation") ||
+                element.getClass().equals(ConceptStepImpl.class) || element.getClass().equals(SpecStepImpl.class));
     }
 
     public boolean isRenaming(DataContext dataContext) {
@@ -27,27 +41,31 @@ public class CustomRenameHandler implements RenameHandler {
 
     public void invoke(@NotNull Project project, Editor editor, PsiFile file, DataContext dataContext) {
         PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
-        if (element == null) return;
+        if (element == null) element = psiElement;
         String text = element.toString();
         if (element.toString().equals("PsiAnnotation"))
             text = element.getChildren()[2].getChildren()[1].getText().substring(1, element.getChildren()[2].getChildren()[1].getText().length() - 1);
-        Messages.showInputDialog(project,
-                String.format("Refactoring \"%s\" to : ", text),
-                "Refactor",
-                Messages.getInformationIcon(),
-                text,
-                new MyInputValidator(project,text));
+        else if (element.getClass().equals(SpecStepImpl.class))
+            text = element.getText().replaceFirst("\\*", "").trim();
+        Messages.showInputDialog(project, String.format("Refactoring \"%s\" to : ", text), "Refactor", Messages.getInformationIcon(), text, new RenameInputValidator(project, text));
     }
 
     public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, DataContext dataContext) {
         invoke(project, null, null, dataContext);
     }
 
-    private static class MyInputValidator implements InputValidator {
+    private PsiElement getStepElement(PsiElement selectedElement) {
+        if (selectedElement.getClass().equals(SpecStepImpl.class))
+            return selectedElement;
+        if (selectedElement.getParent() == null) return null;
+        return getStepElement(selectedElement.getParent());
+    }
+
+    private static class RenameInputValidator implements InputValidator {
         private final Project project;
         private String text;
 
-        public MyInputValidator(final Project project, String text) {
+        public RenameInputValidator(final Project project, String text) {
             this.project = project;
             this.text = text;
         }
@@ -61,31 +79,27 @@ public class CustomRenameHandler implements RenameHandler {
         }
 
         private boolean doRename(final String inputString) {
-            String[] commands = new String[4];
-            commands[0] = "gauge";
-            commands[1] = "--refactor";
-            commands[2] = text;
-            commands[3] = inputString;
+            String[] commands = new String[]{"gauge", "--refactor", text, inputString};
             try {
                 Process exec = Runtime.getRuntime().exec(commands, null, new File(project.getBaseDir().getPath()));
                 exec.waitFor();
                 String errorMessage = "";
                 errorMessage = getMessages(errorMessage, exec.getErrorStream());
                 errorMessage = getMessages(errorMessage, exec.getInputStream());
-                if (!errorMessage.equals(""))   Messages.showErrorDialog(errorMessage,"Refactoring Error");
+                if (!errorMessage.equals("")) Messages.showWarningDialog(errorMessage, "Warning");
                 return true;
             } catch (Exception e) {
-                Messages.showErrorDialog("Connot execute refactor command","Refactoring Error");
+                Messages.showWarningDialog("Cannot execute refactor command", "Warning");
                 return false;
             }
         }
-    }
 
-    private static String getMessages(String errorMessage, InputStream stream) throws IOException {
-        String line;
-        BufferedReader br = new BufferedReader(new InputStreamReader(stream));
-        while ((line = br.readLine()) != null)
-            errorMessage += line;
-        return errorMessage;
+        private static String getMessages(String errorMessage, InputStream stream) throws IOException {
+            String line;
+            BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+            while ((line = br.readLine()) != null)
+                errorMessage += line;
+            return errorMessage;
+        }
     }
 }
