@@ -26,9 +26,11 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
 
     public static final String JAVA_DEBUG_PORT = "50005";
     public static final String SIMPLE_CONSOLE_FLAG = "--simple-console";
+    public static final String TAGS_FLAG = "--tags";
     private String specsToExecute;
     private Module module;
     private String environment;
+    private String tags;
 
     public GaugeRunConfiguration(String name, Project project, ConfigurationFactoryEx configurationFactory) {
         super(project, configurationFactory, name);
@@ -50,6 +52,10 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
                 GeneralCommandLine commandLine = new GeneralCommandLine();
                 commandLine.setExePath(GaugeUtil.getGaugeExecPath());
                 commandLine.addParameter(SIMPLE_CONSOLE_FLAG);
+                if (!Strings.isBlank(tags)){
+                    commandLine.addParameter(TAGS_FLAG);
+                    commandLine.addParameter(tags);
+                }
                 commandLine.setWorkDirectory(getProject().getBaseDir().getPath());
                 if (!Strings.isBlank(environment)) {
                     commandLine.addParameters(ENV_FLAG, environment);
@@ -68,6 +74,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         super.readExternal(element);
         environment = JDOMExternalizer.readString(element, "environment");
         specsToExecute = JDOMExternalizer.readString(element, "specsToExecute");
+        tags = JDOMExternalizer.readString(element, "tags");
     }
 
     @Override
@@ -75,6 +82,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         super.writeExternal(element);
         JDOMExternalizer.write(element, "environment", environment);
         JDOMExternalizer.write(element, "specsToExecute", specsToExecute);
+        JDOMExternalizer.write(element, "tags", tags);
     }
 
     @NotNull
@@ -106,5 +114,13 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
 
     public void setEnvironment(String environment) {
         this.environment = environment;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
     }
 }
