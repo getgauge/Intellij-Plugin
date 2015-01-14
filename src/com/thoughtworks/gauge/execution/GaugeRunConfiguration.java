@@ -60,7 +60,10 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
                 if (!Strings.isBlank(environment)) {
                     commandLine.addParameters(ENV_FLAG, environment);
                 }
-                commandLine.addParameter(specsToExecute);
+                String[] specs = specsToExecute.split(" ");
+                for (String spec : specs) {
+                    commandLine.addParameter(spec);
+                }
                 if (DefaultDebugExecutor.EXECUTOR_ID.equals(env.getExecutor().getId())) {
                     commandLine.getEnvironment().put(GAUGE_DEBUG_OPTS_ENV, JAVA_DEBUG_PORT);
                 }

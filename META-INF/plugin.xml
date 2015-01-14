@@ -57,6 +57,7 @@
       <programRunner implementation="com.thoughtworks.gauge.execution.GaugeTestRunner"/>
       <runConfigurationProducer implementation="com.thoughtworks.gauge.execution.GaugeExecutionProducer"/>
       <runConfigurationProducer implementation="com.thoughtworks.gauge.execution.ScenarioExecutionProducer"/>
+      <runConfigurationProducer implementation="com.thoughtworks.gauge.execution.SpecsExecutionProducer"/>
       <editorActionHandler action="EditorEnter" implementationClass="com.thoughtworks.gauge.GaugeEnterHandler"/>
       <renameHandler implementation="com.thoughtworks.gauge.rename.CustomRenameHandler"/>
   </extensions>
