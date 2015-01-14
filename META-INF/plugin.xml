@@ -43,6 +43,7 @@
       <lang.parserDefinition language="Concept" implementationClass="com.thoughtworks.gauge.parser.ConceptParserDefinition"/>
       <lang.syntaxHighlighterFactory key="Specification" implementationClass="com.thoughtworks.gauge.highlight.SpecSyntaxHighlighterFactory"/>
       <lang.syntaxHighlighterFactory key="Concept" implementationClass="com.thoughtworks.gauge.highlight.ConceptSyntaxHighlighterFactory"/>
+      <lang.findUsagesProvider language="Specification" implementationClass="com.thoughtworks.gauge.findUsages.SpecStepFindUsagesProvider"/>
       <colorSettingsPage implementation="com.thoughtworks.gauge.highlight.SpecColorSettingsPage"/>
       <colorSettingsPage implementation="com.thoughtworks.gauge.highlight.ConceptColorSettingsPage"/>
       <annotator language="Specification" implementationClass="com.thoughtworks.gauge.annotator.StepAnnotator"/>
