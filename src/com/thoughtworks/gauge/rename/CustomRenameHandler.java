@@ -43,8 +43,14 @@ public class CustomRenameHandler implements RenameHandler {
         PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
         if (element == null) element = psiElement;
         String text = element.toString();
-        if (element.toString().equals("PsiAnnotation"))
-            text = element.getChildren()[2].getChildren()[1].getText().substring(1, element.getChildren()[2].getChildren()[1].getText().length() - 1);
+        if (element.toString().equals("PsiAnnotation")) {
+            if (element.getChildren()[2].getChildren()[1].getChildren()[0].getChildren().length == 1)
+                text = element.getChildren()[2].getChildren()[1].getText().substring(1, element.getChildren()[2].getChildren()[1].getText().length() - 1);
+            else {
+                Messages.showWarningDialog("Refactoring for steps having aliases are not supported", "Warning");
+                return;
+            }
+        }
         else if (element.getClass().equals(SpecStepImpl.class))
             text = element.getText().replaceFirst("\\*", "").trim();
         Messages.showInputDialog(project, String.format("Refactoring \"%s\" to : ", text), "Refactor", Messages.getInformationIcon(), text, new RenameInputValidator(project, text));
@@ -89,7 +95,7 @@ public class CustomRenameHandler implements RenameHandler {
                 if (!errorMessage.equals("")) Messages.showWarningDialog(errorMessage, "Warning");
                 return true;
             } catch (Exception e) {
-                Messages.showWarningDialog("Cannot execute refactor command", "Warning");
+                Messages.showInfoMessage("Cannot execute refactor command", "Warning");
                 return false;
             }
         }
@@ -98,7 +104,7 @@ public class CustomRenameHandler implements RenameHandler {
             String line;
             BufferedReader br = new BufferedReader(new InputStreamReader(stream));
             while ((line = br.readLine()) != null)
-                errorMessage += line;
+                errorMessage += line + "\n";
             return errorMessage;
         }
     }
