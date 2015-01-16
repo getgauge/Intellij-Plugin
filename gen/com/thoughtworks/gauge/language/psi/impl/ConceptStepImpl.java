@@ -66,6 +66,6 @@ public class ConceptStepImpl extends ConceptNamedElementImpl implements ConceptS
 
   @Override
   public String toString() {
-    return this.isConcept ? this.getText().split("\n")[0].replace("#","").trim() : super.toString();
+    return this.isConcept ? this.getStepValue().getStepAnnotationText() : super.toString();
   }
 }

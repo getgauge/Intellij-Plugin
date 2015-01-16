@@ -50,9 +50,8 @@ public class CustomRenameHandler implements RenameHandler {
                 Messages.showWarningDialog("Refactoring for steps having aliases are not supported", "Warning");
                 return;
             }
-        }
-        else if (element.getClass().equals(SpecStepImpl.class))
-            text = element.getText().replaceFirst("\\*", "").trim();
+        } else if (element.getClass().equals(SpecStepImpl.class))
+            text = ((SpecStepImpl) element).getStepValue().getStepAnnotationText();
         Messages.showInputDialog(project, String.format("Refactoring \"%s\" to : ", text), "Refactor", Messages.getInformationIcon(), text, new RenameInputValidator(project, text));
     }
 
