@@ -65,9 +65,6 @@
 
   <application-components>
     <!-- Add your application components here -->
-      <component>
-          <implementation-class>com.thoughtworks.gauge.core.GaugeApplicationComponent</implementation-class>
-      </component>
   </application-components>
 
   <project-components>
