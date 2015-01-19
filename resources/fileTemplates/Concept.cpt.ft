@@ -1,6 +1,6 @@
 Created by ${USER} on ${DATE}
 
-This is a concept file where you can define many concepts with following syntax.
-Concept Heading
-step1
-step2
+This is a concept file with following syntax for each concept.
+# Concept Heading
+* step1
+* step2
