@@ -5,10 +5,12 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.rename.RenameHandler;
@@ -17,6 +19,7 @@ import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
+import java.util.Arrays;
 
 import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeExecPath;
 
@@ -103,23 +106,28 @@ public class CustomRenameHandler implements RenameHandler {
                 @Override
                 public void run() {
                     try {
+                        FileDocumentManager.getInstance().saveDocumentAsIs(editor.getDocument());
                         Process process = processBuilder.start();
-                        if (process.waitFor() != 0) {
-                            String errorMessage = "";
-                            errorMessage = getMessages(errorMessage, process.getInputStream());
-                            int flags = HintManager.HIDE_BY_ANY_KEY | HintManager.HIDE_BY_TEXT_CHANGE | HintManager.HIDE_BY_SCROLLING;
-                            int timeout = 0;
-                            HintManager.getInstance().showErrorHint(editor, errorMessage,
-                                    editor.getCaretModel().getOffset(), editor.getCaretModel().getOffset() + 1,
-                                    HintManager.ABOVE, flags, timeout);
-                        }
-                        LocalFileSystem.getInstance().refresh(false);
+                        String message = "";
+                        message = getMessages(message, process.getInputStream());
+                        refreshAllFiles();
+                        showMessage(message);
                     } catch (Exception e) {
                         Messages.showInfoMessage(String.format("Could not execute refactor command: %s", e.getMessage()), "Warning");
                     }
                 }
             });
             return true;
+        }
+
+        private void refreshAllFiles() {
+            VirtualFile currentFile = FileDocumentManager.getInstance().getFile(editor.getDocument());
+            LocalFileSystem.getInstance().refreshFiles(Arrays.asList(new VirtualFile[]{currentFile}));
+            LocalFileSystem.getInstance().refresh(false);
+        }
+
+        private void showMessage(String errorMessage) {
+            HintManager.getInstance().showErrorHint(editor, errorMessage);
         }
 
         private static String getMessages(String errorMessage, InputStream stream) throws IOException {
