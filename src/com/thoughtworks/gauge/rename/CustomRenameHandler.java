@@ -6,6 +6,8 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.Messages;
@@ -14,14 +16,15 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.rename.RenameHandler;
+import com.thoughtworks.gauge.core.Gauge;
+import com.thoughtworks.gauge.core.GaugeService;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
+import gauge.messages.Api;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.Arrays;
-
-import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeExecPath;
 
 public class CustomRenameHandler implements RenameHandler {
 
@@ -30,9 +33,9 @@ public class CustomRenameHandler implements RenameHandler {
 
     public boolean isAvailableOnDataContext(DataContext dataContext) {
         PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
+        Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
+        this.editor = editor;
         if (element == null) {
-            Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
-            this.editor = editor;
             if (editor == null) return false;
             int offset = editor.getCaretModel().getOffset();
             if (offset > 0 && offset == editor.getDocument().getTextLength()) offset--;
@@ -52,6 +55,7 @@ public class CustomRenameHandler implements RenameHandler {
     public void invoke(@NotNull Project project, Editor editor, PsiFile file, DataContext dataContext) {
         PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
         if (element == null) element = psiElement;
+        psiElement = element;
         String text = element.toString();
         //Finding text from annotation
         if (element.toString().equals("PsiAnnotation")) {
@@ -64,7 +68,8 @@ public class CustomRenameHandler implements RenameHandler {
         } else if (element.getClass().equals(SpecStepImpl.class)) {
             text = ((SpecStepImpl) element).getStepValue().getStepAnnotationText();
         }
-        Messages.showInputDialog(project, String.format("Refactoring \"%s\" to : ", text), "Refactor", Messages.getInformationIcon(), text, new RenameInputValidator(project, this.editor, text));
+        Messages.showInputDialog(project, String.format("Refactoring \"%s\" to : ", text), "Refactor", Messages.getInformationIcon(), text,
+                new RenameInputValidator(project, this.editor, text, this.psiElement));
 
     }
 
@@ -83,11 +88,13 @@ public class CustomRenameHandler implements RenameHandler {
         private final Project project;
         private Editor editor;
         private String text;
+        private PsiElement psiElement;
 
-        public RenameInputValidator(final Project project, Editor editor, String text) {
+        public RenameInputValidator(final Project project, Editor editor, String text, PsiElement psiElement) {
             this.project = project;
             this.editor = editor;
             this.text = text;
+            this.psiElement = psiElement;
         }
 
         public boolean checkInput(String inputString) {
@@ -95,47 +102,42 @@ public class CustomRenameHandler implements RenameHandler {
         }
 
         public boolean canClose(final String inputString) {
-            return doRename(inputString);
+            return doRename(inputString, editor, psiElement);
         }
 
-        private boolean doRename(final String inputString) {
-            final ProcessBuilder processBuilder = new ProcessBuilder(getGaugeExecPath(), "--refactor", text, inputString);
-            processBuilder.directory(new File(project.getBaseDir().getPath()));
-
+        private boolean doRename(final String inputString, final Editor editor, final PsiElement psiElement) {
             ApplicationManager.getApplication().runWriteAction(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         FileDocumentManager.getInstance().saveDocumentAsIs(editor.getDocument());
-                        Process process = processBuilder.start();
-                        String message = "";
-                        message = getMessages(message, process.getInputStream());
-                        refreshAllFiles();
-                        showMessage(message);
+                        Module module = ModuleUtil.findModuleForPsiElement(psiElement);
+                        GaugeService gaugeService = Gauge.getGaugeService(module);
+                        Api.PerformRefactoringResponse response = gaugeService.getGaugeConnection().sendPerformRefactoringRequest(text, inputString);
+                        refreshFiles();
+                        showMessage(response);
                     } catch (Exception e) {
-                        Messages.showInfoMessage(String.format("Could not execute refactor command: %s", e.getMessage()), "Warning");
+                        HintManager.getInstance().showErrorHint(editor, String.format("Could not execute refactor command: %s", e.toString()));
                     }
                 }
             });
             return true;
         }
 
-        private void refreshAllFiles() {
+        private void refreshFiles() {
             VirtualFile currentFile = FileDocumentManager.getInstance().getFile(editor.getDocument());
-            LocalFileSystem.getInstance().refreshFiles(Arrays.asList(new VirtualFile[]{currentFile}));
+            LocalFileSystem.getInstance().refreshFiles(Arrays.asList(currentFile));
             LocalFileSystem.getInstance().refresh(false);
         }
 
-        private void showMessage(String errorMessage) {
-            HintManager.getInstance().showErrorHint(editor, errorMessage);
-        }
-
-        private static String getMessages(String errorMessage, InputStream stream) throws IOException {
-            String line;
-            BufferedReader br = new BufferedReader(new InputStreamReader(stream));
-            while ((line = br.readLine()) != null)
-                errorMessage += line + "\n";
-            return errorMessage;
+        private void showMessage(Api.PerformRefactoringResponse response) throws IOException {
+            if (!response.hasSuccess()) {
+                String message = "";
+                for (String error : response.getErrorsList()) {
+                    message += error + "\n";
+                }
+                HintManager.getInstance().showErrorHint(this.editor, message);
+            }
         }
     }
 }
