@@ -62,6 +62,7 @@ public class CustomRenameHandler implements RenameHandler {
             text = ((SpecStepImpl) element).getStepValue().getStepAnnotationText();
         }
         Messages.showInputDialog(project, String.format("Refactoring \"%s\" to : ", text), "Refactor", Messages.getInformationIcon(), text, new RenameInputValidator(project, this.editor, text));
+
     }
 
     public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, DataContext dataContext) {

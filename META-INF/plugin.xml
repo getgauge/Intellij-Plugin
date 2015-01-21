@@ -61,13 +61,11 @@
       <editorActionHandler action="EditorEnter" implementationClass="com.thoughtworks.gauge.GaugeEnterHandler"/>
       <renameHandler implementation="com.thoughtworks.gauge.rename.CustomRenameHandler"/>
       <fileTemplateGroup implementation="com.thoughtworks.gauge.core.SpecificationLiveTemplate"/>
+      <defaultLiveTemplatesProvider implementation="com.thoughtworks.gauge.core.TableTemplateProvider"/>
   </extensions>
 
   <application-components>
     <!-- Add your application components here -->
-      <component>
-          <implementation-class>com.thoughtworks.gauge.core.GaugeApplicationComponent</implementation-class>
-      </component>
   </application-components>
 
   <project-components>
