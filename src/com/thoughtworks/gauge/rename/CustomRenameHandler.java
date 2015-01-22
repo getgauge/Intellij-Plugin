@@ -1,9 +1,11 @@
 package com.thoughtworks.gauge.rename;
 
+import com.google.protobuf.ProtocolStringList;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
@@ -23,8 +25,10 @@ import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import gauge.messages.Api;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CustomRenameHandler implements RenameHandler {
 
@@ -106,37 +110,46 @@ public class CustomRenameHandler implements RenameHandler {
         }
 
         private boolean doRename(final String inputString, final Editor editor, final PsiElement psiElement) {
-            ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            FileDocumentManager.getInstance().saveDocumentAsIs(editor.getDocument());
+            final Module module = ModuleUtil.findModuleForPsiElement(psiElement);
+            final Runnable command = new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        FileDocumentManager.getInstance().saveDocumentAsIs(editor.getDocument());
-                        Module module = ModuleUtil.findModuleForPsiElement(psiElement);
                         GaugeService gaugeService = Gauge.getGaugeService(module);
                         Api.PerformRefactoringResponse response = gaugeService.getGaugeConnection().sendPerformRefactoringRequest(text, inputString);
-                        refreshFiles();
+                        refreshFiles(response.getFilesChangedList());
                         showMessage(response);
                     } catch (Exception e) {
                         HintManager.getInstance().showErrorHint(editor, String.format("Could not execute refactor command: %s", e.toString()));
                     }
                 }
+            };
+            ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                @Override
+                public void run() {
+                    CommandProcessor.getInstance().executeCommand(project, command, "Apply CSS", "CSS");
+                }
             });
+            FileDocumentManager.getInstance().saveAllDocuments();
             return true;
         }
 
-        private void refreshFiles() {
-            VirtualFile currentFile = FileDocumentManager.getInstance().getFile(editor.getDocument());
-            LocalFileSystem.getInstance().refreshFiles(Arrays.asList(currentFile));
-            LocalFileSystem.getInstance().refresh(false);
+        private void refreshFiles(ProtocolStringList filesChangedList) {
+            List<VirtualFile> files = new ArrayList<VirtualFile>();
+            for (String fileName : filesChangedList) {
+                files.add(LocalFileSystem.getInstance().findFileByIoFile(new File(fileName)));
+            }
+            LocalFileSystem.getInstance().refreshFiles(files);
         }
 
         private void showMessage(Api.PerformRefactoringResponse response) throws IOException {
-            if (!response.hasSuccess()) {
+            if (!response.getSuccess()) {
                 String message = "";
                 for (String error : response.getErrorsList()) {
                     message += error + "\n";
                 }
-                HintManager.getInstance().showErrorHint(this.editor, message);
+                HintManager.getInstance().showErrorHint(this.editor, message.replace("<", "\"").replace(">", "\""));
             }
         }
     }
