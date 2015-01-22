@@ -1,34 +1,16 @@
 package com.thoughtworks.gauge.rename;
 
-import com.google.protobuf.ProtocolStringList;
-import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.rename.RenameHandler;
-import com.thoughtworks.gauge.core.Gauge;
-import com.thoughtworks.gauge.core.GaugeService;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
-import gauge.messages.Api;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class CustomRenameHandler implements RenameHandler {
 
@@ -86,71 +68,5 @@ public class CustomRenameHandler implements RenameHandler {
             return selectedElement;
         if (selectedElement.getParent() == null) return null;
         return getStepElement(selectedElement.getParent());
-    }
-
-    private static class RenameInputValidator implements InputValidator {
-        private final Project project;
-        private Editor editor;
-        private String text;
-        private PsiElement psiElement;
-
-        public RenameInputValidator(final Project project, Editor editor, String text, PsiElement psiElement) {
-            this.project = project;
-            this.editor = editor;
-            this.text = text;
-            this.psiElement = psiElement;
-        }
-
-        public boolean checkInput(String inputString) {
-            return true;
-        }
-
-        public boolean canClose(final String inputString) {
-            return doRename(inputString, editor, psiElement);
-        }
-
-        private boolean doRename(final String inputString, final Editor editor, final PsiElement psiElement) {
-            FileDocumentManager.getInstance().saveDocumentAsIs(editor.getDocument());
-            final Module module = ModuleUtil.findModuleForPsiElement(psiElement);
-            final Runnable command = new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        GaugeService gaugeService = Gauge.getGaugeService(module);
-                        Api.PerformRefactoringResponse response = gaugeService.getGaugeConnection().sendPerformRefactoringRequest(text, inputString);
-                        refreshFiles(response.getFilesChangedList());
-                        showMessage(response);
-                    } catch (Exception e) {
-                        HintManager.getInstance().showErrorHint(editor, String.format("Could not execute refactor command: %s", e.toString()));
-                    }
-                }
-            };
-            ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                @Override
-                public void run() {
-                    CommandProcessor.getInstance().executeCommand(project, command, "Apply CSS", "CSS");
-                }
-            });
-            FileDocumentManager.getInstance().saveAllDocuments();
-            return true;
-        }
-
-        private void refreshFiles(ProtocolStringList filesChangedList) {
-            List<VirtualFile> files = new ArrayList<VirtualFile>();
-            for (String fileName : filesChangedList) {
-                files.add(LocalFileSystem.getInstance().findFileByIoFile(new File(fileName)));
-            }
-            LocalFileSystem.getInstance().refreshFiles(files);
-        }
-
-        private void showMessage(Api.PerformRefactoringResponse response) throws IOException {
-            if (!response.getSuccess()) {
-                String message = "";
-                for (String error : response.getErrorsList()) {
-                    message += error + "\n";
-                }
-                HintManager.getInstance().showErrorHint(this.editor, message.replace("<", "\"").replace(">", "\""));
-            }
-        }
     }
 }
