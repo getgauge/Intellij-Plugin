@@ -20,7 +20,10 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.thoughtworks.gauge.GaugeConstant.*;
+import java.util.ArrayList;
+
+import static com.thoughtworks.gauge.GaugeConstant.ENV_FLAG;
+import static com.thoughtworks.gauge.GaugeConstant.GAUGE_DEBUG_OPTS_ENV;
 
 public class GaugeRunConfiguration extends LocatableConfigurationBase implements RunProfileWithCompileBeforeLaunchOption {
 
@@ -31,6 +34,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
     private Module module;
     private String environment;
     private String tags;
+    private ArrayList<String> specsArrayToExecute;
 
     public GaugeRunConfiguration(String name, Project project, ConfigurationFactoryEx configurationFactory) {
         super(project, configurationFactory, name);
@@ -60,9 +64,11 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
                 if (!Strings.isBlank(environment)) {
                     commandLine.addParameters(ENV_FLAG, environment);
                 }
-                String[] specs = specsToExecute.split(" ");
-                for (String spec : specs) {
-                    commandLine.addParameter(spec);
+                if (!Strings.isBlank(specsToExecute))
+                    commandLine.addParameter(specsToExecute);
+                if (specsArrayToExecute != null){
+                    for (String spec : specsArrayToExecute)
+                        commandLine.addParameter(spec);
                 }
                 if (DefaultDebugExecutor.EXECUTOR_ID.equals(env.getExecutor().getId())) {
                     commandLine.getEnvironment().put(GAUGE_DEBUG_OPTS_ENV, JAVA_DEBUG_PORT);
@@ -125,5 +131,9 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
 
     public void setTags(String tags) {
         this.tags = tags;
+    }
+
+    public void setSpecsArrayToExecute(ArrayList<String> specsArrayToExecute) {
+        this.specsArrayToExecute = specsArrayToExecute;
     }
 }

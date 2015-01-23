@@ -9,6 +9,8 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.thoughtworks.gauge.language.SpecFileType;
 
+import java.util.ArrayList;
+
 
 public class SpecsExecutionProducer extends RunConfigurationProducer {
     public SpecsExecutionProducer() {
@@ -33,13 +35,13 @@ public class SpecsExecutionProducer extends RunConfigurationProducer {
             }
         }
 
-        String specsToExecute = "";
+        ArrayList<String> specsToExecute = new ArrayList<String>();
         for (VirtualFile selectedFile : selectedFiles) {
             if (selectedFile.getFileType().getClass().equals(SpecFileType.class) || selectedFile.isDirectory()) {
-                specsToExecute += selectedFile.getPath() + " ";
+                specsToExecute.add(selectedFile.getPath());
             }
         }
-        ((GaugeRunConfiguration) configuration).setSpecsToExecute(specsToExecute.trim());
+        ((GaugeRunConfiguration) configuration).setSpecsArrayToExecute(specsToExecute);
         configuration.setName("Specifications");
         return true;
     }
