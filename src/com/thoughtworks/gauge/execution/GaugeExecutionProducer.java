@@ -6,7 +6,6 @@ import com.intellij.execution.actions.RunConfigurationProducer;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.DataKey;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -73,6 +72,9 @@ public class GaugeExecutionProducer extends RunConfigurationProducer {
         }
 
         final String specsToExecute = ((GaugeRunConfiguration) configuration).getSpecsToExecute();
+        if(specsToExecute == null) {
+            return false;
+        }
         return (specsToExecute.contains(location.getVirtualFile().getName()));
     }
 }

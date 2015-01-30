@@ -34,7 +34,6 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
     private Module module;
     private String environment;
     private String tags;
-    private ArrayList<String> specsArrayToExecute;
 
     public GaugeRunConfiguration(String name, Project project, ConfigurationFactoryEx configurationFactory) {
         super(project, configurationFactory, name);
@@ -56,7 +55,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
                 GeneralCommandLine commandLine = new GeneralCommandLine();
                 commandLine.setExePath(GaugeUtil.getGaugeExecPath());
                 commandLine.addParameter(SIMPLE_CONSOLE_FLAG);
-                if (!Strings.isBlank(tags)){
+                if (!Strings.isBlank(tags)) {
                     commandLine.addParameter(TAGS_FLAG);
                     commandLine.addParameter(tags);
                 }
@@ -64,11 +63,8 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
                 if (!Strings.isBlank(environment)) {
                     commandLine.addParameters(ENV_FLAG, environment);
                 }
-                if (!Strings.isBlank(specsToExecute))
-                    commandLine.addParameter(specsToExecute);
-                if (specsArrayToExecute != null){
-                    for (String spec : specsArrayToExecute)
-                        commandLine.addParameter(spec);
+                if (!Strings.isBlank(specsToExecute)) {
+                    addSpecs(commandLine, specsToExecute);
                 }
                 if (DefaultDebugExecutor.EXECUTOR_ID.equals(env.getExecutor().getId())) {
                     commandLine.getEnvironment().put(GAUGE_DEBUG_OPTS_ENV, JAVA_DEBUG_PORT);
@@ -76,6 +72,15 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
                 return GaugeRunProcessHandler.runCommandLine(commandLine);
             }
         };
+    }
+
+    private void addSpecs(GeneralCommandLine commandLine, String specsToExecute) {
+        String[] specNames = specsToExecute.split(",");
+        for (String specName : specNames) {
+            if (!specName.isEmpty()) {
+                commandLine.addParameter(specName);
+            }
+        }
     }
 
     @Override
@@ -134,6 +139,13 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
     }
 
     public void setSpecsArrayToExecute(ArrayList<String> specsArrayToExecute) {
-        this.specsArrayToExecute = specsArrayToExecute;
+        StringBuilder builder = new StringBuilder("");
+        for (String specName : specsArrayToExecute) {
+            builder.append(specName);
+            if (specsArrayToExecute.indexOf(specName) != specsArrayToExecute.size() - 1) {
+                builder.append(",");
+            }
+        }
+        setSpecsToExecute(builder.toString());
     }
 }
