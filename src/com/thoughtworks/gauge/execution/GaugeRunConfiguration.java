@@ -78,7 +78,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         String[] specNames = specsToExecute.split(",");
         for (String specName : specNames) {
             if (!specName.isEmpty()) {
-                commandLine.addParameter(specName);
+                commandLine.addParameter(specName.trim());
             }
         }
     }
