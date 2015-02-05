@@ -29,12 +29,13 @@ SpecHeading = {WhiteSpace}* "#" {InputCharacter}* {LineTerminator}? | {WhiteSpac
 Tags = {WhiteSpace}* tags {WhiteSpace}? ":" {InputCharacter}* {LineTerminator}?
 %%
 <YYINITIAL> {
-  {ScenarioHeading}             {return SCENARIO_HEADING;}
-  {SpecHeading}                 {return SPEC_HEADING;}
-  {Tags}                        {return TAGS;}
-  {StepIdentifier}              {yybegin(INSTEP);return STEP_IDENTIFIER;}
-  {TableIdentifier}             {yybegin(INTABLEHEADER);return TABLE_BORDER;}
-  [^]                           {return COMMENT;}
+  {ScenarioHeading}                                 {return SCENARIO_HEADING;}
+  {SpecHeading}                                     {return SPEC_HEADING;}
+  {Tags}                                            {return TAGS;}
+  {StepIdentifier}                                  {yybegin(INSTEP);return STEP_IDENTIFIER;}
+  {TableIdentifier}                                 {yybegin(INTABLEHEADER);return TABLE_BORDER;}
+  {StepIdentifier}{InputCharacter}*{StepIdentifier} {return COMMENT;}
+  [^]                                               {return COMMENT;}
 }
 
 <INSTEP> {
