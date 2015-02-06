@@ -49,14 +49,14 @@ ConceptHeading = {WhiteSpace}* "#" {InputCharacter}* {LineTerminator}? | {WhiteS
 
 %%
 <YYINITIAL> {
-  {ConceptHeading}             {return CONCEPT_HEADING;}
+  {ConceptHeading}              {return CONCEPT_HEADING;}
   {StepIdentifier}              {yybegin(INSTEP);return STEP_IDENTIFIER;}
   {TableIdentifier}             {yybegin(INTABLEHEADER);return TABLE_BORDER;}
   [^]                           {return COMMENT;}
 }
 
 <INSTEP> {
-  [^*<\"\r\n]*                  {yybegin(INSTEP); return STEP;}
+  [^<\"\r\n]*                   {yybegin(INSTEP); return STEP;}
   [\"]                          {yybegin(INARG); return ARG_START; }
   [<]                           {yybegin(INDYNAMIC); return DYNAMIC_ARG_START;}
   {LineTerminator}?             {yybegin(YYINITIAL); return STEP;}
