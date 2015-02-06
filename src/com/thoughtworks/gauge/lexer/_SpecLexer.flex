@@ -34,12 +34,11 @@ Tags = {WhiteSpace}* tags {WhiteSpace}? ":" {InputCharacter}* {LineTerminator}?
   {Tags}                                            {return TAGS;}
   {StepIdentifier}                                  {yybegin(INSTEP);return STEP_IDENTIFIER;}
   {TableIdentifier}                                 {yybegin(INTABLEHEADER);return TABLE_BORDER;}
-  {StepIdentifier}{InputCharacter}*{StepIdentifier} {return COMMENT;}
   [^]                                               {return COMMENT;}
 }
 
 <INSTEP> {
-  [^*<\"\r\n]*                  {yybegin(INSTEP); return STEP;}
+  [^<\"\r\n]*                  {yybegin(INSTEP); return STEP;}
   [\"]                          {yybegin(INARG); return ARG_START; }
   [<]                           {yybegin(INDYNAMIC); return DYNAMIC_ARG_START;}
   {LineTerminator}?             {yybegin(YYINITIAL); return STEP;}
