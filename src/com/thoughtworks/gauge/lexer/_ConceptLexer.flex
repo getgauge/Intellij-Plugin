@@ -28,13 +28,15 @@ InputCharacter = [^\r\n]
 WhiteSpace = [ \t\f]
 TableIdentifier = [|]
 StepIdentifier = [*]
-ConceptHeading = {WhiteSpace}* "#" {InputCharacter}* {LineTerminator}? | {WhiteSpace}* {InputCharacter}* {LineTerminator} [-]+ {LineTerminator}?
+NonWhiteSpaceAndIdentifierCharacter = [^ \r\n\t\f#*|]
+ConceptHeading = {WhiteSpace}* "#" {InputCharacter}* {LineTerminator}? | {WhiteSpace}* {InputCharacter}* {LineTerminator} [=]+ {LineTerminator}?
 
 %%
 <YYINITIAL> {
   {ConceptHeading}              {return CONCEPT_HEADING;}
   {StepIdentifier}              {yybegin(INSTEP);return STEP_IDENTIFIER;}
   {TableIdentifier}             {yybegin(INTABLEHEADER);return TABLE_BORDER;}
+  {LineTerminator}? {WhiteSpace}* {NonWhiteSpaceAndIdentifierCharacter}+ {WhiteSpace}* ({StepIdentifier} | [##] | {TableIdentifier}) {InputCharacter}* {LineTerminator}? {return COMMENT;}
   [^]                           {return COMMENT;}
 }
 

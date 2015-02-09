@@ -24,6 +24,8 @@ InputCharacter = [^\r\n]
 WhiteSpace = [ \t\f]
 TableIdentifier = [|]
 StepIdentifier = [*]
+NonWhiteSpaceCharacter = [^ \r\n\t\f]
+NonWhiteSpaceAndIdentifierCharacter = [^ \r\n\t\f#*|]
 ScenarioHeading = {WhiteSpace}* "##" {InputCharacter}* {LineTerminator}? | {WhiteSpace}* {InputCharacter}* {LineTerminator} [-]+ {LineTerminator}?
 SpecHeading = {WhiteSpace}* "#" {InputCharacter}* {LineTerminator}? | {WhiteSpace}* {InputCharacter}* {LineTerminator} [=]+ {LineTerminator}?
 Tags = {WhiteSpace}* tags {WhiteSpace}? ":" {InputCharacter}* {LineTerminator}?
@@ -34,11 +36,12 @@ Tags = {WhiteSpace}* tags {WhiteSpace}? ":" {InputCharacter}* {LineTerminator}?
   {Tags}                                            {return TAGS;}
   {StepIdentifier}                                  {yybegin(INSTEP);return STEP_IDENTIFIER;}
   {TableIdentifier}                                 {yybegin(INTABLEHEADER);return TABLE_BORDER;}
+  {LineTerminator}? {WhiteSpace}* {NonWhiteSpaceAndIdentifierCharacter}+ {WhiteSpace}* ({StepIdentifier} | [#] | [##] | {TableIdentifier}) {InputCharacter}* {LineTerminator}? {return COMMENT;}
   [^]                                               {return COMMENT;}
 }
 
 <INSTEP> {
-  [^<\"\r\n]*                  {yybegin(INSTEP); return STEP;}
+  [^<\"\r\n]*                   {yybegin(INSTEP); return STEP;}
   [\"]                          {yybegin(INARG); return ARG_START; }
   [<]                           {yybegin(INDYNAMIC); return DYNAMIC_ARG_START;}
   {LineTerminator}?             {yybegin(YYINITIAL); return STEP;}
