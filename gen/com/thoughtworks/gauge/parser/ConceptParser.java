@@ -102,7 +102,6 @@ public class ConceptParser implements PsiParser {
   // (comment)* conceptHeading NEW_LINE* (step NEW_LINE* | comment) +
   public static boolean concept(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "concept")) return false;
-    if (!nextTokenIs(b, "<concept>", COMMENT, CONCEPT_HEADING_IDENTIFIER)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, "<concept>");
     r = concept_0(b, l + 1);
@@ -201,7 +200,6 @@ public class ConceptParser implements PsiParser {
   // concept+
   static boolean conceptFile(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "conceptFile")) return false;
-    if (!nextTokenIs(b, "", COMMENT, CONCEPT_HEADING_IDENTIFIER)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = concept(b, l + 1);
@@ -216,33 +214,44 @@ public class ConceptParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // CONCEPT_HEADING_IDENTIFIER (CONCEPT_HEADING|dynamicArg)*
+  // (CONCEPT_HEADING_IDENTIFIER (CONCEPT_HEADING|dynamicArg)*) | (CONCEPT_HEADING)
   public static boolean conceptHeading(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "conceptHeading")) return false;
-    if (!nextTokenIs(b, CONCEPT_HEADING_IDENTIFIER)) return false;
+    if (!nextTokenIs(b, "<concept heading>", CONCEPT_HEADING, CONCEPT_HEADING_IDENTIFIER)) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, "<concept heading>");
+    r = conceptHeading_0(b, l + 1);
+    if (!r) r = consumeToken(b, CONCEPT_HEADING);
+    exit_section_(b, l, m, CONCEPT_HEADING, r, false, null);
+    return r;
+  }
+
+  // CONCEPT_HEADING_IDENTIFIER (CONCEPT_HEADING|dynamicArg)*
+  private static boolean conceptHeading_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "conceptHeading_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, CONCEPT_HEADING_IDENTIFIER);
-    r = r && conceptHeading_1(b, l + 1);
-    exit_section_(b, m, CONCEPT_HEADING, r);
+    r = r && conceptHeading_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
     return r;
   }
 
   // (CONCEPT_HEADING|dynamicArg)*
-  private static boolean conceptHeading_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "conceptHeading_1")) return false;
+  private static boolean conceptHeading_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "conceptHeading_0_1")) return false;
     int c = current_position_(b);
     while (true) {
-      if (!conceptHeading_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "conceptHeading_1", c)) break;
+      if (!conceptHeading_0_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "conceptHeading_0_1", c)) break;
       c = current_position_(b);
     }
     return true;
   }
 
   // CONCEPT_HEADING|dynamicArg
-  private static boolean conceptHeading_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "conceptHeading_1_0")) return false;
+  private static boolean conceptHeading_0_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "conceptHeading_0_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, CONCEPT_HEADING);

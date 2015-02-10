@@ -52,6 +52,7 @@ ConceptHeadingIdentifier = "#"
   {StepIdentifier}              {yybegin(INSTEP);return STEP_IDENTIFIER;}
   {TableIdentifier}             {yybegin(INTABLEHEADER);return TABLE_BORDER;}
   {LineTerminator}? {WhiteSpace}* {NonWhiteSpaceAndIdentifierCharacter}+ {WhiteSpace}* ({StepIdentifier} | [##] | {TableIdentifier}) {InputCharacter}* {LineTerminator}? {return COMMENT;}
+  {InputCharacterWithoutIdentifiers}+ {LineTerminator}[=]+ {LineTerminator} {yybegin(YYINITIAL);return CONCEPT_HEADING;}
   [^]                           {return COMMENT;}
 }
 

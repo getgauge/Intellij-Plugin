@@ -37,7 +37,7 @@
 conceptFile ::= concept+
 concept ::= (comment)* conceptHeading NEW_LINE* (step NEW_LINE* | comment) +
 private comment ::= COMMENT
-conceptHeading ::= CONCEPT_HEADING_IDENTIFIER (CONCEPT_HEADING|dynamicArg)*
+conceptHeading ::= ((CONCEPT_HEADING_IDENTIFIER (CONCEPT_HEADING|dynamicArg)*) | (CONCEPT_HEADING))
 step ::= STEP_IDENTIFIER (arg|STEP)+ table?    {mixin="com.thoughtworks.gauge.language.psi.impl.ConceptNamedElementImpl"
                                    implements="com.thoughtworks.gauge.language.psi.ConceptNamedElement" methods = [getStepValue]}
 arg ::= dynamicArg | staticArg
