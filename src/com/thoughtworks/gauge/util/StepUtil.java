@@ -37,7 +37,7 @@ public class StepUtil {
             if (psiElement == null){
                 return null;
             }
-            return new ConceptStepImpl(psiElement.getNode());
+            return new ConceptStepImpl(psiElement.getNode(),true);
         }
         return method.getChildren()[0].getChildren()[0];
     }
