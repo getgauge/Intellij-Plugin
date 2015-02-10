@@ -38,6 +38,8 @@ public class StepCompletionContributor extends CompletionContributor {
         StepCompletionProvider provider = new StepCompletionProvider();
         provider.setConcept(true);
         extend(CompletionType.BASIC, PlatformPatterns.psiElement(ConceptTokenTypes.STEP).withLanguage(Concept.INSTANCE), provider);
+        extend(CompletionType.BASIC, PlatformPatterns.psiElement(ConceptTokenTypes.DYNAMIC_ARG).withLanguage(Concept.INSTANCE), new ConceptDynamicArgCompletionProvider());
+        extend(CompletionType.BASIC, PlatformPatterns.psiElement(ConceptTokenTypes.ARG).withLanguage(Concept.INSTANCE), new ConceptStaticArgCompletionProvider());
     }
 
     public static String getPrefix(CompletionParameters parameters) {

@@ -1,20 +1,4 @@
-// Copyright 2015 ThoughtWorks, Inc.
-
-// This file is part of getgauge/Intellij-plugin.
-
-// getgauge/Intellij-plugin is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-
-// getgauge/Intellij-plugin is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-
-// You should have received a copy of the GNU General Public License
-// along with getgauge/Intellij-plugin.  If not, see <http://www.gnu.org/licenses/>.
-
+// This is a generated file. Not intended for manual editing.
 package com.thoughtworks.gauge.language.token;
 
 import com.intellij.psi.tree.IElementType;
@@ -34,6 +18,7 @@ public interface ConceptTokenTypes {
   IElementType ARG_START = new ConceptTokenType("ARG_START");
   IElementType COMMENT = new ConceptTokenType("COMMENT");
   IElementType CONCEPT_HEADING = new ConceptTokenType("CONCEPT_HEADING");
+  IElementType CONCEPT_HEADING_IDENTIFIER = new ConceptTokenType("CONCEPT_HEADING_IDENTIFIER");
   IElementType DYNAMIC_ARG = new ConceptTokenType("DYNAMIC_ARG");
   IElementType DYNAMIC_ARG_END = new ConceptTokenType("DYNAMIC_ARG_END");
   IElementType DYNAMIC_ARG_START = new ConceptTokenType("DYNAMIC_ARG_START");
@@ -53,6 +38,9 @@ public interface ConceptTokenTypes {
       }
       else if (type == CONCEPT) {
         return new ConceptConceptImpl(node);
+      }
+      else if (type == CONCEPT_HEADING) {
+        return new ConceptConceptHeadingImpl(node);
       }
       else if (type == DYNAMIC_ARG) {
         return new ConceptDynamicArgImpl(node);

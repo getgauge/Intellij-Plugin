@@ -1,3 +1,4 @@
+// This is a generated file. Not intended for manual editing.
 package com.thoughtworks.gauge.language.psi.impl;
 
 import java.util.List;
@@ -16,15 +17,8 @@ import com.thoughtworks.gauge.StepValue;
 
 public class ConceptStepImpl extends ConceptNamedElementImpl implements ConceptStep {
 
-  private boolean isConcept = false;
-
   public ConceptStepImpl(ASTNode node) {
     super(node);
-  }
-
-  public ConceptStepImpl(@NotNull ASTNode node, boolean isConcept) {
-    super(node);
-    this.isConcept = isConcept;
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -62,10 +56,5 @@ public class ConceptStepImpl extends ConceptNamedElementImpl implements ConceptS
   @Override
   public PsiReference getReference() {
     return new ConceptReference(this);
-  }
-
-  @Override
-  public String toString() {
-    return this.isConcept ? this.getStepValue().getStepAnnotationText() : super.toString();
   }
 }

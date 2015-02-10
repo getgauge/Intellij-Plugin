@@ -11,27 +11,21 @@ import static com.thoughtworks.gauge.language.token.ConceptTokenTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.thoughtworks.gauge.language.psi.*;
 
-public class ConceptConceptImpl extends ASTWrapperPsiElement implements ConceptConcept {
+public class ConceptConceptHeadingImpl extends ASTWrapperPsiElement implements ConceptConceptHeading {
 
-  public ConceptConceptImpl(ASTNode node) {
+  public ConceptConceptHeadingImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof ConceptVisitor) ((ConceptVisitor)visitor).visitConcept(this);
+    if (visitor instanceof ConceptVisitor) ((ConceptVisitor)visitor).visitConceptHeading(this);
     else super.accept(visitor);
   }
 
   @Override
   @NotNull
-  public ConceptConceptHeading getConceptHeading() {
-    return findNotNullChildByClass(ConceptConceptHeading.class);
-  }
-
-  @Override
-  @NotNull
-  public List<ConceptStep> getStepList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, ConceptStep.class);
+  public List<ConceptDynamicArg> getDynamicArgList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, ConceptDynamicArg.class);
   }
 
 }

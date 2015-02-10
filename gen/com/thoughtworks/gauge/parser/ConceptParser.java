@@ -1,20 +1,3 @@
-// Copyright 2015 ThoughtWorks, Inc.
-
-// This file is part of getgauge/Intellij-plugin.
-
-// getgauge/Intellij-plugin is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-
-// getgauge/Intellij-plugin is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-
-// You should have received a copy of the GNU General Public License
-// along with getgauge/Intellij-plugin.  If not, see <http://www.gnu.org/licenses/>.
-
 // This is a generated file. Not intended for manual editing.
 package com.thoughtworks.gauge.parser;
 
@@ -44,6 +27,9 @@ public class ConceptParser implements PsiParser {
     }
     else if (t == CONCEPT) {
       r = concept(b, 0);
+    }
+    else if (t == CONCEPT_HEADING) {
+      r = conceptHeading(b, 0);
     }
     else if (t == DYNAMIC_ARG) {
       r = dynamicArg(b, 0);
@@ -96,15 +82,16 @@ public class ConceptParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // (comment)* conceptHeading (step | comment)+
+  // (comment)* conceptHeading NEW_LINE* (step NEW_LINE* | comment) +
   public static boolean concept(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "concept")) return false;
-    if (!nextTokenIs(b, "<concept>", COMMENT, CONCEPT_HEADING)) return false;
+    if (!nextTokenIs(b, "<concept>", COMMENT, CONCEPT_HEADING_IDENTIFIER)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, "<concept>");
     r = concept_0(b, l + 1);
     r = r && conceptHeading(b, l + 1);
     r = r && concept_2(b, l + 1);
+    r = r && concept_3(b, l + 1);
     exit_section_(b, l, m, CONCEPT, r, false, null);
     return r;
   }
@@ -131,38 +118,73 @@ public class ConceptParser implements PsiParser {
     return r;
   }
 
-  // (step | comment)+
+  // NEW_LINE*
   private static boolean concept_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "concept_2")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!consumeToken(b, NEW_LINE)) break;
+      if (!empty_element_parsed_guard_(b, "concept_2", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // (step NEW_LINE* | comment) +
+  private static boolean concept_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "concept_3")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = concept_2_0(b, l + 1);
+    r = concept_3_0(b, l + 1);
     int c = current_position_(b);
     while (r) {
-      if (!concept_2_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "concept_2", c)) break;
+      if (!concept_3_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "concept_3", c)) break;
       c = current_position_(b);
     }
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // step | comment
-  private static boolean concept_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "concept_2_0")) return false;
+  // step NEW_LINE* | comment
+  private static boolean concept_3_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "concept_3_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = step(b, l + 1);
+    r = concept_3_0_0(b, l + 1);
     if (!r) r = comment(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
+  }
+
+  // step NEW_LINE*
+  private static boolean concept_3_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "concept_3_0_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = step(b, l + 1);
+    r = r && concept_3_0_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // NEW_LINE*
+  private static boolean concept_3_0_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "concept_3_0_0_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!consumeToken(b, NEW_LINE)) break;
+      if (!empty_element_parsed_guard_(b, "concept_3_0_0_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
   }
 
   /* ********************************************************** */
   // concept+
   static boolean conceptFile(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "conceptFile")) return false;
-    if (!nextTokenIs(b, "", COMMENT, CONCEPT_HEADING)) return false;
+    if (!nextTokenIs(b, "", COMMENT, CONCEPT_HEADING_IDENTIFIER)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = concept(b, l + 1);
@@ -177,9 +199,39 @@ public class ConceptParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // CONCEPT_HEADING
-  static boolean conceptHeading(PsiBuilder b, int l) {
-    return consumeToken(b, CONCEPT_HEADING);
+  // CONCEPT_HEADING_IDENTIFIER (CONCEPT_HEADING|dynamicArg)*
+  public static boolean conceptHeading(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "conceptHeading")) return false;
+    if (!nextTokenIs(b, CONCEPT_HEADING_IDENTIFIER)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, CONCEPT_HEADING_IDENTIFIER);
+    r = r && conceptHeading_1(b, l + 1);
+    exit_section_(b, m, CONCEPT_HEADING, r);
+    return r;
+  }
+
+  // (CONCEPT_HEADING|dynamicArg)*
+  private static boolean conceptHeading_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "conceptHeading_1")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!conceptHeading_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "conceptHeading_1", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // CONCEPT_HEADING|dynamicArg
+  private static boolean conceptHeading_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "conceptHeading_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, CONCEPT_HEADING);
+    if (!r) r = dynamicArg(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */

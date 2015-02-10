@@ -5,6 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface ConceptDynamicArg extends PsiElement {
+public interface ConceptConceptHeading extends PsiElement {
+
+  @NotNull
+  List<ConceptDynamicArg> getDynamicArgList();
 
 }

@@ -35,26 +35,30 @@ import static com.thoughtworks.gauge.language.token.ConceptTokenTypes.*;
 %type IElementType
 %unicode
 %caseless
-%state INSTEP,INARG,INDYNAMIC,INTABLEHEADER,INTABLEBODY,INTABLEBODYROW,INDYNAMICTABLEITEM
+%state INSTEP,INARG,INDYNAMIC,INTABLEHEADER,INTABLEBODY,INTABLEBODYROW,INDYNAMICTABLEITEM,INCONCEPTHEADING,INDYNAMICCONCEPTARG
 
-EOL="\r"|"\n"|"\r\n"
-LINE_WS=[\ \t\f]
-WHITE_SPACE=({LINE_WS}|{EOL})+
 LineTerminator = \r|\n|\r\n
 InputCharacter = [^\r\n]
+InputCharacterWithoutIdentifiers = [^\r\n#*|]
 WhiteSpace = [ \t\f]
 TableIdentifier = [|]
 StepIdentifier = [*]
 NonWhiteSpaceAndIdentifierCharacter = [^ \r\n\t\f#*|]
-ConceptHeading = {WhiteSpace}* "#" {InputCharacter}* {LineTerminator}? | {WhiteSpace}* {InputCharacter}* {LineTerminator} [=]+ {LineTerminator}?
+ConceptHeadingIdentifier = "#"
 
 %%
 <YYINITIAL> {
-  {ConceptHeading}              {return CONCEPT_HEADING;}
+  {ConceptHeadingIdentifier}    {yybegin(INCONCEPTHEADING);return CONCEPT_HEADING_IDENTIFIER;}
   {StepIdentifier}              {yybegin(INSTEP);return STEP_IDENTIFIER;}
   {TableIdentifier}             {yybegin(INTABLEHEADER);return TABLE_BORDER;}
   {LineTerminator}? {WhiteSpace}* {NonWhiteSpaceAndIdentifierCharacter}+ {WhiteSpace}* ({StepIdentifier} | [##] | {TableIdentifier}) {InputCharacter}* {LineTerminator}? {return COMMENT;}
   [^]                           {return COMMENT;}
+}
+
+<INCONCEPTHEADING> {
+  [^<\"\r\n]*                   {yybegin(INCONCEPTHEADING); return CONCEPT_HEADING;}
+  [<]                           {yybegin(INDYNAMICCONCEPTARG); return DYNAMIC_ARG_START;}
+  {LineTerminator}?             {yybegin(YYINITIAL); return NEW_LINE;}
 }
 
 <INSTEP> {
@@ -72,6 +76,11 @@ ConceptHeading = {WhiteSpace}* "#" {InputCharacter}* {LineTerminator}? | {WhiteS
 <INDYNAMIC> {
   (\\<|\\>|[^\>])*              {return DYNAMIC_ARG; }
   [>]                           {yybegin(INSTEP); return DYNAMIC_ARG_END;}
+}
+
+<INDYNAMICCONCEPTARG> {
+  (\\<|\\>|[^\>])*              {return DYNAMIC_ARG; }
+  [>]                           {yybegin(INCONCEPTHEADING); return DYNAMIC_ARG_END;}
 }
 
 <INDYNAMICTABLEITEM> {
