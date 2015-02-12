@@ -39,10 +39,9 @@ public class ConceptPsiImplUtil extends SpecPsiImplUtil {
         int newLineIndex = stepText.indexOf("\n");
         int endIndex = newLineIndex == -1 ? stepText.length() : newLineIndex;
         ConceptTable inlineTable = element.getTable();
-        int index = 0;
+        stepText = stepText.substring(0, endIndex).trim();
         if (stepText.trim().charAt(0)=='#')
-            index = 1;
-        stepText = stepText.substring(index, endIndex).trim();
+            stepText = stepText.substring(1, endIndex).trim();
         Module moduleForElement = ModuleUtil.findModuleForPsiElement(element);
         GaugeService gaugeService = Gauge.getGaugeService(moduleForElement);
         if (gaugeService == null) {
