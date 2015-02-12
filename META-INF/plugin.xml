@@ -18,12 +18,22 @@
 <idea-plugin version="2">
   <id>com.thoughtworks.gauge</id>
   <name>Gauge</name>
-  <version>0.0.2</version>
-  <vendor email="getgauge@googlegroups.com" url="http:getgauge.io">Gauge</vendor>
+  <version>0.0.3</version>
+  <vendor email="getgauge@googlegroups.com" url="http://getgauge.io">Gauge</vendor>
 
   <description><![CDATA[
       Plugin for writing Gauge tests
-      <p>The plugin provides the following features:</p>
+      <p>New Features in v0.0.3</p>
+        <ul>
+           <li> Refactoring of steps across gauge project </li>
+           <li> Single scenario execution </li>
+           <li> Multiple spec execution from project explorer </li>
+           <li> Tag expression in spec run configuration </li>
+           <li> Template for adding tables </li>
+           <li> Specification and concept file creation </li>
+        </ul>
+      <\ br>
+      <p>The plugin provides the following basic features:</p>
         <ul>
             <li>Basic language parsing and highlighting</li>
             <li>Project Creation</li>
