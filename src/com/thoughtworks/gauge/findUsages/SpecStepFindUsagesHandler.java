@@ -76,12 +76,6 @@ public class SpecStepFindUsagesHandler extends FindUsagesHandler {
         return super.getFindUsagesOptions();
     }
 
-    @Nullable
-    @Override
-    protected String getHelpId() {
-        return super.getHelpId();
-    }
-
     @NotNull
     @Override
     public PsiElement[] getSecondaryElements() {
