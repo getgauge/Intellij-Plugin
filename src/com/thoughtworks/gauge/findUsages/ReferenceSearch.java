@@ -20,6 +20,7 @@ package com.thoughtworks.gauge.findUsages;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.source.PsiMethodImpl;
 import com.intellij.psi.impl.source.tree.java.PsiAnnotationImpl;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -37,60 +38,61 @@ public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesS
         ApplicationManager.getApplication().runReadAction(new Runnable() {
             @Override
             public void run() {
-            checkInConceptFiles(searchParameters, processor);
-            checkInSpecFiles(searchParameters, processor);
+                Collection<ConceptStepImpl> conceptSteps = getConceptSteps(searchParameters.getElementToSearch());
+                Collection<SpecStep> specSteps = getSpecSteps(searchParameters.getElementToSearch());
+                Class<? extends PsiElement> elementClass = searchParameters.getElementToSearch().getClass();
+                if (elementClass.equals(ConceptStepImpl.class))
+                    handleConceptStep(conceptSteps, specSteps, searchParameters, processor);
+                else if (elementClass.equals(PsiAnnotationImpl.class) || elementClass.equals(PsiMethodImpl.class))
+                    handleAnnotation(conceptSteps, specSteps, searchParameters, processor);
+                else if (elementClass.equals(SpecStepImpl.class))
+                    handleSpecStep(conceptSteps, specSteps, searchParameters, processor);
             }
         });
     }
 
-    private void checkInSpecFiles(ReferencesSearch.SearchParameters searchParameters, Processor<PsiReference> processor) {
-        Collection<SpecStep> specSteps = getSpecSteps(searchParameters.getElementToSearch());
-        for (final SpecStep specStep : specSteps) {
-            final PsiElement elementToSearch = searchParameters.getElementToSearch();
-            if (elementToSearch.getClass().equals(PsiAnnotationImpl.class)) {
-                handleAnnotation(searchParameters, processor, specStep, replaceParamValues(getStepAnnotationText(specStep)));
-                continue;
-            }
-            final String text = ((PsiNamedElement) elementToSearch).getName();
-            if (elementToSearch.getClass().equals(ConceptStepImpl.class) && replaceParamValues(getConceptStepText(((ConceptStepImpl) elementToSearch))).equals(specStep.getStepValue().getStepAnnotationText().trim()))
-                processor.process(specStep.getReference());
-            if (text != null && specStep.getName() != null && specStep.getName().trim().equals(text.trim()))
-                processor.process(specStep.getReference());
-        }
+    private void handleSpecStep(Collection<ConceptStepImpl> conceptSteps, Collection<SpecStep> specSteps, ReferencesSearch.SearchParameters searchParameters, Processor<PsiReference> processor) {
+        String text = getStepAnnotationText(((SpecStepImpl) searchParameters.getElementToSearch()));
+        for (ConceptStepImpl conceptStep : conceptSteps)
+            process(processor, conceptStep, text.equals(getConceptStepText(conceptStep)));
+        text = ((SpecStepImpl) searchParameters.getElementToSearch()).getName();
+        for (final SpecStep specStep : specSteps)
+            process(processor, specStep, text != null && specStep.getName() != null && specStep.getName().trim().equals(text.trim()));
+    }
+
+    private void process(Processor<PsiReference> processor, PsiNamedElement conceptStep, boolean equals) {
+        if (equals) processor.process(conceptStep.getReference());
+    }
+
+    private void handleAnnotation(Collection<ConceptStepImpl> conceptSteps, Collection<SpecStep> specSteps, ReferencesSearch.SearchParameters searchParameters, Processor<PsiReference> processor) {
+        for (ConceptStepImpl conceptStep : conceptSteps)
+            handleAnnotation(searchParameters, processor, conceptStep, getConceptStepText(conceptStep));
+        for (final SpecStep specStep : specSteps)
+            handleAnnotation(searchParameters, processor, specStep, replaceParamValues(getStepAnnotationText(specStep)));
+    }
+
+    private void handleConceptStep(Collection<ConceptStepImpl> conceptSteps, Collection<SpecStep> specSteps, ReferencesSearch.SearchParameters searchParameters, Processor<PsiReference> processor) {
+        String conceptStepText = getConceptStepText((ConceptStepImpl) searchParameters.getElementToSearch());
+        for (ConceptStepImpl conceptStep : conceptSteps)
+            process(processor, conceptStep, replaceParamValues(conceptStepText).equals(replaceParamValues(getConceptStepText(conceptStep))));
+        for (final SpecStep specStep : specSteps)
+            process(processor, specStep, replaceParamValues(conceptStepText).equals(getStepAnnotationText(specStep)));
     }
 
     private String getConceptStepText(ConceptStepImpl elementToSearch) {
         String text = elementToSearch.getStepValue().getStepAnnotationText().trim();
-        if (!text.equals("") && text.charAt(0) == '*' || text.charAt(0) == '#')
-            return text.substring(1).trim();
-        return text;
-    }
-
-    private void checkInConceptFiles(ReferencesSearch.SearchParameters searchParameters, Processor<PsiReference> processor) {
-        Collection<ConceptStepImpl> conceptSteps = getConceptSteps(searchParameters.getElementToSearch());
-        if (searchParameters.getElementToSearch().getClass().equals(ConceptStepImpl.class))
-            for (ConceptStepImpl conceptStep : conceptSteps)
-                if (replaceParamValues(getConceptStepText((ConceptStepImpl) searchParameters.getElementToSearch())).equals(replaceParamValues(getConceptStepText(conceptStep))))
-                    processor.process(conceptStep.getReference());
-        if (searchParameters.getElementToSearch().getClass().equals(PsiAnnotationImpl.class))
-            for (ConceptStepImpl conceptStep : conceptSteps)
-                handleAnnotation(searchParameters, processor, conceptStep, getConceptStepText(conceptStep));
-        if (searchParameters.getElementToSearch().getClass().equals(SpecStepImpl.class))
-            for (ConceptStepImpl conceptStep : conceptSteps)
-                if (getStepAnnotationText(((SpecStepImpl) searchParameters.getElementToSearch())).equals(getConceptStepText(conceptStep)))
-                    processor.process(conceptStep.getReference());
+        return !text.equals("") && text.charAt(0) == '*' || text.charAt(0) == '#' ? text.substring(1).trim() : text;
     }
 
     private String getStepAnnotationText(SpecStep elementToSearch) {
-        return elementToSearch.getStepValue().getStepAnnotationText();
+        return elementToSearch.getStepValue().getStepAnnotationText().trim();
     }
 
     private void handleAnnotation(ReferencesSearch.SearchParameters searchParameters, Processor<PsiReference> processor, PsiNamedElement conceptStep, String text) {
         Collection<PsiNameValuePair> psiNameValuePairs = PsiTreeUtil.collectElementsOfType(searchParameters.getElementToSearch(), PsiNameValuePair.class);
         String stepText = replaceParamValues(text);
         for (PsiNameValuePair psiNameValuePair : psiNameValuePairs)
-            if (stepText.equals(replaceParamValues(removeQuotes(psiNameValuePair.getText()))))
-                processor.process(conceptStep.getReference());
+            process(processor, conceptStep, stepText.equals(replaceParamValues(removeQuotes(psiNameValuePair.getText()))));
     }
 
     private String replaceParamValues(String conceptStepText) {
@@ -102,18 +104,15 @@ public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesS
     }
 
     private Collection<SpecStep> getSpecSteps(PsiElement element) {
-        PsiDirectory directory = getPsiDirectory(element, element.getContainingFile().getContainingDirectory());
-        return PsiTreeUtil.collectElementsOfType(directory, SpecStep.class);
+        return PsiTreeUtil.collectElementsOfType(getPsiDirectory(element, element.getContainingFile().getContainingDirectory()), SpecStep.class);
     }
 
     private Collection<ConceptStepImpl> getConceptSteps(PsiElement element) {
-        PsiDirectory directory = getPsiDirectory(element, element.getContainingFile().getContainingDirectory());
-        return PsiTreeUtil.collectElementsOfType(directory, ConceptStepImpl.class);
+        return PsiTreeUtil.collectElementsOfType(getPsiDirectory(element, element.getContainingFile().getContainingDirectory()), ConceptStepImpl.class);
     }
 
     private PsiDirectory getPsiDirectory(PsiElement element, PsiDirectory directory) {
-        if (directory.getParentDirectory() == null)
-            return null;
+        if (directory.getParentDirectory() == null) return null;
         if (element.getProject().getName().equals(directory.getParentDirectory().getName()))
             return directory.getParentDirectory();
         return getPsiDirectory(element, directory.getParentDirectory());
