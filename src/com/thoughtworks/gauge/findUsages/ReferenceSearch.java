@@ -25,12 +25,15 @@ import com.intellij.psi.impl.source.tree.java.PsiAnnotationImpl;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
+import com.thoughtworks.gauge.StepRegistry;
 import com.thoughtworks.gauge.language.psi.SpecStep;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
     @Override
@@ -65,10 +68,23 @@ public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesS
     }
 
     private void handleAnnotation(Collection<ConceptStepImpl> conceptSteps, Collection<SpecStep> specSteps, ReferencesSearch.SearchParameters searchParameters, Processor<PsiReference> processor) {
+        Collection<PsiNameValuePair> pairs = PsiTreeUtil.collectElementsOfType(searchParameters.getElementToSearch(), PsiNameValuePair.class);
+        List<String> steps = handleStepAliases(pairs);
         for (ConceptStepImpl conceptStep : conceptSteps)
-            handleAnnotation(searchParameters, processor, conceptStep, getConceptStepText(conceptStep));
+            handleAnnotation(processor, conceptStep, getConceptStepText(conceptStep), steps);
         for (final SpecStep specStep : specSteps)
-            handleAnnotation(searchParameters, processor, specStep, replaceParamValues(getStepAnnotationText(specStep)));
+            handleAnnotation(processor, specStep, replaceParamValues(getStepAnnotationText(specStep)), steps);
+    }
+
+    private List<String> handleStepAliases(Collection<PsiNameValuePair> pairs) {
+        List<String> steps = new ArrayList<String>();
+        for (PsiNameValuePair pair : pairs)
+            if (pair.getText().startsWith("{"))
+                for (String step : pair.getText().trim().substring(2, pair.getText().length() - 2).trim().split("\"\\s*,\\s*\""))
+                    steps.add(step.trim());
+            else
+                steps.add(pair.getText());
+        return steps;
     }
 
     private void handleConceptStep(Collection<ConceptStepImpl> conceptSteps, Collection<SpecStep> specSteps, ReferencesSearch.SearchParameters searchParameters, Processor<PsiReference> processor) {
@@ -88,11 +104,10 @@ public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesS
         return elementToSearch.getStepValue().getStepAnnotationText().trim();
     }
 
-    private void handleAnnotation(ReferencesSearch.SearchParameters searchParameters, Processor<PsiReference> processor, PsiNamedElement conceptStep, String text) {
-        Collection<PsiNameValuePair> psiNameValuePairs = PsiTreeUtil.collectElementsOfType(searchParameters.getElementToSearch(), PsiNameValuePair.class);
+    private void handleAnnotation(Processor<PsiReference> processor, PsiNamedElement conceptStep, String text, List<String> steps) {
         String stepText = replaceParamValues(text);
-        for (PsiNameValuePair psiNameValuePair : psiNameValuePairs)
-            process(processor, conceptStep, stepText.equals(replaceParamValues(removeQuotes(psiNameValuePair.getText()))));
+        for (String step : steps)
+            process(processor, conceptStep, stepText.equals(replaceParamValues(removeQuotes(step))));
     }
 
     private String replaceParamValues(String conceptStepText) {
@@ -100,7 +115,7 @@ public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesS
     }
 
     private String removeQuotes(String text) {
-        return text.substring(1, text.length() - 1);
+        return text.charAt(0) == '"' ? text.substring(1, text.length() - 1) : text;
     }
 
     private Collection<SpecStep> getSpecSteps(PsiElement element) {
