@@ -89,6 +89,7 @@
       <renameHandler implementation="com.thoughtworks.gauge.rename.CustomRenameHandler"/>
       <fileTemplateGroup implementation="com.thoughtworks.gauge.core.SpecificationLiveTemplate"/>
       <defaultLiveTemplatesProvider implementation="com.thoughtworks.gauge.core.TableTemplateProvider"/>
+      <fileEditorProvider implementation="com.thoughtworks.gauge.markdownPreview.MarkdownPreviewEditorProvider"/>
   </extensions>
 
   <application-components>
