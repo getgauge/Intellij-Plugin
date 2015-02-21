@@ -84,7 +84,7 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
                 String failureMessage = "project initialization unsuccessful";
                 try {
                     ProcessBuilder processBuilder = new ProcessBuilder(init);
-                    processBuilder.directory(new File(path, getName()));
+                    processBuilder.directory(new File(getModuleFileDirectory()));
                     Process process = processBuilder.start();
                     final int exitCode = process.waitFor();
                     if (exitCode != 0) {
