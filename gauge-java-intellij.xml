@@ -323,6 +323,10 @@
         <patternset refid="compiler.resources"/>
         <type type="file"/>
       </fileset>
+      <fileset dir="${module.gauge-java-intellij.basedir}/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
     </copy>
   </target>
   
