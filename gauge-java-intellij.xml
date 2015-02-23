@@ -351,6 +351,13 @@
     </jar>
     <copy file="${module.gauge-java-intellij.basedir}/lib/gaugert-0.0.2.jar" tofile="${tmp.dir.gauge-java-intellij}/Gauge-Java-Intellij/lib/gaugert-0.0.2.jar"/>
     <copy file="${module.gauge-java-intellij.basedir}/lib/commons-io-2.4.jar" tofile="${tmp.dir.gauge-java-intellij}/Gauge-Java-Intellij/lib/commons-io-2.4.jar"/>
+    <copy file="${module.gauge-java-intellij.basedir}/lib/asm-4.1.jar" tofile="${tmp.dir.gauge-java-intellij}/Gauge-Java-Intellij/lib/asm-4.1.jar"/>
+    <copy file="${module.gauge-java-intellij.basedir}/lib/asm-analysis-4.1.jar" tofile="${tmp.dir.gauge-java-intellij}/Gauge-Java-Intellij/lib/asm-analysis-4.1.jar"/>
+    <copy file="${module.gauge-java-intellij.basedir}/lib/asm-tree-4.1.jar" tofile="${tmp.dir.gauge-java-intellij}/Gauge-Java-Intellij/lib/asm-tree-4.1.jar"/>
+    <copy file="${module.gauge-java-intellij.basedir}/lib/asm-util-4.1.jar" tofile="${tmp.dir.gauge-java-intellij}/Gauge-Java-Intellij/lib/asm-util-4.1.jar"/>
+    <copy file="${module.gauge-java-intellij.basedir}/lib/parboiled-core-1.1.6.jar" tofile="${tmp.dir.gauge-java-intellij}/Gauge-Java-Intellij/lib/parboiled-core-1.1.6.jar"/>
+    <copy file="${module.gauge-java-intellij.basedir}/lib/parboiled-java-1.1.6.jar" tofile="${tmp.dir.gauge-java-intellij}/Gauge-Java-Intellij/lib/parboiled-java-1.1.6.jar"/>
+    <copy file="${module.gauge-java-intellij.basedir}/lib/pegdown-1.4.2.jar" tofile="${tmp.dir.gauge-java-intellij}/Gauge-Java-Intellij/lib/pegdown-1.4.2.jar"/>
     <zip destfile="${gauge-java-intellij.plugin.path.jar}">
       <fileset dir="${module.gauge-java-intellij.basedir}/../temp"/>
     </zip>
