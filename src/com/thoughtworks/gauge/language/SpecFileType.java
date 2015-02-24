@@ -18,6 +18,7 @@
 package com.thoughtworks.gauge.language;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
+import com.thoughtworks.gauge.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,7 +46,7 @@ public class SpecFileType extends LanguageFileType {
     @NotNull
     @Override
     public String getDefaultExtension() {
-        return "spec";
+        return Constants.SPEC_EXTENSION;
     }
 
     @Nullable

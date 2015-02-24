@@ -1,11 +1,14 @@
 package com.thoughtworks.gauge.util;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.EnvironmentUtil;
 import com.thoughtworks.gauge.GaugeConstant;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
+
+import static com.thoughtworks.gauge.Constants.*;
 
 public class GaugeUtil {
     private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.GaugeUtil");
@@ -43,4 +46,11 @@ public class GaugeUtil {
         return GaugeConstant.GAUGE;
     }
 
+    public static boolean isGaugeFile(VirtualFile file) {
+        String extension = file.getExtension().toLowerCase();
+        if (extension.equals(SPEC_EXTENSION) || extension.equals(MD_EXTENSION) || extension.equals(CONCEPT_EXTENSION)) {
+            return true;
+        }
+        return false;
+    }
 }

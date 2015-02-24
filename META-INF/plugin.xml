@@ -84,7 +84,7 @@
       <runConfigurationProducer implementation="com.thoughtworks.gauge.execution.GaugeExecutionProducer"/>
       <runConfigurationProducer implementation="com.thoughtworks.gauge.execution.ScenarioExecutionProducer"/>
       <runConfigurationProducer implementation="com.thoughtworks.gauge.execution.SpecsExecutionProducer"/>
-      <editorActionHandler action="EditorEnter" implementationClass="com.thoughtworks.gauge.GaugeEnterHandler"/>
+      <enterHandlerDelegate implementation="com.thoughtworks.gauge.GaugeEnterHandlerDelegate"/>
       <renameHandler implementation="com.thoughtworks.gauge.rename.CustomRenameHandler"/>
       <fileTemplateGroup implementation="com.thoughtworks.gauge.core.SpecificationLiveTemplate"/>
       <defaultLiveTemplatesProvider implementation="com.thoughtworks.gauge.core.TableTemplateProvider"/>
