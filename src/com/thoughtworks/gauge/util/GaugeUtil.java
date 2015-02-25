@@ -1,6 +1,7 @@
 package com.thoughtworks.gauge.util;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.EnvironmentUtil;
 import com.thoughtworks.gauge.Constants;
@@ -71,5 +72,9 @@ public class GaugeUtil {
 
     private static boolean containsManifest(File projectDir) {
         return new File(projectDir, Constants.MANIFEST_FILE).exists();
+    }
+
+    public static File moduleDirFromModule(Module module) {
+        return new File(module.getModuleFilePath()).getParentFile();
     }
 }
