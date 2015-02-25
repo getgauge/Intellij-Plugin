@@ -23,6 +23,7 @@ import com.intellij.openapi.module.ModuleComponent;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
 import com.thoughtworks.gauge.module.GaugeModuleType;
+import com.thoughtworks.gauge.util.GaugeUtil;
 import com.thoughtworks.gauge.util.SocketUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -99,14 +100,14 @@ public class GaugeModuleComponent implements ModuleComponent {
         try {
             return gauge.start();
         } catch (IOException e) {
-            LOG.error("could not start gauge api:" + e.getMessage(), e);
+            LOG.error("Could not start gauge api:" + e.getMessage(), e);
             System.out.println("could not start gauge api:" + e.getMessage());
         }
         return null;
     }
 
     private boolean isGaugeModule(Module module) {
-        return GaugeModuleType.MODULE_TYPE_ID.equals(module.getOptionValue(Module.ELEMENT_TYPE));
+        return GaugeModuleType.MODULE_TYPE_ID.equals(module.getOptionValue(Module.ELEMENT_TYPE)) || GaugeUtil.isGaugeProjectDir(module.getProject().getBaseDir());
     }
 
 }

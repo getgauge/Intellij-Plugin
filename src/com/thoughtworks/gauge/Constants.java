@@ -22,4 +22,6 @@ public class Constants {
     public static final String SPEC_EXTENSION = "spec";
     public static final String MD_EXTENSION = "md";
     public static final String CONCEPT_EXTENSION = "cpt";
+    public static final String MANIFEST_FILE = "manifest.json";
+    public static final String SPECS_DIR = "specs";
 }

@@ -3,6 +3,7 @@ package com.thoughtworks.gauge.util;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.EnvironmentUtil;
+import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.GaugeConstant;
 import org.apache.commons.lang.StringUtils;
 
@@ -52,5 +53,22 @@ public class GaugeUtil {
             return true;
         }
         return false;
+    }
+
+    public static boolean isGaugeProjectDir(VirtualFile dir) {
+        File projectDir = new File(dir.getPath());
+        if (containsManifest(projectDir) && containsSpecsDir(projectDir)) {
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean containsSpecsDir(File projectDir) {
+        File specDir = new File(projectDir, Constants.SPECS_DIR);
+        return specDir.exists() && specDir.isDirectory();
+    }
+
+    private static boolean containsManifest(File projectDir) {
+        return new File(projectDir, Constants.MANIFEST_FILE).exists();
     }
 }
