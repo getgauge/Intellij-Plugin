@@ -5,6 +5,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.EnvironmentUtil;
 import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.GaugeConstant;
+import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
@@ -15,14 +16,14 @@ public class GaugeUtil {
     private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.GaugeUtil");
     private static String gaugePath = null;
 
-    public static String getGaugeExecPath() {
+    public static String getGaugeExecPath() throws GaugeNotFoundException {
         if (gaugePath == null) {
             gaugePath = getPath();
         }
         return gaugePath;
     }
 
-    private static String getPath() {
+    private static String getPath() throws GaugeNotFoundException {
         String path = EnvironmentUtil.getValue("PATH");
         LOG.info("PATH => " + path);
         String gaugeHome = EnvironmentUtil.getValue("GAUGE_ROOT");
@@ -44,7 +45,7 @@ public class GaugeUtil {
             }
         }
         LOG.warn("Could not find executable in PATH or GAUGE_ROOT");
-        return GaugeConstant.GAUGE;
+        throw new GaugeNotFoundException("Could not find executable in PATH or GAUGE_ROOT. Gauge is not installed.");
     }
 
     public static boolean isGaugeFile(VirtualFile file) {

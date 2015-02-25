@@ -39,6 +39,7 @@ import com.thoughtworks.gauge.GaugeModuleComponent;
 import com.thoughtworks.gauge.PluginNotInstalledException;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
+import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,8 +57,17 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
     @Override
     public void setupRootModel(ModifiableRootModel modifiableRootModel) throws ConfigurationException {
         super.setupRootModel(modifiableRootModel);
+        checkGaugeIsInstalled();
         gaugeInit(modifiableRootModel);
         addGaugeLibToModule(modifiableRootModel);
+    }
+
+    private void checkGaugeIsInstalled() {
+        try {
+            getGaugeExecPath();
+        } catch (GaugeNotFoundException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Nullable
@@ -77,12 +87,12 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
                 progressIndicator.setIndeterminate(true);
                 progressIndicator.setText2("This might take a few minutes if gauge-" + getLanguage() + " runner is not installed");
                 final String path = getPathForInitialization(modifiableRootModel);
-                final String[] init = {
-                        getGaugeExecPath(),
-                        INIT_FLAG, getLanguage()
-                };
-                String failureMessage = "project initialization unsuccessful";
+                String failureMessage = "Project initialization unsuccessful";
                 try {
+                    final String[] init = {
+                            getGaugeExecPath(),
+                            INIT_FLAG, getLanguage()
+                    };
                     ProcessBuilder processBuilder = new ProcessBuilder(init);
                     processBuilder.directory(new File(getModuleFileDirectory()));
                     Process process = processBuilder.start();
@@ -94,6 +104,8 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
                     throw new RuntimeException(failureMessage, e);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(failureMessage, e);
+                } catch (GaugeNotFoundException e) {
+                    throw new RuntimeException(String.format("%s: %s", failureMessage, e.getMessage()), e);
                 }
             }
         });

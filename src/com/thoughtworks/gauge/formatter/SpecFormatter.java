@@ -52,9 +52,9 @@ public class SpecFormatter extends AnAction {
             FileDocumentManager.getInstance().saveDocument(doc);
         }
 
-        ProcessBuilder processBuilder = new ProcessBuilder(getGaugeExecPath(), "--format", fileName);
-        processBuilder.directory(new File(projectDir));
         try {
+            ProcessBuilder processBuilder = new ProcessBuilder(getGaugeExecPath(), "--format", fileName);
+            processBuilder.directory(new File(projectDir));
             Process process = processBuilder.start();
             int exitCode = process.waitFor();
             if (exitCode == 0) {

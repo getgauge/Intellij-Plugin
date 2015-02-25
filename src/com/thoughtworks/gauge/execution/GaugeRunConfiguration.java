@@ -32,6 +32,8 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizer;
 import com.intellij.openapi.util.WriteExternalException;
 import com.jgoodies.common.base.Strings;
+import com.thoughtworks.gauge.GaugeConstant;
+import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import com.thoughtworks.gauge.util.GaugeUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -70,25 +72,34 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
             @Override
             protected ProcessHandler startProcess() throws ExecutionException {
                 GeneralCommandLine commandLine = new GeneralCommandLine();
-                commandLine.setExePath(GaugeUtil.getGaugeExecPath());
-                commandLine.addParameter(SIMPLE_CONSOLE_FLAG);
-                if (!Strings.isBlank(tags)) {
-                    commandLine.addParameter(TAGS_FLAG);
-                    commandLine.addParameter(tags);
+                try {
+                    commandLine.setExePath(GaugeUtil.getGaugeExecPath());
+                } catch (GaugeNotFoundException e) {
+                    commandLine.setExePath(GaugeConstant.GAUGE);
+                } finally {
+                    addFlags(commandLine, env);
+                    return GaugeRunProcessHandler.runCommandLine(commandLine);
                 }
-                commandLine.setWorkDirectory(getProject().getBaseDir().getPath());
-                if (!Strings.isBlank(environment)) {
-                    commandLine.addParameters(ENV_FLAG, environment);
-                }
-                if (!Strings.isBlank(specsToExecute)) {
-                    addSpecs(commandLine, specsToExecute);
-                }
-                if (DefaultDebugExecutor.EXECUTOR_ID.equals(env.getExecutor().getId())) {
-                    commandLine.getEnvironment().put(GAUGE_DEBUG_OPTS_ENV, JAVA_DEBUG_PORT);
-                }
-                return GaugeRunProcessHandler.runCommandLine(commandLine);
             }
         };
+    }
+
+    private void addFlags(GeneralCommandLine commandLine, ExecutionEnvironment env) {
+        commandLine.addParameter(SIMPLE_CONSOLE_FLAG);
+        if (!Strings.isBlank(tags)) {
+            commandLine.addParameter(TAGS_FLAG);
+            commandLine.addParameter(tags);
+        }
+        commandLine.setWorkDirectory(getProject().getBaseDir().getPath());
+        if (!Strings.isBlank(environment)) {
+            commandLine.addParameters(ENV_FLAG, environment);
+        }
+        if (!Strings.isBlank(specsToExecute)) {
+            addSpecs(commandLine, specsToExecute);
+        }
+        if (DefaultDebugExecutor.EXECUTOR_ID.equals(env.getExecutor().getId())) {
+            commandLine.getEnvironment().put(GAUGE_DEBUG_OPTS_ENV, JAVA_DEBUG_PORT);
+        }
     }
 
     private void addSpecs(GeneralCommandLine commandLine, String specsToExecute) {
