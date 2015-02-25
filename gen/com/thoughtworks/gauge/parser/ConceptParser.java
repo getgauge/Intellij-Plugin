@@ -1,20 +1,3 @@
-// Copyright 2015 ThoughtWorks, Inc.
-
-// This file is part of getgauge/Intellij-plugin.
-
-// getgauge/Intellij-plugin is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-
-// getgauge/Intellij-plugin is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-
-// You should have received a copy of the GNU General Public License
-// along with getgauge/Intellij-plugin.  If not, see <http://www.gnu.org/licenses/>.
-
 // This is a generated file. Not intended for manual editing.
 package com.thoughtworks.gauge.parser;
 
@@ -513,16 +496,115 @@ public class ConceptParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // TABLE_ROW_VALUE | DYNAMIC_ARG_START DYNAMIC_ARG DYNAMIC_ARG_END
+  // TABLE_ROW_VALUE+ | (DYNAMIC_ARG_START DYNAMIC_ARG+ DYNAMIC_ARG_END WHITESPACE* TABLE_ROW_VALUE* WHITESPACE*)+
   public static boolean tableRowValue(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "tableRowValue")) return false;
     if (!nextTokenIs(b, "<table row value>", DYNAMIC_ARG_START, TABLE_ROW_VALUE)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, "<table row value>");
-    r = consumeToken(b, TABLE_ROW_VALUE);
-    if (!r) r = parseTokens(b, 0, DYNAMIC_ARG_START, DYNAMIC_ARG, DYNAMIC_ARG_END);
+    r = tableRowValue_0(b, l + 1);
+    if (!r) r = tableRowValue_1(b, l + 1);
     exit_section_(b, l, m, TABLE_ROW_VALUE, r, false, null);
     return r;
+  }
+
+  // TABLE_ROW_VALUE+
+  private static boolean tableRowValue_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "tableRowValue_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, TABLE_ROW_VALUE);
+    int c = current_position_(b);
+    while (r) {
+      if (!consumeToken(b, TABLE_ROW_VALUE)) break;
+      if (!empty_element_parsed_guard_(b, "tableRowValue_0", c)) break;
+      c = current_position_(b);
+    }
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // (DYNAMIC_ARG_START DYNAMIC_ARG+ DYNAMIC_ARG_END WHITESPACE* TABLE_ROW_VALUE* WHITESPACE*)+
+  private static boolean tableRowValue_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "tableRowValue_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = tableRowValue_1_0(b, l + 1);
+    int c = current_position_(b);
+    while (r) {
+      if (!tableRowValue_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "tableRowValue_1", c)) break;
+      c = current_position_(b);
+    }
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // DYNAMIC_ARG_START DYNAMIC_ARG+ DYNAMIC_ARG_END WHITESPACE* TABLE_ROW_VALUE* WHITESPACE*
+  private static boolean tableRowValue_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "tableRowValue_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, DYNAMIC_ARG_START);
+    r = r && tableRowValue_1_0_1(b, l + 1);
+    r = r && consumeToken(b, DYNAMIC_ARG_END);
+    r = r && tableRowValue_1_0_3(b, l + 1);
+    r = r && tableRowValue_1_0_4(b, l + 1);
+    r = r && tableRowValue_1_0_5(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // DYNAMIC_ARG+
+  private static boolean tableRowValue_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "tableRowValue_1_0_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, DYNAMIC_ARG);
+    int c = current_position_(b);
+    while (r) {
+      if (!consumeToken(b, DYNAMIC_ARG)) break;
+      if (!empty_element_parsed_guard_(b, "tableRowValue_1_0_1", c)) break;
+      c = current_position_(b);
+    }
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // WHITESPACE*
+  private static boolean tableRowValue_1_0_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "tableRowValue_1_0_3")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!consumeToken(b, WHITESPACE)) break;
+      if (!empty_element_parsed_guard_(b, "tableRowValue_1_0_3", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // TABLE_ROW_VALUE*
+  private static boolean tableRowValue_1_0_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "tableRowValue_1_0_4")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!consumeToken(b, TABLE_ROW_VALUE)) break;
+      if (!empty_element_parsed_guard_(b, "tableRowValue_1_0_4", c)) break;
+      c = current_position_(b);
+    }
+    return true;
+  }
+
+  // WHITESPACE*
+  private static boolean tableRowValue_1_0_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "tableRowValue_1_0_5")) return false;
+    int c = current_position_(b);
+    while (true) {
+      if (!consumeToken(b, WHITESPACE)) break;
+      if (!empty_element_parsed_guard_(b, "tableRowValue_1_0_5", c)) break;
+      c = current_position_(b);
+    }
+    return true;
   }
 
 }

@@ -35,7 +35,7 @@ import static com.thoughtworks.gauge.language.token.ConceptTokenTypes.*;
 %type IElementType
 %unicode
 %caseless
-%state INSTEP,INARG,INDYNAMIC,INTABLEHEADER,INTABLEBODY,INTABLEBODYROW,INDYNAMICTABLEITEM,INCONCEPTHEADING,INDYNAMICCONCEPTARG
+%state INSTEP,INARG,INDYNAMIC,INTABLEHEADER,INTABLEBODY,INTABLEBODYROW,INDYNAMICTABLEITEM,INCONCEPTHEADING,INDYNAMICCONCEPTARG,INTABLECELL
 
 LineTerminator = \r|\n|\r\n
 InputCharacter = [^\r\n]
@@ -85,8 +85,10 @@ ConceptHeadingIdentifier = "#"
 }
 
 <INDYNAMICTABLEITEM> {
-  (\\<|\\>|[^\>])*              {return DYNAMIC_ARG; }
-  [>]                           {yybegin(INTABLEBODYROW); return DYNAMIC_ARG_END;}
+  (\\<|\\>|[^\>|]|[\\\|])            {yybegin(INDYNAMICTABLEITEM); return DYNAMIC_ARG; }
+  [>]                                {yybegin(INTABLEBODYROW); return DYNAMIC_ARG_END;}
+  {TableIdentifier}                  {yybegin(INTABLEBODYROW); return TABLE_BORDER;}
+  {LineTerminator}{WhiteSpace}*      {yybegin(INTABLEBODY);return NEW_LINE;}
 }
 
 <INTABLEHEADER> {
@@ -94,17 +96,23 @@ ConceptHeadingIdentifier = "#"
     {TableIdentifier}                       {yybegin(INTABLEHEADER); return TABLE_BORDER;}
     {LineTerminator}{WhiteSpace}*           {yybegin(INTABLEBODY);return NEW_LINE;}
 }
+
 <INTABLEBODY> {
     {TableIdentifier}                       {yybegin(INTABLEBODYROW); return TABLE_BORDER;}
     [^]                                     {yypushback(1); yybegin(YYINITIAL);}
 }
 
-
 <INTABLEBODYROW> {
-    {WhiteSpace}*                           {yybegin(INTABLEBODYROW); return WHITESPACE;}
-    (\\\||[^-<|\r\n])*                      {yybegin(INTABLEBODYROW); return TABLE_ROW_VALUE;}
-    [-]*                                    {yybegin(INTABLEBODYROW); return TABLE_BORDER;}
-    [<]                                     {yybegin(INDYNAMICTABLEITEM); return DYNAMIC_ARG_START;}
-    {TableIdentifier}                       {yybegin(INTABLEBODYROW); return TABLE_BORDER;}
-    {LineTerminator}{WhiteSpace}*           {yybegin(INTABLEBODY); return NEW_LINE;}
+    {WhiteSpace}*                          {yybegin(INTABLEBODYROW); return WHITESPACE;}
+    (\\\||[^-<|\r\n])                      {yybegin(INTABLECELL); return TABLE_ROW_VALUE;}
+    [-]*                                   {yybegin(INTABLEBODYROW); return TABLE_BORDER;}
+    [<]                                    {yybegin(INDYNAMICTABLEITEM); return DYNAMIC_ARG_START;}
+    {TableIdentifier}                      {yybegin(INTABLEBODYROW); return TABLE_BORDER;}
+    {LineTerminator}{WhiteSpace}*          {yybegin(INTABLEBODY); return NEW_LINE;}
+}
+
+<INTABLECELL> {
+    (\\\||[^|\r\n])*                {yybegin(INTABLECELL); return TABLE_ROW_VALUE;}
+    {TableIdentifier}               {yybegin(INTABLEBODYROW); return TABLE_BORDER;}
+    {LineTerminator}{WhiteSpace}*   {yybegin(INTABLEBODY); return NEW_LINE;}
 }
