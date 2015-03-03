@@ -17,8 +17,11 @@
 
 package com.thoughtworks.gauge.execution;
 
+import com.intellij.execution.CommonProgramRunConfigurationParameters;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
+import com.intellij.execution.application.ApplicationConfiguration;
+import com.intellij.execution.application.ApplicationConfigurationType;
 import com.intellij.execution.configuration.ConfigurationFactoryEx;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.executors.DefaultDebugExecutor;
@@ -39,7 +42,10 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.thoughtworks.gauge.GaugeConstant.ENV_FLAG;
 import static com.thoughtworks.gauge.GaugeConstant.GAUGE_DEBUG_OPTS_ENV;
@@ -49,13 +55,19 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
     public static final String JAVA_DEBUG_PORT = "50005";
     public static final String SIMPLE_CONSOLE_FLAG = "--simple-console";
     public static final String TAGS_FLAG = "--tags";
+    public static final String PARALLEL_FLAG = "--parallel";
+    private static final String PARALLEL_NODES_FLAG = "--n";
     private String specsToExecute;
     private Module module;
     private String environment;
     private String tags;
+    private boolean execInParallel;
+    private String parallelNodes;
+    public ApplicationConfiguration programParameters;
 
     public GaugeRunConfiguration(String name, Project project, ConfigurationFactoryEx configurationFactory) {
         super(project, configurationFactory, name);
+        this.programParameters  = new ApplicationConfiguration(name, project, ApplicationConfigurationType.getInstance());
     }
 
     @NotNull
@@ -94,11 +106,47 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         if (!Strings.isBlank(environment)) {
             commandLine.addParameters(ENV_FLAG, environment);
         }
+        addParallelExecFlags(commandLine);
+        addProgramArguments(commandLine);
+      
         if (!Strings.isBlank(specsToExecute)) {
             addSpecs(commandLine, specsToExecute);
         }
         if (DefaultDebugExecutor.EXECUTOR_ID.equals(env.getExecutor().getId())) {
             commandLine.getEnvironment().put(GAUGE_DEBUG_OPTS_ENV, JAVA_DEBUG_PORT);
+        }
+        
+    }
+
+    private void addProgramArguments(GeneralCommandLine commandLine) {
+        if (programParameters == null) {
+            return;
+        }
+        String parameters = programParameters.getProgramParameters();
+        if (!Strings.isEmpty(parameters)) {
+            commandLine.addParameters(programParameters.getProgramParameters().split(" "));
+        }
+        Map<String, String> envs = programParameters.getEnvs();
+        if (!envs.isEmpty()) {
+            commandLine.setEnvParams(envs);
+        }
+        if (!programParameters.getWorkingDirectory().isEmpty()) {
+            commandLine.setWorkDirectory(new File(programParameters.getWorkingDirectory()));
+        }
+    }
+
+    private void addParallelExecFlags(GeneralCommandLine commandLine) {
+        if (execInParallel) {
+            commandLine.addParameter(PARALLEL_FLAG);
+            try {
+                if (!Strings.isEmpty(parallelNodes)) {
+                    int nodes = Integer.parseInt(this.parallelNodes);
+                    commandLine.addParameters(PARALLEL_NODES_FLAG, parallelNodes);
+                }
+            } catch (NumberFormatException e) {
+                System.err.println("Incorrect number of parallel execution streams specified: " + parallelNodes);
+                e.printStackTrace();
+            }
         }
     }
 
@@ -117,6 +165,13 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         environment = JDOMExternalizer.readString(element, "environment");
         specsToExecute = JDOMExternalizer.readString(element, "specsToExecute");
         tags = JDOMExternalizer.readString(element, "tags");
+        parallelNodes = JDOMExternalizer.readString(element, "parallelNodes");
+        execInParallel = JDOMExternalizer.readBoolean(element, "execInParallel");
+        programParameters.setProgramParameters(JDOMExternalizer.readString(element, "programParameters"));
+        programParameters.setWorkingDirectory(JDOMExternalizer.readString(element, "workingDirectory"));
+        HashMap<String, String> envMap = new HashMap<String, String>();
+        JDOMExternalizer.readMap(element, envMap, "envMap", "envMap" );
+        programParameters.setEnvs(envMap);
     }
 
     @Override
@@ -125,6 +180,11 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         JDOMExternalizer.write(element, "environment", environment);
         JDOMExternalizer.write(element, "specsToExecute", specsToExecute);
         JDOMExternalizer.write(element, "tags", tags);
+        JDOMExternalizer.write(element, "parallelNodes", parallelNodes);
+        JDOMExternalizer.write(element, "execInParallel", execInParallel);
+        JDOMExternalizer.write(element, "programParameters", programParameters.getProgramParameters());
+        JDOMExternalizer.write(element, "workingDirectory", programParameters.getWorkingDirectory());
+        JDOMExternalizer.writeMap(element, programParameters.getEnvs(), "envMap", "envMap");
     }
 
     @NotNull
@@ -175,5 +235,25 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
             }
         }
         setSpecsToExecute(builder.toString());
+    }
+
+    public void setExecInParallel(boolean execInParallel) {
+        this.execInParallel = execInParallel;
+    }
+
+    public boolean getExecInParallel() {
+        return execInParallel;
+    }
+
+    public void setParallelNodes(String parallelNodes) {
+        this.parallelNodes = parallelNodes;
+    }
+
+    public String getParallelNodes() {
+        return parallelNodes;
+    }
+
+    public CommonProgramRunConfigurationParameters getProgramParameters() {
+        return programParameters;
     }
 }
