@@ -45,7 +45,7 @@ public class CustomRenameHandler implements RenameHandler {
             PsiFile data = CommonDataKeys.PSI_FILE.getData(dataContext);
             if (data == null) return false;
             psiElement = getStepElement(data.findElementAt(offset));
-            return psiElement != null && psiElement.getClass().equals(SpecStepImpl.class);
+            return psiElement != null && (psiElement.getClass().equals(SpecStepImpl.class) || (psiElement.getClass().equals(ConceptStepImpl.class)));
         }
         return CommonDataKeys.PROJECT.getData(dataContext) != null && (element.toString().equals("PsiAnnotation") ||
                 element.getClass().equals(ConceptStepImpl.class) || element.getClass().equals(SpecStepImpl.class));
@@ -70,10 +70,17 @@ public class CustomRenameHandler implements RenameHandler {
             }
         } else if (element.getClass().equals(SpecStepImpl.class)) {
             text = ((SpecStepImpl) element).getStepValue().getStepAnnotationText();
+        }else if (element.getClass().equals(ConceptStepImpl.class)) {
+            text = removeIdentifiers(((ConceptStepImpl) element).getStepValue().getStepAnnotationText());
         }
         Messages.showInputDialog(project, String.format("Refactoring \"%s\" to : ", text), "Refactor", Messages.getInformationIcon(), text,
                 new RenameInputValidator(project, this.editor, text, this.psiElement));
 
+    }
+
+    private String removeIdentifiers(String text) {
+        text = text.trim();
+        return text.charAt(0) == '*' || text.charAt(0) == '#' ? text.substring(1).trim() : text;
     }
 
     public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, DataContext dataContext) {
@@ -81,7 +88,7 @@ public class CustomRenameHandler implements RenameHandler {
     }
 
     private PsiElement getStepElement(PsiElement selectedElement) {
-        if (selectedElement.getClass().equals(SpecStepImpl.class))
+        if (selectedElement.getClass().equals(SpecStepImpl.class) || selectedElement.getClass().equals(ConceptStepImpl.class))
             return selectedElement;
         if (selectedElement.getParent() == null) return null;
         return getStepElement(selectedElement.getParent());
