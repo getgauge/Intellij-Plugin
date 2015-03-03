@@ -7,6 +7,7 @@ import com.intellij.util.EnvironmentUtil;
 import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.GaugeConstant;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
+import com.thoughtworks.xstream.mapper.Mapper;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
@@ -50,7 +51,12 @@ public class GaugeUtil {
     }
 
     public static boolean isGaugeFile(VirtualFile file) {
-        String extension = file.getExtension().toLowerCase();
+        String extension;
+        try {
+            extension = file.getExtension().toLowerCase();
+        } catch(NullPointerException e){
+            return false;
+        }
         if (extension.equals(SPEC_EXTENSION) || extension.equals(MD_EXTENSION) || extension.equals(CONCEPT_EXTENSION)) {
             return true;
         }

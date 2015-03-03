@@ -32,7 +32,7 @@ public class GaugeEnterHandlerDelegate implements EnterHandlerDelegate {
 
     @Override
     public Result preprocessEnter(PsiFile psiFile, Editor editor, Ref<Integer> ref, Ref<Integer> ref1, DataContext dataContext, EditorActionHandler editorActionHandler) {
-        return null;
+        return Result.Continue;
     }
 
     @Override
