@@ -31,7 +31,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 
-public class SpecsExecutionProducer extends RunConfigurationProducer {
+public class     SpecsExecutionProducer extends RunConfigurationProducer {
 
     public static final String DEFAULT_CONFIGURATION_NAME = "Specifications";
     public static final String SPECS_DIR = "specs";

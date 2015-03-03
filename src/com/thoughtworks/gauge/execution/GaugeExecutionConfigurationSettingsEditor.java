@@ -1,5 +1,6 @@
 package com.thoughtworks.gauge.execution;
 
+import com.intellij.execution.ui.CommonProgramParametersPanel;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import org.jetbrains.annotations.NotNull;
@@ -11,12 +12,18 @@ public class GaugeExecutionConfigurationSettingsEditor extends SettingsEditor<Ga
     private JTextField environment;
     private JPanel configWindow;
     private JTextField tags;
+    private JRadioButton inParallel;
+    private JTextField numberOfParallelNodes;
+    private CommonProgramParametersPanel commonProgramParameters;
 
     @Override
     protected void resetEditorFrom(GaugeRunConfiguration config) {
         specification.setText(config.getSpecsToExecute());
         environment.setText(config.getEnvironment());
         tags.setText(config.getTags());
+        inParallel.setSelected(config.getExecInParallel());
+        numberOfParallelNodes.setText(config.getParallelNodes());
+        commonProgramParameters.reset(config.programParameters);
     }
 
     @Override
@@ -24,6 +31,9 @@ public class GaugeExecutionConfigurationSettingsEditor extends SettingsEditor<Ga
         config.setSpecsToExecute(specification.getText());
         config.setEnvironment(environment.getText());
         config.setTags(tags.getText());
+        config.setExecInParallel(inParallel.isSelected());
+        config.setParallelNodes(numberOfParallelNodes.getText());
+        commonProgramParameters.applyTo(config.programParameters);
     }
 
     @NotNull
