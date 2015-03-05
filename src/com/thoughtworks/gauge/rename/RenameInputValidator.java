@@ -17,7 +17,6 @@
 
 package com.thoughtworks.gauge.rename;
 
-import com.google.protobuf.ProtocolStringList;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
@@ -42,6 +41,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.intellij.openapi.vfs.LocalFileSystem.getInstance;
@@ -126,7 +126,7 @@ public class RenameInputValidator implements InputValidator {
         });
     }
 
-    private void performUndoableAction(ProtocolStringList filesChangedList) {
+    private void performUndoableAction(List<String> filesChangedList) {
         for (String fileName : filesChangedList)
             try {
                 VirtualFile virtualFile = getInstance().findFileByIoFile(new File(fileName));

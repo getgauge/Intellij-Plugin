@@ -99,6 +99,8 @@
       <fileTemplateGroup implementation="com.thoughtworks.gauge.core.SpecificationLiveTemplate"/>
       <defaultLiveTemplatesProvider implementation="com.thoughtworks.gauge.core.TableTemplateProvider"/>
       <fileEditorProvider implementation="com.thoughtworks.gauge.markdownPreview.MarkdownPreviewEditorProvider"/>
+      <refactoring.extractIncludeHandler language="Specification" implementationClass="com.thoughtworks.gauge.extract.ExtractConceptHandler"/>
+      <lang.refactoringSupport language="Specification" implementationClass="com.thoughtworks.gauge.extract.RefactoringSupportProvider"/>
   </extensions>
 
   <application-components>
