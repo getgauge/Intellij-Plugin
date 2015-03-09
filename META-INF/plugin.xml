@@ -101,6 +101,7 @@
       <fileEditorProvider implementation="com.thoughtworks.gauge.markdownPreview.MarkdownPreviewEditorProvider"/>
       <refactoring.extractIncludeHandler language="Specification" implementationClass="com.thoughtworks.gauge.extract.ExtractConceptHandler"/>
       <lang.refactoringSupport language="Specification" implementationClass="com.thoughtworks.gauge.extract.RefactoringSupportProvider"/>
+      <lang.refactoringSupport language="Concept" implementationClass="com.thoughtworks.gauge.extract.RefactoringSupportProvider"/>
   </extensions>
 
   <application-components>

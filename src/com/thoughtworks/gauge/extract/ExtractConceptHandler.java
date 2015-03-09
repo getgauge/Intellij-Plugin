@@ -40,15 +40,15 @@ public class ExtractConceptHandler implements RefactoringActionHandler {
         final String selectedText = editor.getCaretModel().getAllCarets().get(0).getSelectedText();
         final ExtractConceptResponse response = getResponse(psiFile, selectedText);
         if (!response.isValid) {
-            HintManager.getInstance().showErrorHint(editor,response.error);
+            HintManager.getInstance().showErrorHint(editor, response.error);
             return;
         }
         ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
             public void run() {
-                List<PsiFile> javaFiles = FileManager.getAllConceptFiles(project);
-                javaFiles.add(0, null);
-                ListPopup stepImplChooser = JBPopupFactory.getInstance().createListPopup(new BaseListPopupStep<PsiFile>("Choose File", javaFiles) {
+                List<PsiFile> conceptFiles = FileManager.getAllConceptFiles(project);
+                conceptFiles.add(0, null);
+                ListPopup stepImplChooser = JBPopupFactory.getInstance().createListPopup(new BaseListPopupStep<PsiFile>("Choose File", conceptFiles) {
                     @Override
                     public boolean isSpeedSearchEnabled() {
                         return true;
@@ -63,7 +63,7 @@ public class ExtractConceptHandler implements RefactoringActionHandler {
                                     DataContext dataContext = DataManager.getInstance().getDataContext();
                                     GaugeDataContext gaugeDataContext = new GaugeDataContext(dataContext);
                                     AnActionEvent anActionEvent = new AnActionEvent(null, gaugeDataContext, ActionPlaces.UNKNOWN, new Presentation("Create File"), instance, 0);
-                                    CreateFileAction createFileAction = new GaugeCreateFileAction(response.conceptHeading + "\n" + response.steps,psiFile);
+                                    CreateFileAction createFileAction = new GaugeCreateFileAction("# " + response.conceptHeading + "\n" + response.steps, psiFile);
                                     createFileAction.actionPerformed(anActionEvent);
                                 }
                                 ApplicationManager.getApplication().runWriteAction(new Runnable() {
@@ -72,12 +72,12 @@ public class ExtractConceptHandler implements RefactoringActionHandler {
                                         CommandProcessor.getInstance().executeCommand(project, new Runnable() {
                                             @Override
                                             public void run() {
-                                                if (selectedValue != null){
+                                                if (selectedValue != null) {
                                                     Document document = FileDocumentManager.getInstance().getDocument(selectedValue.getVirtualFile());
-                                                    document.setText(selectedValue.getText().trim() + "\n\n" + response.conceptHeading + "\n" + response.steps);
+                                                    document.setText(selectedValue.getText().trim() + "\n\n" + "# " + response.conceptHeading + "\n" + response.steps);
                                                 }
                                                 EditorModificationUtil.deleteSelectedText(editor);
-                                                EditorModificationUtil.insertStringAtCaret(editor,response.conceptText, true, false);
+                                                EditorModificationUtil.insertStringAtCaret(editor, response.conceptText, true, false);
                                             }
                                         }, "Create Concept", "Create Concept");
 
@@ -112,14 +112,14 @@ public class ExtractConceptHandler implements RefactoringActionHandler {
             if (!response.getIsValid())
                 return new ExtractConceptResponse("Not Valid Selection");
             Pair<String, Boolean> pairs = Messages.showInputDialogWithCheckBox("Extract Concept", "Refactor", "refactor other usages", false, true, null, response.getConceptHeading(), null);
-            if (pairs.getFirst() == null)    return new ExtractConceptResponse("Process Cancelled");
+            if (pairs.getFirst() == null) return new ExtractConceptResponse("Process Cancelled");
             if (!pairs.getFirst().equals(response.getConceptHeading())) {
                 Api.GetFormatConceptHeadingResponse response1 = gaugeConnection.sendGetFormatConceptHeadingRequest(pairs.getFirst(), response.getConceptHeading(), response.getConceptText());
                 return new ExtractConceptResponse(pairs.getFirst(), response.getIsValid(), response.getSteps(), response1.getNewConceptText());
-            }
-            else
+            } else
                 return new ExtractConceptResponse(pairs.getFirst(), response.getIsValid(), response.getSteps(), response.getConceptText());
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         return new ExtractConceptResponse("Not Valid Selection");
     }
 
@@ -140,6 +140,7 @@ public class ExtractConceptHandler implements RefactoringActionHandler {
             this.steps = steps;
             this.conceptText = conceptText;
         }
+
         public ExtractConceptResponse(String error) {
             this.conceptHeading = "";
             this.isValid = false;
