@@ -18,11 +18,13 @@
 package com.thoughtworks.gauge.core;
 
 import com.intellij.openapi.module.Module;
+import com.thoughtworks.gauge.reference.ReferenceCache;
 
 import java.util.Hashtable;
 
 public class Gauge {
     private static Hashtable<Module, GaugeService> gaugeProjectHandle = new Hashtable<Module, GaugeService>();
+    private static Hashtable<Module, ReferenceCache> moduleReferenceCaches = new Hashtable<Module, ReferenceCache>();
 
     public static void addModule(Module module, GaugeService gaugeService) {
         gaugeProjectHandle.put(module, gaugeService);
@@ -30,5 +32,14 @@ public class Gauge {
 
     public static GaugeService getGaugeService(Module module) {
         return gaugeProjectHandle.get(module);
+    }
+
+    public static ReferenceCache getReferenceCache(Module module) {
+        ReferenceCache referenceCache = moduleReferenceCaches.get(module);
+        if (referenceCache == null) {
+            referenceCache = new ReferenceCache();
+            moduleReferenceCaches.put(module, referenceCache);
+        }
+        return referenceCache;
     }
 }

@@ -17,6 +17,7 @@
 
 package com.thoughtworks.gauge.reference;
 
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
@@ -39,7 +40,7 @@ public class ConceptReference extends PsiReferenceBase<ConceptStep> {
     public PsiElement resolve() {
         SpecStepImpl step = new SpecStepImpl(this.myElement.getNode());
         step.setConcept(true);
-        return StepUtil.findStepImpl(step, this.myElement.getProject());
+        return StepUtil.findStepImpl(step, ModuleUtil.findModuleForPsiElement(this.myElement));
     }
 
     @NotNull
