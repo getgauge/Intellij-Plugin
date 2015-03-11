@@ -108,13 +108,14 @@ public class ExtractConceptHandler implements RefactoringActionHandler {
         GaugeService gaugeService = Gauge.getGaugeService(module);
         GaugeConnection gaugeConnection = gaugeService.getGaugeConnection();
         try {
-            Api.GetExtractConceptInfoResponse response = gaugeConnection.sendGetExtractConceptInfoRequest(text);
+            Api.ExtractConceptInfoResponse response = gaugeConnection.sendGetExtractConceptInfoRequest(text);
             if (!response.getIsValid())
                 return new ExtractConceptResponse("Not Valid Selection");
-            Pair<String, Boolean> pairs = Messages.showInputDialogWithCheckBox("Extract Concept", "Refactor", "refactor other usages", false, true, null, response.getConceptHeading(), null);
+            Pair<String, Boolean> pairs = Messages.showInputDialogWithCheckBox("Extract Concept", "Refactor", "refactor other usages",
+                    false, true, null, response.getConceptHeading(), new ExtractConceptInputValidator(response.getConceptHeading()));
             if (pairs.getFirst() == null) return new ExtractConceptResponse("Process Cancelled");
             if (!pairs.getFirst().equals(response.getConceptHeading())) {
-                Api.GetFormatConceptHeadingResponse response1 = gaugeConnection.sendGetFormatConceptHeadingRequest(pairs.getFirst(), response.getConceptHeading(), response.getConceptText());
+                Api.FormatConceptHeadingResponse response1 = gaugeConnection.sendGetFormatConceptHeadingRequest(pairs.getFirst(), response.getConceptHeading(), response.getConceptText());
                 return new ExtractConceptResponse(pairs.getFirst(), response.getIsValid(), response.getSteps(), response1.getNewConceptText());
             } else
                 return new ExtractConceptResponse(pairs.getFirst(), response.getIsValid(), response.getSteps(), response.getConceptText());
