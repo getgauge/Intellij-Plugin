@@ -46,11 +46,13 @@ dynamicArgTablePattern = {WhiteSpace}* [<] {tableChar}* [>] {WhiteSpace}*
 ScenarioHeading = {WhiteSpace}* "##" {InputCharacter}* {LineTerminator}? | {WhiteSpace}* {InputCharacter}* {LineTerminator} [-]+ {LineTerminator}?
 SpecHeading = {WhiteSpace}* "#" {InputCharacter}* {LineTerminator}? | {WhiteSpace}* {InputCharacter}* {LineTerminator} [=]+ {LineTerminator}?
 Tags = {WhiteSpace}* tags {WhiteSpace}? ":" {InputCharacter}* {LineTerminator}?
+Keyword = {WhiteSpace}* table {WhiteSpace}? ":" {InputCharacter}* {LineTerminator}?
 %%
 <YYINITIAL> {
   {ScenarioHeading}                                 {return SCENARIO_HEADING;}
   {SpecHeading}                                     {return SPEC_HEADING;}
   {Tags}                                            {return TAGS;}
+  {Keyword}                                         {return KEYWORD;}
   {StepIdentifier}                                  {yybegin(INSTEP);return STEP_IDENTIFIER;}
   {TableIdentifier}                                 {yybegin(INTABLEHEADER);return TABLE_BORDER;}
   {LineTerminator}? {WhiteSpace}* {NonWhiteSpaceAndIdentifierCharacter}+ {WhiteSpace}* ({StepIdentifier} | [#] | [##] | {TableIdentifier}) {InputCharacter}* {LineTerminator}? {return COMMENT;}

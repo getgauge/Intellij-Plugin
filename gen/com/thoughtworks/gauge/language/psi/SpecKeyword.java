@@ -5,12 +5,6 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface SpecTable extends PsiElement {
-
-  @NotNull
-  SpecTableBody getTableBody();
-
-  @NotNull
-  SpecTableHeader getTableHeader();
+public interface SpecKeyword extends PsiElement {
 
 }

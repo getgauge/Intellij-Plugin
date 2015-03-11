@@ -66,6 +66,8 @@ public class SpecSyntaxHighlighter extends SyntaxHighlighterBase {
             return HighlighterTokens.DYNAMIC_ARG_ATTRIBUTE;
         } else if (tokenType.equals(TokenType.BAD_CHARACTER)) {
             return HighlighterTokens.BAD_CHAR_KEYS;
+        } else if (tokenType.equals((SpecTokenTypes.KEYWORD))) {
+            return HighlighterTokens.KEYWORD_ATTRIBUTE;
         } else {
             return HighlighterTokens.EMPTY_KEYS;
         }

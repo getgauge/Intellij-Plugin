@@ -36,6 +36,7 @@ public class HighlighterTokens {
     public static final TextAttributesKey DYNAMIC_ARG = createTextAttributesKey("DYNAMIC ARG", DefaultLanguageHighlighterColors.CONSTANT);
     public static final TextAttributesKey TABLE_BORDER = createTextAttributesKey("TABLE BORDER", DefaultLanguageHighlighterColors.LOCAL_VARIABLE);
     public static final TextAttributesKey TAGS = createTextAttributesKey("TAGS", DefaultLanguageHighlighterColors.STATIC_FIELD);
+    public static final TextAttributesKey KEYWORD = createTextAttributesKey("KEYWORD", DefaultLanguageHighlighterColors.STATIC_FIELD);
     public static final TextAttributesKey BAD_CHARACTER = createTextAttributesKey("SIMPLE_BAD_CHARACTER",
             new TextAttributes(Color.RED, null, null, null, Font.BOLD));
     public static final TextAttributesKey[] BAD_CHAR_KEYS = new TextAttributesKey[]{BAD_CHARACTER};
@@ -45,6 +46,7 @@ public class HighlighterTokens {
     public static final TextAttributesKey[] STEP_ATTRIBUTE = new TextAttributesKey[]{STEP};
     public static final TextAttributesKey[] COMMENT_ATTRIBUTE = new TextAttributesKey[]{COMMENT};
     public static final TextAttributesKey[] TAGS_ATTRIBUTE = new TextAttributesKey[]{TAGS};
+    public static final TextAttributesKey[] KEYWORD_ATTRIBUTE = new TextAttributesKey[]{KEYWORD};
     public static final TextAttributesKey[] TABLE_HEADER_ATTRIBUTE = new TextAttributesKey[]{TABLE_HEADER};
     public static final TextAttributesKey[] TABLE_ROW_ATTRIBUTE = new TextAttributesKey[]{TABLE_ROW};
     public static final TextAttributesKey[] ARG_ATTRIBUTE = new TextAttributesKey[]{ARG};

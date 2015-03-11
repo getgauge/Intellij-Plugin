@@ -1,31 +1,14 @@
-// Copyright 2015 ThoughtWorks, Inc.
-
-// This file is part of getgauge/Intellij-plugin.
-
-// getgauge/Intellij-plugin is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-
-// getgauge/Intellij-plugin is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-
-// You should have received a copy of the GNU General Public License
-// along with getgauge/Intellij-plugin.  If not, see <http://www.gnu.org/licenses/>.
-
 // This is a generated file. Not intended for manual editing.
 package com.thoughtworks.gauge.parser;
 
-import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
-import com.intellij.lang.PsiParser;
-import com.intellij.psi.tree.IElementType;
-
-import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
 import static com.thoughtworks.gauge.language.token.SpecTokenTypes.*;
+import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.tree.TokenSet;
+import com.intellij.lang.PsiParser;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class SpecParser implements PsiParser {
@@ -44,6 +27,9 @@ public class SpecParser implements PsiParser {
     }
     else if (t == DYNAMIC_ARG) {
       r = dynamicArg(b, 0);
+    }
+    else if (t == KEYWORD) {
+      r = keyword(b, 0);
     }
     else if (t == SCENARIO) {
       r = scenario(b, 0);
@@ -114,6 +100,18 @@ public class SpecParser implements PsiParser {
   }
 
   /* ********************************************************** */
+  // KEYWORD
+  public static boolean keyword(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "keyword")) return false;
+    if (!nextTokenIs(b, KEYWORD)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, KEYWORD);
+    exit_section_(b, m, KEYWORD, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // scenarioHeading tags? (step | comment)*
   public static boolean scenario(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "scenario")) return false;
@@ -164,7 +162,7 @@ public class SpecParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // (comment)*  specHeading tags? table? (step|comment)*
+  // (comment)*  specHeading tags? keyword? table? (step|comment)*
   public static boolean specDetail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "specDetail")) return false;
     if (!nextTokenIs(b, "<spec detail>", COMMENT, SPEC_HEADING)) return false;
@@ -175,6 +173,7 @@ public class SpecParser implements PsiParser {
     r = r && specDetail_2(b, l + 1);
     r = r && specDetail_3(b, l + 1);
     r = r && specDetail_4(b, l + 1);
+    r = r && specDetail_5(b, l + 1);
     exit_section_(b, l, m, SPEC_DETAIL, r, false, null);
     return r;
   }
@@ -208,28 +207,35 @@ public class SpecParser implements PsiParser {
     return true;
   }
 
-  // table?
+  // keyword?
   private static boolean specDetail_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "specDetail_3")) return false;
+    keyword(b, l + 1);
+    return true;
+  }
+
+  // table?
+  private static boolean specDetail_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "specDetail_4")) return false;
     table(b, l + 1);
     return true;
   }
 
   // (step|comment)*
-  private static boolean specDetail_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "specDetail_4")) return false;
+  private static boolean specDetail_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "specDetail_5")) return false;
     int c = current_position_(b);
     while (true) {
-      if (!specDetail_4_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "specDetail_4", c)) break;
+      if (!specDetail_5_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "specDetail_5", c)) break;
       c = current_position_(b);
     }
     return true;
   }
 
   // step|comment
-  private static boolean specDetail_4_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "specDetail_4_0")) return false;
+  private static boolean specDetail_5_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "specDetail_5_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = step(b, l + 1);
