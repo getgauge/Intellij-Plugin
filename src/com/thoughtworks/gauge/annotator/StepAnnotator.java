@@ -19,6 +19,7 @@ package com.thoughtworks.gauge.annotator;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.psi.PsiElement;
 import com.thoughtworks.gauge.language.psi.ConceptStep;
 import com.thoughtworks.gauge.language.psi.SpecStep;
@@ -41,7 +42,7 @@ public class StepAnnotator implements Annotator {
     }
 
     private void createWarning(PsiElement element, AnnotationHolder holder, SpecStep step) {
-        if (!StepUtil.isImplementedStep(step, element.getProject()))
+        if (!StepUtil.isImplementedStep(step, ModuleUtil.findModuleForPsiElement(step)))
             holder.createWeakWarningAnnotation(element.getTextRange(), "Undefined Step").registerFix(new CreateStepImplFix(step));
     }
 }
