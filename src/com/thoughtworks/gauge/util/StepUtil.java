@@ -20,12 +20,14 @@ package com.thoughtworks.gauge.util;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.AnnotatedElementsSearch;
 import com.intellij.util.Query;
 import com.thoughtworks.gauge.ConceptInfo;
+import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.GaugeConnection;
 import com.thoughtworks.gauge.StepValue;
 import com.thoughtworks.gauge.core.Gauge;
@@ -60,8 +62,8 @@ public class StepUtil {
         PsiElement referenceElement;
         if (method == null) {
             referenceElement = searchConceptsForImpl(step, module);
-            if (referenceElement != null){
-                referenceElement = new ConceptStepImpl(referenceElement.getNode(),true);
+            if (referenceElement != null) {
+                referenceElement = new ConceptStepImpl(referenceElement.getNode(), true);
             }
         } else {
             referenceElement = method.getChildren()[0].getChildren()[0];
@@ -76,31 +78,41 @@ public class StepUtil {
 
     private static PsiElement searchConceptsForImpl(SpecStep step, Module module) {
         try {
-            List<ConceptInfo> conceptInfos = fetchAllConcepts(ModuleUtil.findModuleForPsiElement(step));
-            for (ConceptInfo conceptInfo : conceptInfos) {
-                String conceptName = conceptInfo.getStepValue().getStepAnnotationText().trim();
-                if (conceptInfo.getStepValue().getStepText().equals(step.getStepValue().getStepText())) {
-                    PsiFile[] conceptFiles = findConceptFiles(conceptInfo, module);
-                    if (conceptFiles.length > 0) {
-                        for (PsiElement psiElement : conceptFiles[0].getChildren()) {
-                            boolean isConcept = psiElement.getClass().equals(ConceptConceptImpl.class);
-                            if (psiElement.getClass().equals(ConceptConceptImpl.class)) {
-                                String conceptHeading = ((ConceptConceptImpl) psiElement).getConceptHeading().getText().replaceFirst("#", "").trim();
-                                if (isConcept && (conceptHeading.equals(conceptName) || conceptHeading.startsWith(conceptName.trim() + "\n")))
-                                    return psiElement;
-                            }
-                        }
+            VirtualFile[] conceptFiles = findConceptFiles(module);
+            if (conceptFiles.length > 0) {
+                PsiElement reference;
+                for (VirtualFile file : conceptFiles) {
+                    reference = searchConceptReference(file, step, module);
+                    if (reference != null) {
+                        return reference;
                     }
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             return null;
         }
         return null;
     }
 
-    private static PsiFile[] findConceptFiles(ConceptInfo conceptInfo, Module module) {
-        return FilenameIndex.getFilesByName(module.getProject(), getConceptFileName(conceptInfo), GlobalSearchScope.allScope(module.getProject()));
+    private static PsiElement searchConceptReference(VirtualFile virtualFile, SpecStep step, Module module) {
+        PsiFile psiFile = PsiManager.getInstance(module.getProject()).findFile(virtualFile);
+        if (psiFile == null || !psiFile.isValid()) {
+            return null;
+        }
+        for (PsiElement psiElement : psiFile.getChildren()) {
+            boolean isConcept = psiElement.getClass().equals(ConceptConceptImpl.class);
+            if (psiElement.getClass().equals(ConceptConceptImpl.class)) {
+                StepValue conceptStepValue = ((ConceptConceptImpl) psiElement).getStepValue();
+                if (isConcept && step.getStepValue().getStepText().equals(conceptStepValue.getStepText()))
+                    return psiElement;
+            }
+        }
+        return null;
+    }
+
+    private static VirtualFile[] findConceptFiles(Module module) {
+        Collection<VirtualFile> conceptFiles = FilenameIndex.getAllFilesByExt(module.getProject(), Constants.CONCEPT_EXTENSION);
+        return conceptFiles.toArray(new VirtualFile[conceptFiles.size()]);
     }
 
     private static String getConceptFileName(ConceptInfo conceptInfo) {
