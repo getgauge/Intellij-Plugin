@@ -18,15 +18,15 @@
 // This is a generated file. Not intended for manual editing.
 package com.thoughtworks.gauge.language.psi.impl;
 
-import java.util.List;
-import org.jetbrains.annotations.*;
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import static com.thoughtworks.gauge.language.token.ConceptTokenTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.thoughtworks.gauge.StepValue;
 import com.thoughtworks.gauge.language.psi.*;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class ConceptConceptImpl extends ASTWrapperPsiElement implements ConceptConcept {
 
@@ -50,5 +50,9 @@ public class ConceptConceptImpl extends ASTWrapperPsiElement implements ConceptC
   public List<ConceptStep> getStepList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, ConceptStep.class);
   }
+
+   public StepValue getStepValue() {
+       return ConceptPsiImplUtil.getStepValue(this);
+   }
 
 }

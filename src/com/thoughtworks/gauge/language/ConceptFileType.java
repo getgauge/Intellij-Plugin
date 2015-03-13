@@ -19,6 +19,7 @@ package com.thoughtworks.gauge.language;
 
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.LanguageFileType;
+import com.thoughtworks.gauge.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,7 +47,7 @@ public class ConceptFileType extends LanguageFileType{
     @NotNull
     @Override
     public String getDefaultExtension() {
-        return ".cpt";
+        return Constants.CONCEPT_EXTENSION;
     }
 
     @Nullable

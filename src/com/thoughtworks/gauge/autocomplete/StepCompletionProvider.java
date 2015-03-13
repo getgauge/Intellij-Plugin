@@ -111,6 +111,8 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
         List<Type> steps = new ArrayList<Type>();
         try {
             GaugeService gaugeService = Gauge.getGaugeService(module);
+            if (gaugeService == null)
+                return steps;
             GaugeConnection gaugeConnection = gaugeService.getGaugeConnection();
             if (gaugeConnection != null) {
                 List<StepValue> stepValues = gaugeConnection.fetchAllSteps();

@@ -83,21 +83,7 @@ public class CreateStepImplFix extends BaseIntentionAction {
         ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
             public void run() {
-                Collection<VirtualFile> javaVirtualFiles = FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, JavaFileType.INSTANCE, GlobalSearchScope.projectScope(project));
-                List<PsiFile> javaFiles = new ArrayList<PsiFile>();
-
-                for (VirtualFile javaVFile : javaVirtualFiles) {
-                    PsiFile file = PsiManager.getInstance(project).findFile(javaVFile);
-                    if (file != null) {
-                        javaFiles.add(file);
-                    }
-                }
-                Collections.sort(javaFiles, new Comparator<PsiFile>() {
-                    @Override
-                    public int compare(PsiFile o1, PsiFile o2) {
-                        return getJavaFileName(o1).compareToIgnoreCase(getJavaFileName(o2));
-                    }
-                });
+                List<PsiFile> javaFiles = FileManager.getAllJavaFiles(project);
 
                 javaFiles.add(0, NEW_FILE_HOLDER);
                 ListPopup stepImplChooser = JBPopupFactory.getInstance().createListPopup(new BaseListPopupStep<PsiFile>("Choose implementation class", javaFiles) {

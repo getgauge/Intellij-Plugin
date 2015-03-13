@@ -39,6 +39,7 @@ import com.thoughtworks.gauge.GaugeModuleComponent;
 import com.thoughtworks.gauge.PluginNotInstalledException;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
+import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,14 +51,56 @@ import java.util.List;
 
 import static com.thoughtworks.gauge.GaugeConstant.INIT_FLAG;
 import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeExecPath;
+import static com.thoughtworks.gauge.util.GaugeUtil.moduleDirFromModule;
 
 public class GaugeModuleBuilder extends JavaModuleBuilder {
 
     @Override
     public void setupRootModel(ModifiableRootModel modifiableRootModel) throws ConfigurationException {
         super.setupRootModel(modifiableRootModel);
+        checkGaugeIsInstalled();
         gaugeInit(modifiableRootModel);
-        addGaugeLibToModule(modifiableRootModel);
+        addLibsToModule(modifiableRootModel);
+    }
+
+    private void addLibsToModule(ModifiableRootModel modifiableRootModel) {
+        Module module = modifiableRootModel.getModule();
+        ProjectLib gaugeLib = gaugeLib(module);
+        if (gaugeLib != null) {
+            addGaugeLibToModule(gaugeLib, modifiableRootModel);
+        }
+        addGaugeLibToModule(projectLib(module), modifiableRootModel);
+    }
+
+    private ProjectLib projectLib(Module module) {
+        return new ProjectLib("project-lib", new File(moduleDirFromModule(module), "libs"));
+    }
+
+    private ProjectLib gaugeLib(Module module) {
+        String libRoot;
+        try {
+            GaugeService gaugeService = GaugeModuleComponent.createGaugeService(module);
+            Gauge.addModule(module, gaugeService);
+            GaugeConnection gaugeConnection = gaugeService.getGaugeConnection();
+            if (gaugeConnection == null) {
+                throw new IOException("Gauge api connection not established");
+            }
+            libRoot = gaugeConnection.getLibPath(getLanguage());
+        } catch (IOException e) {
+            System.err.println("Could not add gauge lib, add it manually: " + e.getMessage());
+            return null;
+        } catch (PluginNotInstalledException e) {
+            throw new RuntimeException(getLanguage() + "could not be installed, try it manually");
+        }
+        return new ProjectLib( "gauge-lib" ,new File(libRoot));
+    }
+
+    private void checkGaugeIsInstalled() {
+        try {
+            getGaugeExecPath();
+        } catch (GaugeNotFoundException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Nullable
@@ -77,14 +120,14 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
                 progressIndicator.setIndeterminate(true);
                 progressIndicator.setText2("This might take a few minutes if gauge-" + getLanguage() + " runner is not installed");
                 final String path = getPathForInitialization(modifiableRootModel);
-                final String[] init = {
-                        getGaugeExecPath(),
-                        INIT_FLAG, getLanguage()
-                };
-                String failureMessage = "project initialization unsuccessful";
+                String failureMessage = "Project initialization unsuccessful";
                 try {
+                    final String[] init = {
+                            getGaugeExecPath(),
+                            INIT_FLAG, getLanguage()
+                    };
                     ProcessBuilder processBuilder = new ProcessBuilder(init);
-                    processBuilder.directory(new File(path, getName()));
+                    processBuilder.directory(new File(getModuleFileDirectory()));
                     Process process = processBuilder.start();
                     final int exitCode = process.waitFor();
                     if (exitCode != 0) {
@@ -94,31 +137,16 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
                     throw new RuntimeException(failureMessage, e);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(failureMessage, e);
+                } catch (GaugeNotFoundException e) {
+                    throw new RuntimeException(String.format("%s: %s", failureMessage, e.getMessage()), e);
                 }
             }
         });
     }
 
-    private void addGaugeLibToModule(ModifiableRootModel modifiableRootModel) {
-        String libRoot;
-        Module module = modifiableRootModel.getModule();
-        GaugeService gaugeService = GaugeModuleComponent.createGaugeService(module);
-        Gauge.addModule(module, gaugeService);
-        GaugeConnection gaugeConnection = gaugeService.getGaugeConnection();
-        try {
-            if (gaugeConnection == null) {
-                throw new IOException("Gauge api connection not established");
-            }
-            libRoot = gaugeConnection.getLibPath(getLanguage());
-        } catch (IOException e) {
-            System.out.println("Could not add gauge lib, add it manually: " + e.getMessage());
-            return;
-        } catch (PluginNotInstalledException e) {
-            throw new RuntimeException(getLanguage() + "could not be installed, try it manually");
-        }
-        final Library library = modifiableRootModel.getModuleLibraryTable().createLibrary("gauge-lib");
-        final File libsDir = new File(libRoot);
-        final VirtualFile libDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(libsDir);
+    private void addGaugeLibToModule(ProjectLib lib, ModifiableRootModel modifiableRootModel) {
+        final Library library = modifiableRootModel.getModuleLibraryTable().createLibrary(lib.getLibName());
+        final VirtualFile libDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(lib.getDir());
         final Library.ModifiableModel libModel = library.getModifiableModel();
         libModel.addJarDirectory(libDir, true);
         libModel.commit();
@@ -151,5 +179,23 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
         @NonNls final String path = getContentEntryPath() + File.separator + "src" + File.separator + "test" + File.separator + "java";
         paths.add(Pair.create(path, ""));
         return paths;
+    }
+
+    private class ProjectLib {
+        private String libName;
+        public File dir;
+
+        public ProjectLib(String libName, File dir) {
+            this.libName = libName;
+            this.dir = dir;
+        }
+
+        public String getLibName() {
+            return libName;
+        }
+
+        public File getDir() {
+            return dir;
+        }
     }
 }

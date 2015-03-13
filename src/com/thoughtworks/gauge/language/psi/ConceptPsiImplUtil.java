@@ -18,18 +18,8 @@
 package com.thoughtworks.gauge.language.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
-import com.thoughtworks.gauge.GaugeConnection;
 import com.thoughtworks.gauge.StepValue;
-import com.thoughtworks.gauge.core.Gauge;
-import com.thoughtworks.gauge.core.GaugeService;
-import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.util.ArrayList;
+import com.thoughtworks.gauge.language.psi.impl.ConceptConceptImpl;
 
 public class ConceptPsiImplUtil extends SpecPsiImplUtil {
 
@@ -39,49 +29,17 @@ public class ConceptPsiImplUtil extends SpecPsiImplUtil {
         int newLineIndex = stepText.indexOf("\n");
         int endIndex = newLineIndex == -1 ? stepText.length() : newLineIndex;
         ConceptTable inlineTable = element.getTable();
-        stepText = stepText.substring(0, endIndex).trim();
+        int index = 0;
         if (stepText.trim().charAt(0)=='#')
-            stepText = stepText.substring(1, endIndex).trim();
-        Module moduleForElement = ModuleUtil.findModuleForPsiElement(element);
-        GaugeService gaugeService = Gauge.getGaugeService(moduleForElement);
-        if (gaugeService == null) {
-            return getDefaultStepValue(element);
-        }
-        GaugeConnection apiConnection = gaugeService.getGaugeConnection();
-        if (apiConnection == null) {
-            return getDefaultStepValue(element);
-        }
-        if (inlineTable != null) {
-            return apiConnection.getStepValue(stepText, true);
-        } else {
-            return apiConnection.getStepValue(stepText);
-        }
-
+            index = 1;
+        stepText = stepText.substring(index, endIndex).trim();
+        return getStepValueFor(element, stepText, inlineTable!=null);
+    }
+    public static StepValue getStepValue(ConceptConceptImpl conceptConcept) {
+        String conceptHeadingText = conceptConcept.getConceptHeading().getText();
+        conceptHeadingText = conceptHeadingText.trim().split("\n")[0];
+        String text = conceptHeadingText.trim().replaceFirst("#", "");
+        return getStepValueFor(conceptConcept, text, false);
     }
 
-    private static StepValue getDefaultStepValue(ConceptStep element) {
-        return new StepValue(element.getText(), element.getText(), new ArrayList<String>());
-    }
-
-    public static ItemPresentation getPresentation(final ConceptStepImpl element) {
-        return new ItemPresentation() {
-            @Nullable
-            @Override
-            public String getPresentableText() {
-                return element.getText();
-            }
-
-            @Nullable
-            @Override
-            public String getLocationString() {
-                return element.getContainingFile().getName();
-            }
-
-            @Nullable
-            @Override
-            public Icon getIcon(boolean unused) {
-                return null;
-            }
-        };
-    }
 }
