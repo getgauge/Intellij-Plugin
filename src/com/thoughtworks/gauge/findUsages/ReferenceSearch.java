@@ -25,7 +25,6 @@ import com.intellij.psi.impl.source.tree.java.PsiAnnotationImpl;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
-import com.thoughtworks.gauge.StepRegistry;
 import com.thoughtworks.gauge.language.psi.SpecStep;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
@@ -41,8 +40,8 @@ public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesS
         ApplicationManager.getApplication().runReadAction(new Runnable() {
             @Override
             public void run() {
-                Collection<ConceptStepImpl> conceptSteps = getConceptSteps(searchParameters.getElementToSearch());
-                Collection<SpecStep> specSteps = getSpecSteps(searchParameters.getElementToSearch());
+                Collection<ConceptStepImpl> conceptSteps = getConceptSteps(searchParameters.getElementToSearch(), searchParameters.getScopeDeterminedByUser().getDisplayName());
+                Collection<SpecStep> specSteps = getSpecSteps(searchParameters.getElementToSearch(), searchParameters.getScopeDeterminedByUser().getDisplayName());
                 Class<? extends PsiElement> elementClass = searchParameters.getElementToSearch().getClass();
                 if (elementClass.equals(ConceptStepImpl.class))
                     handleConceptStep(conceptSteps, specSteps, searchParameters, processor);
@@ -118,12 +117,21 @@ public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesS
         return text.charAt(0) == '"' ? text.substring(1, text.length() - 1) : text;
     }
 
-    private Collection<SpecStep> getSpecSteps(PsiElement element) {
-        return PsiTreeUtil.collectElementsOfType(getPsiDirectory(element, element.getContainingFile().getContainingDirectory()), SpecStep.class);
+    private Collection<SpecStep> getSpecSteps(PsiElement element, String displayName) {
+        PsiElement psiDirectory = getDirectorySearchScope(element, displayName);
+        return PsiTreeUtil.collectElementsOfType(psiDirectory, SpecStep.class);
     }
 
-    private Collection<ConceptStepImpl> getConceptSteps(PsiElement element) {
-        return PsiTreeUtil.collectElementsOfType(getPsiDirectory(element, element.getContainingFile().getContainingDirectory()), ConceptStepImpl.class);
+    private Collection<ConceptStepImpl> getConceptSteps(PsiElement element, String displayName) {
+        PsiElement psiDirectory = getDirectorySearchScope(element, displayName);
+        return PsiTreeUtil.collectElementsOfType(psiDirectory, ConceptStepImpl.class);
+    }
+
+    private PsiElement getDirectorySearchScope(PsiElement element, String displayName) {
+        PsiElement psiDirectory = element;
+        if (!displayName.equals("<unknown scope>"))
+            psiDirectory = getPsiDirectory(element, element.getContainingFile().getContainingDirectory());
+        return psiDirectory;
     }
 
     private PsiDirectory getPsiDirectory(PsiElement element, PsiDirectory directory) {
