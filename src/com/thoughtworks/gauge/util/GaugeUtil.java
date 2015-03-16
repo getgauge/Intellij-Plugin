@@ -7,7 +7,6 @@ import com.intellij.util.EnvironmentUtil;
 import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.GaugeConstant;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
-import com.thoughtworks.xstream.mapper.Mapper;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
@@ -32,14 +31,14 @@ public class GaugeUtil {
         LOG.info("GAUGE_ROOT => " + gaugeHome);
         if (!StringUtils.isEmpty(gaugeHome)) {
             File bin = new File(gaugeHome, "bin");
-            File gaugeExec = new File(bin, GaugeConstant.GAUGE);
+            File gaugeExec = new File(bin, gaugeExecutable());
             if (gaugeExec.exists()) {
                 LOG.info("executable path: " + gaugeExec.getAbsolutePath());
                 return gaugeExec.getAbsolutePath();
             }
         } else if (!StringUtils.isEmpty(path)) {
             for (String entry : path.split(File.pathSeparator)) {
-                File gaugeExec = new File(entry, GaugeConstant.GAUGE);
+                File gaugeExec = new File(entry, gaugeExecutable());
                 if (gaugeExec.exists()) {
                     LOG.info("executable path: " + gaugeExec.getAbsolutePath());
                     return gaugeExec.getAbsolutePath();
@@ -48,6 +47,19 @@ public class GaugeUtil {
         }
         LOG.warn("Could not find executable in PATH or GAUGE_ROOT");
         throw new GaugeNotFoundException("Could not find executable in PATH or GAUGE_ROOT. Gauge is not installed.");
+    }
+
+    private static String gaugeExecutable() {
+        if (isWindows()) {
+            return GaugeConstant.GAUGE + ".exe";
+        } else {
+            return GaugeConstant.GAUGE;
+        }
+
+    }
+
+    private static boolean isWindows() {
+        return (System.getProperty("os.name").toLowerCase().contains("win"));
     }
 
     public static boolean isGaugeFile(VirtualFile file) {
