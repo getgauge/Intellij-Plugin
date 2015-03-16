@@ -89,11 +89,11 @@ public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesS
     }
 
     private void handleConceptStep(Collection<ConceptStepImpl> conceptSteps, Collection<SpecStep> specSteps, Processor<PsiReference> processor, ConceptStepImpl elementToSearch) {
-        String conceptStepText = getConceptStepText(elementToSearch);
+        String conceptStepText = replaceParamValues(getConceptStepText(elementToSearch));
         for (ConceptStepImpl conceptStep : conceptSteps)
             process(processor, conceptStep, replaceParamValues(conceptStepText).equals(replaceParamValues(getConceptStepText(conceptStep))));
         for (final SpecStep specStep : specSteps)
-            process(processor, specStep, replaceParamValues(conceptStepText).equals(getStepAnnotationText(specStep)));
+            process(processor, specStep, conceptStepText.equals(replaceParamValues(getStepAnnotationText(specStep))));
     }
 
     private String getConceptStepText(ConceptStepImpl elementToSearch) {
