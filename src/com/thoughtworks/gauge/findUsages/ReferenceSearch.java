@@ -37,7 +37,7 @@ import java.util.List;
 public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
     @Override
     public void processQuery(@NotNull final ReferencesSearch.SearchParameters searchParameters, @NotNull final Processor<PsiReference> processor) {
-        if (searchParameters.getScopeDeterminedByUser().getDisplayName().equals("<unknown scope>"))
+        if (searchParameters.getScope().getDisplayName().equals("<unknown scope>"))
             return;
         ApplicationManager.getApplication().runReadAction(new Runnable() {
             @Override
