@@ -57,6 +57,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
     public static final String TAGS_FLAG = "--tags";
     public static final String PARALLEL_FLAG = "--parallel";
     private static final String PARALLEL_NODES_FLAG = "--n";
+    private static final String TABLE_ROWS_FLAG = "--table-rows";
     private String specsToExecute;
     private Module module;
     private String environment;
@@ -64,6 +65,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
     private boolean execInParallel;
     private String parallelNodes;
     public ApplicationConfiguration programParameters;
+    private String rowsRange;
 
     public GaugeRunConfiguration(String name, Project project, ConfigurationFactoryEx configurationFactory) {
         super(project, configurationFactory, name);
@@ -106,6 +108,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         if (!Strings.isBlank(environment)) {
             commandLine.addParameters(ENV_FLAG, environment);
         }
+        addTableRowsRangeFlags(commandLine);
         addParallelExecFlags(commandLine);
         addProgramArguments(commandLine);
       
@@ -116,6 +119,13 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
             commandLine.getEnvironment().put(GAUGE_DEBUG_OPTS_ENV, JAVA_DEBUG_PORT);
         }
         
+    }
+
+    private void addTableRowsRangeFlags(GeneralCommandLine commandLine) {
+        if (!Strings.isBlank(rowsRange)) {
+            commandLine.addParameter(TABLE_ROWS_FLAG);
+            commandLine.addParameter(rowsRange);
+        }
     }
 
     private void addProgramArguments(GeneralCommandLine commandLine) {
@@ -172,6 +182,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         HashMap<String, String> envMap = new HashMap<String, String>();
         JDOMExternalizer.readMap(element, envMap, "envMap", "envMap" );
         programParameters.setEnvs(envMap);
+        rowsRange = JDOMExternalizer.readString(element, "rowsRange");
     }
 
     @Override
@@ -185,6 +196,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         JDOMExternalizer.write(element, "programParameters", programParameters.getProgramParameters());
         JDOMExternalizer.write(element, "workingDirectory", programParameters.getWorkingDirectory());
         JDOMExternalizer.writeMap(element, programParameters.getEnvs(), "envMap", "envMap");
+        JDOMExternalizer.write(element, "rowsRange", rowsRange);
     }
 
     @NotNull
@@ -255,5 +267,13 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
 
     public CommonProgramRunConfigurationParameters getProgramParameters() {
         return programParameters;
+    }
+
+    public String getRowsRange() {
+        return rowsRange;
+    }
+
+    public void setRowsRange(String rowsRange) {
+        this.rowsRange = rowsRange;
     }
 }
