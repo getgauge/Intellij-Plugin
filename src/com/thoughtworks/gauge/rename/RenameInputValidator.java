@@ -70,7 +70,6 @@ public class RenameInputValidator implements InputValidator {
     private boolean doRename(final String inputString, final Editor editor, final PsiElement psiElement) {
         Api.PerformRefactoringResponse response = null;
         FileDocumentManager.getInstance().saveAllDocuments();
-        makeProject();
         try {
             FileDocumentManager.getInstance().saveDocumentAsIs(editor.getDocument());
             final Module module = ModuleUtil.findModuleForPsiElement(psiElement);
@@ -100,14 +99,6 @@ public class RenameInputValidator implements InputValidator {
             public void run() {
                 for (Document document : documentTextMap.keySet())
                     document.setText(documentTextMap.get(document));
-            }
-        });
-    }
-
-    private void makeProject() {
-        CompilerManager.getInstance(project).make(new CompileStatusNotification() {
-            @Override
-            public void finished(boolean b, int i, int i1, CompileContext compileContext) {
             }
         });
     }

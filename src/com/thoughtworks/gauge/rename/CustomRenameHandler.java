@@ -19,6 +19,9 @@ package com.thoughtworks.gauge.rename;
 
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.compiler.CompileContext;
+import com.intellij.openapi.compiler.CompileStatusNotification;
+import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -47,8 +50,10 @@ public class CustomRenameHandler implements RenameHandler {
             psiElement = getStepElement(data.findElementAt(offset));
             return psiElement != null && (psiElement.getClass().equals(SpecStepImpl.class) || (psiElement.getClass().equals(ConceptStepImpl.class)));
         }
-        return CommonDataKeys.PROJECT.getData(dataContext) != null && (element.toString().equals("PsiAnnotation") ||
+        boolean isAvailable = CommonDataKeys.PROJECT.getData(dataContext) != null && (element.toString().equals("PsiAnnotation") ||
                 element.getClass().equals(ConceptStepImpl.class) || element.getClass().equals(SpecStepImpl.class));
+        if (isAvailable)  makeProject(CommonDataKeys.PROJECT.getData(dataContext));
+        return isAvailable;
     }
 
     public boolean isRenaming(DataContext dataContext) {
@@ -92,5 +97,13 @@ public class CustomRenameHandler implements RenameHandler {
             return selectedElement;
         if (selectedElement.getParent() == null) return null;
         return getStepElement(selectedElement.getParent());
+    }
+    
+    private void makeProject(Project project) {
+        CompilerManager.getInstance(project).make(new CompileStatusNotification() {
+            @Override
+            public void finished(boolean b, int i, int i1, CompileContext compileContext) {
+            }
+        });
     }
 }

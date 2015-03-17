@@ -35,11 +35,11 @@ public class ConceptPsiImplUtil extends SpecPsiImplUtil {
         stepText = stepText.substring(index, endIndex).trim();
         return getStepValueFor(element, stepText, inlineTable!=null);
     }
-
     public static StepValue getStepValue(ConceptConceptImpl conceptConcept) {
         String conceptHeadingText = conceptConcept.getConceptHeading().getText();
         conceptHeadingText = conceptHeadingText.trim().split("\n")[0];
         String text = conceptHeadingText.trim().replaceFirst("#", "");
         return getStepValueFor(conceptConcept, text, false);
     }
+
 }

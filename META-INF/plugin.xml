@@ -18,7 +18,7 @@
 <idea-plugin version="2">
   <id>com.thoughtworks.gauge</id>
   <name>Gauge</name>
-  <version>0.0.4</version>
+  <version>0.0.5</version>
   <vendor email="getgauge@googlegroups.com" url="http://getgauge.io">Gauge</vendor>
 
   <description><![CDATA[
@@ -34,14 +34,19 @@
             <li>Support for Concepts</li>
         </ul>
 
-      Change Notes
+      Change Notes:
+      <p>0.0.5</p>
+      <ul>
+           <li> Basic find usages on steps that have implementation </li>
+           <li> Fixes bug where gauge.exe was not detected on windows </li>
+      </ul>
+
       <p>0.0.4</p>
       <ul>
            <li> Parallel Execution in run configuration </li>
            <li> Html preview tab for spec and concept files </li>
            <li> Bug fixes </li>
-        </ul>
-      </p>
+      </ul>
 
       <p>0.0.3</p>
         <ul>
@@ -98,6 +103,10 @@
       <renameHandler implementation="com.thoughtworks.gauge.rename.CustomRenameHandler"/>
       <fileTemplateGroup implementation="com.thoughtworks.gauge.core.SpecificationLiveTemplate"/>
       <defaultLiveTemplatesProvider implementation="com.thoughtworks.gauge.core.TableTemplateProvider"/>
+      <lang.findUsagesProvider language="Specification" implementationClass="com.thoughtworks.gauge.findUsages.SpecStepFindUsagesProvider"/>
+      <lang.findUsagesProvider language="Concept" implementationClass="com.thoughtworks.gauge.findUsages.ConceptStepFindUsagesProvider"/>
+      <referencesSearch implementation="com.thoughtworks.gauge.findUsages.ReferenceSearch"/>
+      <findUsagesHandlerFactory implementation="com.thoughtworks.gauge.findUsages.CustomFindUsagesHandlerFactory"/>
       <fileEditorProvider implementation="com.thoughtworks.gauge.markdownPreview.MarkdownPreviewEditorProvider"/>
       <refactoring.extractIncludeHandler language="Specification" implementationClass="com.thoughtworks.gauge.extract.ExtractConceptHandler"/>
       <lang.refactoringSupport language="Specification" implementationClass="com.thoughtworks.gauge.extract.RefactoringSupportProvider"/>
