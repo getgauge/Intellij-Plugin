@@ -37,14 +37,16 @@ import java.util.List;
 public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
     @Override
     public void processQuery(@NotNull final ReferencesSearch.SearchParameters searchParameters, @NotNull final Processor<PsiReference> processor) {
-        if (searchParameters.getScope().getDisplayName().equals("<unknown scope>"))
+        final Class<? extends PsiElement> elementClass = searchParameters.getElementToSearch().getClass();
+        Boolean shouldFindUsages = elementClass.equals(ConceptStepImpl.class) || elementClass.equals(SpecStepImpl.class) ||
+                elementClass.equals(PsiAnnotationImpl.class) || elementClass.equals(PsiMethodImpl.class);
+        if (searchParameters.getScope().getDisplayName().equals("<unknown scope>") || !shouldFindUsages)
             return;
         ApplicationManager.getApplication().runReadAction(new Runnable() {
             @Override
             public void run() {
                 Collection<ConceptStepImpl> conceptSteps = getConceptSteps(searchParameters.getElementToSearch());
                 Collection<SpecStep> specSteps = getSpecSteps(searchParameters.getElementToSearch());
-                Class<? extends PsiElement> elementClass = searchParameters.getElementToSearch().getClass();
                 if (elementClass.equals(ConceptStepImpl.class))
                     handleConceptStep(conceptSteps, specSteps, processor, (ConceptStepImpl) searchParameters.getElementToSearch());
                 else if (elementClass.equals(PsiAnnotationImpl.class) || elementClass.equals(PsiMethodImpl.class))
@@ -128,9 +130,9 @@ public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesS
     }
 
     private PsiDirectory getPsiDirectory(PsiElement element, PsiDirectory directory) {
-        if (directory.getParentDirectory() == null) return null;
-        if (element.getProject().getName().equals(directory.getParentDirectory().getName()))
-            return directory.getParentDirectory();
+        if (directory == null) return null;
+        if (element.getProject().getBasePath().equals(directory.getVirtualFile().getPath()))
+            return directory;
         return getPsiDirectory(element, directory.getParentDirectory());
     }
 }
