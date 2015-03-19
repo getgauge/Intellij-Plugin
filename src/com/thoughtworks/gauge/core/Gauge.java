@@ -31,6 +31,9 @@ public class Gauge {
     }
 
     public static GaugeService getGaugeService(Module module) {
+        if (module == null) {
+            return null;
+        }
         return gaugeProjectHandle.get(module);
     }
 

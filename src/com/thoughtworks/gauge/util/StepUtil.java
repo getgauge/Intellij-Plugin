@@ -141,8 +141,8 @@ public class StepUtil {
     }
 
     private static boolean annotationTextMatches(PsiAnnotation annotation, String stepValue) {
-        Module moduleForPsiElement = ModuleUtil.findModuleForPsiElement(annotation);
-        GaugeService gaugeService = Gauge.getGaugeService(moduleForPsiElement);
+        Module module = findModule(annotation);
+        GaugeService gaugeService = Gauge.getGaugeService(module);
         if (gaugeService != null) {
             GaugeConnection gaugeConnection = gaugeService.getGaugeConnection();
             for (String annotationValue : getGaugeStepAnnotationValues(annotation)) {
@@ -153,6 +153,17 @@ public class StepUtil {
             }
         }
         return false;
+    }
+
+    private static Module findModule(PsiAnnotation annotation) {
+        Module module = ModuleUtil.findModuleForPsiElement(annotation);
+        if (module == null) {
+            PsiFile file = annotation.getContainingFile();
+            if (file != null) {
+               return ModuleUtil.findModuleForPsiElement(file);
+            }
+        }
+        return module;
     }
 
     private static List<String> getGaugeStepAnnotationValues(PsiAnnotation annotation) {
