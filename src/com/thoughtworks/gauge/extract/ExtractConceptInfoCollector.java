@@ -13,6 +13,8 @@ import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class ExtractConceptInfoCollector {
@@ -30,7 +32,8 @@ public class ExtractConceptInfoCollector {
     public ExtractConceptInfo getAllInfo() {
         this.isCancelled = false;
         String steps = getFormattedSteps();
-        final ExtractConceptDialog form = new ExtractConceptDialog();
+        List<String> args = getArgs(steps);
+        final ExtractConceptDialog form = new ExtractConceptDialog(this.editor.getProject(), args);
         showDialog(steps, form);
         if (form.getInfo().conceptName.equals("") || this.isCancelled)
             return new ExtractConceptInfo("", "", false);
@@ -38,6 +41,21 @@ public class ExtractConceptInfoCollector {
         String fileName = editor.getProject().getBasePath() + form.getInfo().fileName;
         boolean shouldContinue = conceptName != null;
         return new ExtractConceptInfo(conceptName, fileName, shouldContinue);
+    }
+
+    private List<String> getArgs(String steps) {
+        List<String> args = new ArrayList<String>();
+        matchPatterns(steps, args, "<(.*?)>", ">", "<");
+        matchPatterns(steps, args, "\"(.*?)\"", "\"", "\"");
+        return args;
+    }
+
+    private void matchPatterns(String steps, List<String> args, String regex, String suffix, String prefix) {
+        Pattern pattern = Pattern.compile(regex);
+        final Matcher matcher = pattern.matcher(steps);
+        while (matcher.find()) {
+            args.add(prefix + matcher.group(1) + suffix);
+        }
     }
 
     private void showDialog(String steps, ExtractConceptDialog form) {

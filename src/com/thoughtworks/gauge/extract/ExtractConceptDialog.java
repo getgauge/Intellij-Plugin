@@ -1,15 +1,25 @@
 package com.thoughtworks.gauge.extract;
 
+import com.intellij.openapi.project.Project;
+import com.intellij.ui.TextFieldWithAutoCompletionListProvider;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import javax.swing.*;
 import java.awt.event.*;
+import java.util.List;
 
 public class ExtractConceptDialog extends JDialog {
     private JPanel contentPane;
-    private JTextField textField1;
+    private com.intellij.ui.TextFieldWithAutoCompletion textField1;
     private JTextArea textArea1;
-    private JComboBox comboBox1;
+    private JComboBox<String> comboBox1;
+    private Project project;
+    private List<String> args;
 
-    public ExtractConceptDialog() {
+    public ExtractConceptDialog(Project project, List<String> args) {
+        this.project = project;
+        this.args = args;
         setContentPane(contentPane);
         setModal(true);
 
@@ -37,13 +47,6 @@ public class ExtractConceptDialog extends JDialog {
         dispose();
     }
 
-    public static void main(String[] args) {
-        ExtractConceptDialog dialog = new ExtractConceptDialog();
-        dialog.pack();
-        dialog.setVisible(true);
-        System.exit(0);
-    }
-
     public void setData(String data, java.util.List<String> files) {
         this.textArea1.setColumns(50);
         this.textArea1.setRows(10);
@@ -56,5 +59,38 @@ public class ExtractConceptDialog extends JDialog {
 
     public ExtractConceptInfo getInfo() {
         return new ExtractConceptInfo(this.textField1.getText(), this.comboBox1.getSelectedItem().toString(), true);
+    }
+
+    private void createUIComponents() {
+        this.textField1 = new com.intellij.ui.TextFieldWithAutoCompletion(this.project, new TextFieldWithAutoCompletionListProvider(this.args) {
+            @Nullable
+            @Override
+            protected Icon getIcon(Object o) {
+                return null;
+            }
+
+            @NotNull
+            @Override
+            protected String getLookupString(Object o) {
+                return o.toString();
+            }
+
+            @Nullable
+            @Override
+            protected String getTailText(Object o) {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            protected String getTypeText(Object o) {
+                return null;
+            }
+
+            @Override
+            public int compare(Object o, Object t1) {
+                return 0;
+            }
+        },true,"");
     }
 }
