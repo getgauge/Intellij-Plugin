@@ -2,8 +2,12 @@ package com.thoughtworks.gauge.extract;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.ui.DialogBuilder;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.thoughtworks.gauge.annotator.FileManager;
+import com.thoughtworks.gauge.language.psi.ConceptTable;
+import com.thoughtworks.gauge.language.psi.SpecTable;
+import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 
 import java.util.ArrayList;
@@ -14,10 +18,10 @@ import java.util.Map;
 public class ExtractConceptInfoCollector {
     private final Editor editor;
     private final Map<String, String> tableMap;
-    private final List<SpecStepImpl> specSteps;
+    private final List<PsiElement> specSteps;
     private boolean isCancelled = false;
 
-    public ExtractConceptInfoCollector(Editor editor, Map<String, String> tableMap, List<SpecStepImpl> specSteps) {
+    public ExtractConceptInfoCollector(Editor editor, Map<String, String> tableMap, List<PsiElement> specSteps) {
         this.editor = editor;
         this.tableMap = tableMap;
         this.specSteps = specSteps;
@@ -58,34 +62,37 @@ public class ExtractConceptInfoCollector {
     private List<String> getConceptNames() {
         List<PsiFile> files = FileManager.getAllConceptFiles(editor.getProject());
         List<String> names = new ArrayList<String>();
-        for (PsiFile file : files) {
+        for (PsiFile file : files)
             names.add(file.getVirtualFile().getPath().replace(editor.getProject().getBasePath(), ""));
-        }
         return names;
     }
 
     private String getFormattedSteps() {
         StringBuilder builder = new StringBuilder();
-        for (SpecStepImpl step : specSteps) {
-            if (step.getInlineTable() != null) {
-                builder.append(step.getText().trim().replace(step.getInlineTable().getText().trim(), "").trim())
-                        .append(" ").append("<" + tableMap.get(step.getInlineTable().getText().trim()) + ">").append("\n");
-                continue;
-            }
-            builder.append(step.getText().trim()).append("\n");
-        }
+        for (PsiElement step : specSteps)
+            builder = step.getClass().equals(SpecStepImpl.class) ? formatStep(builder, (SpecStepImpl) step) : formatStep(builder, (ConceptStepImpl) step);
         return builder.toString();
     }
-}
 
-class ExtractConceptInfo {
-    public final String conceptName;
-    public final String fileName;
-    public final Boolean shouldContinue;
+    private StringBuilder formatStep(StringBuilder builder, SpecStepImpl step) {
+        SpecTable table = step.getInlineTable();
+        if (table != null) {
+            builder.append(step.getText().trim().replace(table.getText().trim(), "").trim())
+                    .append(" <").append(tableMap.get(table.getText().trim())).append(">").append("\n");
+            return builder;
+        }
+        return builder.append(step.getText().trim()).append("\n");
+    }
 
-    public ExtractConceptInfo(String conceptName, String fileName, Boolean shouldContinue) {
-        this.conceptName = conceptName;
-        this.fileName = fileName;
-        this.shouldContinue = shouldContinue;
+    private StringBuilder formatStep(StringBuilder builder, ConceptStepImpl step) {
+        ConceptTable table = step.getTable();
+        if (table != null) {
+            builder.append(step.getText().trim().replace(table.getText().trim(), "").trim())
+                    .append(" <").append(tableMap.get(table.getText().trim())).append(">").append("\n");
+            return builder;
+        }
+        return builder.append(step.getText().trim()).append("\n");
     }
 }
+
+

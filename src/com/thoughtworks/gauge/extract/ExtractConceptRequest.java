@@ -5,7 +5,9 @@ import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.psi.PsiElement;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
+import com.thoughtworks.gauge.language.psi.ConceptTable;
 import com.thoughtworks.gauge.language.psi.SpecTable;
+import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import gauge.messages.Api;
 
@@ -22,14 +24,6 @@ public class ExtractConceptRequest {
     private final boolean refactorOtherUsages;
     private final Api.textInfo textInfo;
 
-    public ExtractConceptRequest(List<Api.step> steps, String fileName, String concept, boolean refactorOtherUsages, Api.textInfo textInfo) {
-        this.steps = steps;
-        this.fileName = fileName;
-        this.concept = Api.step.newBuilder().setName(concept).build();
-        this.refactorOtherUsages = refactorOtherUsages;
-        this.textInfo = textInfo;
-    }
-
     public ExtractConceptRequest(String fileName, String concept, boolean refactorOtherUsages, Api.textInfo textInfo) {
         this.fileName = fileName;
         this.concept = Api.step.newBuilder().setName(concept).build();
@@ -37,27 +31,49 @@ public class ExtractConceptRequest {
         this.textInfo = textInfo;
     }
 
-    public void convertToSteps(List<SpecStepImpl> specSteps, Map<String,String> tableMap){
+    public void convertToSteps(List<PsiElement> specSteps, Map<String,String> tableMap){
         this.steps = new ArrayList<Api.step>();
-        for (SpecStepImpl specStep : specSteps) {
+        for (PsiElement specStep : specSteps) {
             String text = specStep.getText().trim().substring(2).trim();
             Api.step stepToAdd = Api.step.newBuilder().setName(text).build();
-            if (specStep.getInlineTable() != null) {
-                String tableText = specStep.getInlineTable().getText().trim();
-                Api.step.Builder builder = Api.step.newBuilder().setName(text.replace(tableText, "").trim()).setTable(tableText);
-                String tableAsParameter = getTableName(specStep.getInlineTable(), concept.getName(), tableMap);
-                if (tableAsParameter != null) builder = builder.setParamTableName(tableAsParameter);
-                stepToAdd = builder.build();
-            }
+            if (specStep.getClass().equals(SpecStepImpl.class))
+                stepToAdd = formatTable(tableMap, (SpecStepImpl) specStep, text, stepToAdd);
+            else
+                stepToAdd = formatTable(tableMap, (ConceptStepImpl) specStep, text, stepToAdd);
             steps.add(stepToAdd);
         }
     }
 
-    private String getTableName(SpecTable inlineTable, String concept, Map<String,String> tableMap) {
+    private Api.step formatTable(Map<String, String> tableMap, SpecStepImpl specStep, String text, Api.step stepToAdd) {
+        SpecTable table = specStep.getInlineTable();
+        if (table != null) {
+            stepToAdd = getStep(tableMap, text, table.getText().trim());
+        }
+        return stepToAdd;
+    }
+
+    private Api.step formatTable(Map<String, String> tableMap, ConceptStepImpl specStep, String text, Api.step stepToAdd) {
+        ConceptTable table = specStep.getTable();
+        if (table != null) {
+            stepToAdd = getStep(tableMap, text, table.getText().trim());
+        }
+        return stepToAdd;
+    }
+
+    private Api.step getStep(Map<String, String> tableMap, String text, String tableText) {
+        Api.step stepToAdd;
+        Api.step.Builder builder = Api.step.newBuilder().setName(text.replace(tableText, "").trim()).setTable(tableText);
+        String tableAsParameter = getTableName(concept.getName(), tableMap, tableText);
+        if (tableAsParameter != null) builder = builder.setParamTableName(tableAsParameter);
+        stepToAdd = builder.build();
+        return stepToAdd;
+    }
+
+    private String getTableName(String concept, Map<String, String> tableMap, String tableText) {
         Pattern pattern = Pattern.compile("<(.*?)>");
         final Matcher matcher = pattern.matcher(concept);
         while (matcher.find()) {
-            if (tableMap.get(matcher.group(1)) != null && tableMap.get(matcher.group(1)).equals(inlineTable.getText().trim()))
+            if (tableMap.get(matcher.group(1)) != null && tableMap.get(matcher.group(1)).equals(tableText))
                 return matcher.group(1);
         }
         return null;
