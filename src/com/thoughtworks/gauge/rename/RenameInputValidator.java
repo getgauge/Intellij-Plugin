@@ -20,9 +20,6 @@ package com.thoughtworks.gauge.rename;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.openapi.compiler.CompileContext;
-import com.intellij.openapi.compiler.CompileStatusNotification;
-import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -85,7 +82,7 @@ public class RenameInputValidator implements InputValidator {
     }
 
     private void refreshFiles(Api.PerformRefactoringResponse response) {
-        final Map<Document,String> documentTextMap = new HashMap<Document, String>();
+        final Map<Document, String> documentTextMap = new HashMap<Document, String>();
         for (String fileName : response.getFilesChangedList()) {
             VirtualFile fileByIoFile = LocalFileSystem.getInstance().findFileByIoFile(new File(fileName));
             if (fileByIoFile != null) {

@@ -26,15 +26,13 @@ import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.AnnotatedElementsSearch;
 import com.intellij.util.Query;
-import com.thoughtworks.gauge.ConceptInfo;
-import com.thoughtworks.gauge.Constants;
-import com.thoughtworks.gauge.GaugeConnection;
-import com.thoughtworks.gauge.StepValue;
+import com.thoughtworks.gauge.*;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
 import com.thoughtworks.gauge.language.psi.SpecStep;
 import com.thoughtworks.gauge.language.psi.impl.ConceptConceptImpl;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
+import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import com.thoughtworks.gauge.reference.ReferenceCache;
 
 import java.io.File;
@@ -58,7 +56,7 @@ public class StepUtil {
 
     private static PsiElement findStepReference(SpecStep step, Module module) {
         Collection<PsiMethod> stepMethods = getStepMethods(module.getProject());
-        PsiMethod method = filter(stepMethods, step);
+        PsiMethod method = findStepImplementationMethod(stepMethods, step);
         PsiElement referenceElement;
         if (method == null) {
             referenceElement = searchConceptsForImpl(step, module);
@@ -66,7 +64,7 @@ public class StepUtil {
                 referenceElement = new ConceptStepImpl(referenceElement.getNode(), true);
             }
         } else {
-            referenceElement = method.getChildren()[0].getChildren()[0];
+            referenceElement = method;
         }
         addReferenceToCache(step, referenceElement, module);
         return referenceElement;
@@ -119,7 +117,7 @@ public class StepUtil {
         return new File(conceptInfo.getFilePath()).getName();
     }
 
-    private static PsiMethod filter(Collection<PsiMethod> stepMethods, SpecStep step) {
+    private static PsiMethod findStepImplementationMethod(Collection<PsiMethod> stepMethods, SpecStep step) {
         String stepText = step.getStepValue().getStepText();
         for (PsiMethod stepMethod : stepMethods) {
             if (isMatch(stepMethod, stepText)) {
@@ -130,32 +128,34 @@ public class StepUtil {
     }
 
     public static boolean isMatch(PsiMethod stepMethod, String stepText) {
-        final PsiModifierList modifierList = stepMethod.getModifierList();
-        final PsiAnnotation[] annotations = modifierList.getAnnotations();
-        for (PsiAnnotation annotation : annotations) {
-            if (annotationTextMatches(annotation, stepText)) {
+        Module module = findModule(stepMethod);
+        GaugeService gaugeService = Gauge.getGaugeService(module);
+        if (gaugeService == null) {
+            return false;
+        }
+
+        GaugeConnection connection = gaugeService.getGaugeConnection();
+
+        List<String> annotationValues = getGaugeStepAnnotationValues(stepMethod);
+        for (String value : annotationValues) {
+            if (connection.getStepValue(value).getStepText().equals(stepText)) {
                 return true;
             }
         }
         return false;
     }
 
-    private static boolean annotationTextMatches(PsiAnnotation annotation, String stepValue) {
-        Module module = findModule(annotation);
-        GaugeService gaugeService = Gauge.getGaugeService(module);
-        if (gaugeService != null) {
-            GaugeConnection gaugeConnection = gaugeService.getGaugeConnection();
-            for (String annotationValue : getGaugeStepAnnotationValues(annotation)) {
-                String methodValue = gaugeConnection.getStepValue(annotationValue).getStepText();
-                if (methodValue.equals(stepValue)) {
-                    return true;
-                }
-            }
+    public static List<String> getGaugeStepAnnotationValues(PsiMethod stepMethod) {
+        final PsiModifierList modifierList = stepMethod.getModifierList();
+        final PsiAnnotation[] annotations = modifierList.getAnnotations();
+        List<String> values = new ArrayList<String>();
+        for (PsiAnnotation annotation : annotations) {
+            values.addAll(getGaugeStepAnnotationValues(annotation));
         }
-        return false;
+        return values;
     }
 
-    private static Module findModule(PsiAnnotation annotation) {
+    private static Module findModule(PsiElement annotation) {
         Module module = ModuleUtil.findModuleForPsiElement(annotation);
         if (module == null) {
             PsiFile file = annotation.getContainingFile();
@@ -168,6 +168,9 @@ public class StepUtil {
 
     private static List<String> getGaugeStepAnnotationValues(PsiAnnotation annotation) {
         List<String> values = new ArrayList<String>();
+        if (!isGaugeAnnotation(annotation)) {
+            return values;
+        }
         PsiAnnotationMemberValue attributeValue = annotation.findAttributeValue("value");
         Object value = JavaPsiFacade.getInstance(annotation.getProject()).getConstantEvaluationHelper().computeConstantExpression(attributeValue);
         if (value != null && value instanceof String) {
@@ -182,6 +185,10 @@ public class StepUtil {
             }
         }
         return values;
+    }
+
+    private static boolean isGaugeAnnotation(PsiAnnotation annotation) {
+        return annotation.getQualifiedName().equals(Step.class.getCanonicalName());
     }
 
 
@@ -228,4 +235,18 @@ public class StepUtil {
         }
         return false;
     }
+
+
+    public static boolean isStep(PsiElement element) {
+        return element instanceof SpecStepImpl;
+    }
+
+    public static boolean isConcept(PsiElement element) {
+        return element instanceof ConceptStepImpl;
+    }
+
+    public static boolean isMethod(PsiElement element) {
+        return element instanceof PsiMethod;
+    }
+
 }
