@@ -15,12 +15,16 @@ public class ReferenceCache {
     }
 
     public PsiElement searchReferenceFor(SpecStep step) {
-        String stepValueText = step.getStepValue().getStepText();
-        PsiStepReferenceCache element = stepReferences.get(stepValueText);
-        if (isValid(element)) {
-            return element.getPsiElement();
+        try {
+            String stepValueText = step.getStepValue().getStepText();
+            PsiStepReferenceCache element = stepReferences.get(stepValueText);
+            if (isValid(element)) {
+                return element.getPsiElement();
+            }
+            stepReferences.remove(stepValueText);
+        } catch (Exception e) {
+            return null;
         }
-        stepReferences.remove(stepValueText);
         return null;
     }
 
