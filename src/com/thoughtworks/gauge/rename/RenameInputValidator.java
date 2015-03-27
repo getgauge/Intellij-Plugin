@@ -18,33 +18,17 @@
 package com.thoughtworks.gauge.rename;
 
 import com.intellij.codeInsight.hint.HintManager;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.openapi.compiler.CompileContext;
-import com.intellij.openapi.compiler.CompileStatusNotification;
-import com.intellij.openapi.compiler.CompilerManager;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidator;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
+import com.thoughtworks.gauge.undo.UndoHandler;
 import gauge.messages.Api;
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static com.intellij.openapi.vfs.LocalFileSystem.getInstance;
 
 public class RenameInputValidator implements InputValidator {
     private final Project project;
@@ -75,59 +59,12 @@ public class RenameInputValidator implements InputValidator {
             final Module module = ModuleUtil.findModuleForPsiElement(psiElement);
             GaugeService gaugeService = Gauge.getGaugeService(module);
             response = gaugeService.getGaugeConnection().sendPerformRefactoringRequest(text, inputString);
-            refreshFiles(response);
         } catch (Exception e) {
             HintManager.getInstance().showErrorHint(editor, String.format("Could not execute refactor command: %s", e.toString()));
         }
-        runWriteAction(response);
+        new UndoHandler(response.getFilesChangedList(), project, "Refactoring").undo();
         showMessage(response);
         return true;
-    }
-
-    private void refreshFiles(Api.PerformRefactoringResponse response) {
-        final Map<Document,String> documentTextMap = new HashMap<Document, String>();
-        for (String fileName : response.getFilesChangedList()) {
-            VirtualFile fileByIoFile = LocalFileSystem.getInstance().findFileByIoFile(new File(fileName));
-            if (fileByIoFile != null) {
-                Document document = FileDocumentManager.getInstance().getDocument(fileByIoFile);
-                if (document != null) documentTextMap.put(document, document.getText());
-            }
-        }
-        VirtualFileManager.getInstance().refreshWithoutFileWatcher(false);
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-                for (Document document : documentTextMap.keySet())
-                    document.setText(documentTextMap.get(document));
-            }
-        });
-    }
-
-    private void runWriteAction(final Api.PerformRefactoringResponse finalResponse) {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-                CommandProcessor.getInstance().executeCommand(project, new Runnable() {
-                    @Override
-                    public void run() {
-                        performUndoableAction(finalResponse.getFilesChangedList());
-                    }
-                }, "Refactoring", "Refactoring");
-            }
-        });
-    }
-
-    private void performUndoableAction(List<String> filesChangedList) {
-        for (String fileName : filesChangedList)
-            try {
-                VirtualFile virtualFile = getInstance().findFileByIoFile(new File(fileName));
-                if (virtualFile != null) {
-                    Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
-                    getInstance().refreshAndFindFileByIoFile(new File(fileName));
-                    if (document != null) document.setText(FileUtils.readFileToString(new File(fileName)));
-                }
-            } catch (Exception ignored) {
-            }
     }
 
     private void showMessage(Api.PerformRefactoringResponse response) {
