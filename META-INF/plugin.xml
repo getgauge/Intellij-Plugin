@@ -108,7 +108,14 @@
       <renameHandler implementation="com.thoughtworks.gauge.rename.CustomRenameHandler"/>
       <fileTemplateGroup implementation="com.thoughtworks.gauge.core.SpecificationLiveTemplate"/>
       <defaultLiveTemplatesProvider implementation="com.thoughtworks.gauge.core.TableTemplateProvider"/>
+      <lang.findUsagesProvider language="Specification" implementationClass="com.thoughtworks.gauge.findUsages.SpecStepFindUsagesProvider"/>
+      <lang.findUsagesProvider language="Concept" implementationClass="com.thoughtworks.gauge.findUsages.ConceptStepFindUsagesProvider"/>
+      <referencesSearch implementation="com.thoughtworks.gauge.findUsages.ReferenceSearch"/>
+      <findUsagesHandlerFactory implementation="com.thoughtworks.gauge.findUsages.CustomFindUsagesHandlerFactory"/>
       <fileEditorProvider implementation="com.thoughtworks.gauge.markdownPreview.MarkdownPreviewEditorProvider"/>
+      <refactoring.extractIncludeHandler language="Specification" implementationClass="com.thoughtworks.gauge.extract.ExtractConceptHandler"/>
+      <lang.refactoringSupport language="Specification" implementationClass="com.thoughtworks.gauge.extract.RefactoringSupportProvider"/>
+      <lang.refactoringSupport language="Concept" implementationClass="com.thoughtworks.gauge.extract.RefactoringSupportProvider"/>
   </extensions>
 
   <application-components>

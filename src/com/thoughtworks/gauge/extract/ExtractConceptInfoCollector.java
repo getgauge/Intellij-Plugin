@@ -1,7 +1,9 @@
 package com.thoughtworks.gauge.extract;
 
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.impl.EditorImpl;
 import com.intellij.openapi.ui.DialogBuilder;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.thoughtworks.gauge.annotator.FileManager;
@@ -10,7 +12,9 @@ import com.thoughtworks.gauge.language.psi.SpecTable;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -18,6 +22,7 @@ import java.util.regex.Pattern;
 
 
 public class ExtractConceptInfoCollector {
+    public static final String CREATE_NEW_FILE = "Create New File(Enter info in the below field)";
     private final Editor editor;
     private final Map<String, String> tableMap;
     private final List<PsiElement> specSteps;
@@ -33,7 +38,7 @@ public class ExtractConceptInfoCollector {
         this.isCancelled = false;
         String steps = getFormattedSteps();
         List<String> args = getArgs(steps);
-        final ExtractConceptDialog form = new ExtractConceptDialog(this.editor.getProject(), args);
+        final ExtractConceptDialog form = new ExtractConceptDialog(this.editor.getProject(), args, getDirNames());
         showDialog(steps, form);
         if (form.getInfo().conceptName.equals("") || this.isCancelled)
             return new ExtractConceptInfo("", "", false);
@@ -80,6 +85,7 @@ public class ExtractConceptInfoCollector {
     private List<String> getConceptNames() {
         List<PsiFile> files = FileManager.getAllConceptFiles(editor.getProject());
         List<String> names = new ArrayList<String>();
+        names.add(CREATE_NEW_FILE);
         for (PsiFile file : files)
             names.add(file.getVirtualFile().getPath().replace(editor.getProject().getBasePath(), ""));
         return names;
@@ -111,6 +117,8 @@ public class ExtractConceptInfoCollector {
         }
         return builder.append(step.getText().trim()).append("\n");
     }
+
+    public List<String> getDirNames() {
+        return new ArrayList<String>();
+    }
 }
-
-
