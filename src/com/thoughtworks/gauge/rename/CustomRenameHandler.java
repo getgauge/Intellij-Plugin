@@ -27,10 +27,18 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiMethod;
 import com.intellij.refactoring.rename.RenameHandler;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
+import com.thoughtworks.gauge.util.StepUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+
+import static com.thoughtworks.gauge.util.StepUtil.isConcept;
+import static com.thoughtworks.gauge.util.StepUtil.isMethod;
+import static com.thoughtworks.gauge.util.StepUtil.isStep;
 
 public class CustomRenameHandler implements RenameHandler {
 
@@ -48,11 +56,10 @@ public class CustomRenameHandler implements RenameHandler {
             PsiFile data = CommonDataKeys.PSI_FILE.getData(dataContext);
             if (data == null) return false;
             psiElement = getStepElement(data.findElementAt(offset));
-            return psiElement != null && (psiElement.getClass().equals(SpecStepImpl.class) || (psiElement.getClass().equals(ConceptStepImpl.class)));
+            return psiElement != null && (isConcept(psiElement) || isStep(psiElement));
         }
-        boolean isAvailable = CommonDataKeys.PROJECT.getData(dataContext) != null && (element.toString().equals("PsiAnnotation") ||
-                element.getClass().equals(ConceptStepImpl.class) || element.getClass().equals(SpecStepImpl.class));
-        if (isAvailable)  makeProject(CommonDataKeys.PROJECT.getData(dataContext));
+        boolean isAvailable = CommonDataKeys.PROJECT.getData(dataContext) != null && (isMethod(element) || isConcept(element) || isStep(element));
+        if (isAvailable) makeProject(CommonDataKeys.PROJECT.getData(dataContext));
         return isAvailable;
     }
 
@@ -65,17 +72,21 @@ public class CustomRenameHandler implements RenameHandler {
         if (element == null) element = psiElement;
         psiElement = element;
         String text = element.toString();
+
         //Finding text from annotation
-        if (element.toString().equals("PsiAnnotation")) {
-            if (element.getChildren()[2].getChildren()[1].getChildren()[0].getChildren().length == 1)
-                text = element.getChildren()[2].getChildren()[1].getText().substring(1, element.getChildren()[2].getChildren()[1].getText().length() - 1);
-            else {
+        if (isMethod(element)) {
+            List<String> values = StepUtil.getGaugeStepAnnotationValues((PsiMethod) element);
+            if (values.size() == 0) {
+                return;
+            } else if (values.size() == 1)
+                text = values.get(0);
+            else if (values.size() > 1) {
                 Messages.showWarningDialog("Refactoring for steps having aliases are not supported", "Warning");
                 return;
             }
-        } else if (element.getClass().equals(SpecStepImpl.class)) {
+        } else if (isStep(element)) {
             text = ((SpecStepImpl) element).getStepValue().getStepAnnotationText();
-        }else if (element.getClass().equals(ConceptStepImpl.class)) {
+        } else if (isConcept(element)){
             text = removeIdentifiers(((ConceptStepImpl) element).getStepValue().getStepAnnotationText());
         }
         Messages.showInputDialog(project, String.format("Refactoring \"%s\" to : ", text), "Refactor", Messages.getInformationIcon(), text,
@@ -98,7 +109,7 @@ public class CustomRenameHandler implements RenameHandler {
         if (selectedElement.getParent() == null) return null;
         return getStepElement(selectedElement.getParent());
     }
-    
+
     private void makeProject(Project project) {
         CompilerManager.getInstance(project).make(new CompileStatusNotification() {
             @Override
