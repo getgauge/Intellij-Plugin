@@ -160,7 +160,7 @@ public class StepUtil {
         if (module == null) {
             PsiFile file = annotation.getContainingFile();
             if (file != null) {
-               return ModuleUtil.findModuleForPsiElement(file);
+                return ModuleUtil.findModuleForPsiElement(file);
             }
         }
         return module;
@@ -249,4 +249,7 @@ public class StepUtil {
         return element instanceof PsiMethod;
     }
 
+    public static boolean isGaugeFileExtension(String name) {
+        return (name.equals(Constants.CONCEPT_EXTENSION) || name.equals(Constants.MD_EXTENSION) || name.equals(Constants.SPEC_EXTENSION));
+    }
 }

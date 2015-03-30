@@ -25,6 +25,7 @@ import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
@@ -36,9 +37,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.thoughtworks.gauge.util.StepUtil.isConcept;
-import static com.thoughtworks.gauge.util.StepUtil.isMethod;
-import static com.thoughtworks.gauge.util.StepUtil.isStep;
+import static com.thoughtworks.gauge.util.StepUtil.*;
 
 public class CustomRenameHandler implements RenameHandler {
 
@@ -48,6 +47,8 @@ public class CustomRenameHandler implements RenameHandler {
     public boolean isAvailableOnDataContext(DataContext dataContext) {
         PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
         Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
+        VirtualFile file = CommonDataKeys.VIRTUAL_FILE.getData(dataContext);
+        if (file != null && !StepUtil.isGaugeFileExtension(file.getExtension())) return false;
         this.editor = editor;
         if (element == null) {
             if (editor == null) return false;
@@ -86,7 +87,7 @@ public class CustomRenameHandler implements RenameHandler {
             }
         } else if (isStep(element)) {
             text = ((SpecStepImpl) element).getStepValue().getStepAnnotationText();
-        } else if (isConcept(element)){
+        } else if (isConcept(element)) {
             text = removeIdentifiers(((ConceptStepImpl) element).getStepValue().getStepAnnotationText());
         }
         Messages.showInputDialog(project, String.format("Refactoring \"%s\" to : ", text), "Refactor", Messages.getInformationIcon(), text,
