@@ -93,6 +93,11 @@ public class GaugeUtil {
     }
 
     public static File moduleDirFromModule(Module module) {
-        return new File(module.getModuleFilePath()).getParentFile();
+        VirtualFile baseDir = module.getProject().getBaseDir();
+        if (baseDir.exists()) {
+            return new File(baseDir.getPath());
+        } else {
+            return new File(module.getModuleFilePath()).getParentFile();
+        }
     }
 }

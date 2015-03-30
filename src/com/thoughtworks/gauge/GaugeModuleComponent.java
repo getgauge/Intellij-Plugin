@@ -24,6 +24,7 @@ import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import com.thoughtworks.gauge.module.GaugeModuleType;
+import com.thoughtworks.gauge.module.lib.GaugeLibHelper;
 import com.thoughtworks.gauge.util.GaugeUtil;
 import com.thoughtworks.gauge.util.SocketUtils;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +44,6 @@ public class GaugeModuleComponent implements ModuleComponent {
     }
 
     public void initComponent() {
-
     }
 
     public void disposeComponent() {
@@ -60,6 +60,7 @@ public class GaugeModuleComponent implements ModuleComponent {
             if (Gauge.getGaugeService(module) == null) {
                 GaugeService gaugeService = createGaugeService(module);
                 Gauge.addModule(module, gaugeService);
+                new GaugeLibHelper().checkGaugeLibs(module);
             }
         }
     }
