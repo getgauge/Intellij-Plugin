@@ -160,8 +160,11 @@ public class GaugeLibHelper {
     private ProjectLib gaugeLib(Module module) {
         String libRoot;
         try {
-            GaugeService gaugeService = GaugeModuleComponent.createGaugeService(module);
-            Gauge.addModule(module, gaugeService);
+            GaugeService gaugeService = Gauge.getGaugeService(module);
+            if (gaugeService == null) {
+                 gaugeService = GaugeModuleComponent.createGaugeService(module);
+                Gauge.addModule(module, gaugeService);
+            }
             GaugeConnection gaugeConnection = gaugeService.getGaugeConnection();
             if (gaugeConnection == null) {
                 throw new IOException("Gauge api connection not established");
