@@ -25,19 +25,17 @@ public class ExtractConceptHandler implements RefactoringActionHandler {
         this.psiFile = psiFile;
         this.editor = editor;
         try {
-            List<PsiElement> specSteps = getSteps(this.editor, this.psiFile);
-            ExtractConceptInfoCollector collector = new ExtractConceptInfoCollector(editor, builder.getTextToTableMap(), specSteps);
+            List<PsiElement> steps = getSteps(this.editor, this.psiFile);
+            if (steps.size() == 0) throw new RuntimeException("Invalid selection");
+            ExtractConceptInfoCollector collector = new ExtractConceptInfoCollector(editor, builder.getTextToTableMap(), steps);
             ExtractConceptInfo info = collector.getAllInfo();
             if (info.shouldContinue) {
-                Api.ExtractConceptResponse response = makeExtractConceptRequest(specSteps, info.fileName, info.conceptName, false, psiFile);
-                if (!response.getIsSuccess()) {
-                    HintManager.getInstance().showErrorHint(editor, response.getError());
-                    return;
-                }
+                Api.ExtractConceptResponse response = makeExtractConceptRequest(steps, info.fileName, info.conceptName, false, psiFile);
+                if (!response.getIsSuccess()) throw new RuntimeException(response.getError());
                 VirtualFileManager.getInstance().refreshWithoutFileWatcher(false);
             }
         } catch (Exception e) {
-            HintManager.getInstance().showErrorHint(editor, "Cannot extract Concept.");
+            HintManager.getInstance().showErrorHint(editor, e.getMessage());
         }
     }
 

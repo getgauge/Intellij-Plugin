@@ -9,8 +9,10 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.FileBasedIndex;
+import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.language.ConceptFileType;
 
+import java.io.File;
 import java.util.*;
 
 public class FileManager {
@@ -58,5 +60,22 @@ public class FileManager {
             return javaFile.getPackageName() + "." + javaFile.getName();
         }
         return javaFile.getName();
+    }
+
+    public static List<String> getDirNamesUnderSpecs(Project project) {
+        File dir = new File(project.getBasePath() + File.separator + Constants.SPECS_DIR);
+        File[] files = dir.listFiles();
+        List<String> dirs = new ArrayList<String>();
+        dirs.add(String.format("%s%s%s", File.separator, Constants.SPECS_DIR, File.separator));
+        getDirectories(files, dirs, project.getBasePath());
+        return dirs;
+    }
+
+    private static void getDirectories(File[] files, List<String> dirs, String basePath) {
+        for (File file : files)
+            if (file.isDirectory()) {
+                dirs.add(file.getPath().replace(basePath,"") + File.separator);
+                getDirectories(file.listFiles(), dirs, basePath);
+            }
     }
 }
