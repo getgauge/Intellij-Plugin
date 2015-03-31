@@ -20,6 +20,7 @@ package com.thoughtworks.gauge.language;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.thoughtworks.gauge.Constants;
+import com.thoughtworks.gauge.idea.icon.GaugeIcon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

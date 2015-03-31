@@ -15,13 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with getgauge/Intellij-plugin.  If not, see <http://www.gnu.org/licenses/>.
 
-package com.thoughtworks.gauge.core;
+package com.thoughtworks.gauge.idea.template;
 
 import com.intellij.ide.fileTemplates.FileTemplateDescriptor;
 import com.intellij.ide.fileTemplates.FileTemplateGroupDescriptor;
 import com.intellij.ide.fileTemplates.FileTemplateGroupDescriptorFactory;
+import com.thoughtworks.gauge.idea.icon.GaugeIcon;
 import com.thoughtworks.gauge.language.ConceptFileType;
-import com.thoughtworks.gauge.language.GaugeIcon;
 import com.thoughtworks.gauge.language.SpecFileType;
 
 public class SpecificationLiveTemplate implements FileTemplateGroupDescriptorFactory {
