@@ -7,21 +7,18 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.refactoring.RefactoringActionHandler;
 import com.thoughtworks.gauge.extract.stepBuilder.StepsBuilder;
 import gauge.messages.Api;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class ExtractConceptHandler implements RefactoringActionHandler {
-
+public class ExtractConceptHandler {
     private StepsBuilder builder;
     private PsiFile psiFile;
     private Editor editor;
 
-    @Override
-    public void invoke(@NotNull final Project project, final Editor editor, final PsiFile psiFile, final DataContext dataContext) {
+    public void invoke(@NotNull final Project project,@NotNull final Editor editor,@NotNull final PsiFile psiFile,@NotNull final DataContext dataContext) {
         this.psiFile = psiFile;
         this.editor = editor;
         try {
@@ -52,9 +49,5 @@ public class ExtractConceptHandler implements RefactoringActionHandler {
     private List<PsiElement> getSteps(Editor editor, PsiFile psiFile) {
         builder = StepsBuilder.getBuilder(editor, psiFile);
         return builder.build();
-    }
-
-    @Override
-    public void invoke(@NotNull Project project, @NotNull PsiElement[] psiElements, DataContext dataContext) {
     }
 }

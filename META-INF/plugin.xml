@@ -113,9 +113,6 @@
       <referencesSearch implementation="com.thoughtworks.gauge.findUsages.ReferenceSearch"/>
       <findUsagesHandlerFactory implementation="com.thoughtworks.gauge.findUsages.CustomFindUsagesHandlerFactory"/>
       <fileEditorProvider implementation="com.thoughtworks.gauge.markdownPreview.MarkdownPreviewEditorProvider"/>
-      <refactoring.extractIncludeHandler language="Specification" implementationClass="com.thoughtworks.gauge.extract.ExtractConceptHandler"/>
-      <lang.refactoringSupport language="Specification" implementationClass="com.thoughtworks.gauge.extract.RefactoringSupportProvider"/>
-      <lang.refactoringSupport language="Concept" implementationClass="com.thoughtworks.gauge.extract.RefactoringSupportProvider"/>
   </extensions>
 
   <application-components>
@@ -132,6 +129,11 @@
               class="com.thoughtworks.gauge.formatter.SpecFormatter"
               text="spec format" description="Format spec files">
       <keyboard-shortcut first-keystroke="ctrl alt shift l" keymap="$default"/>
+      </action>
+      <action id="IntroduceActionGroup"
+              class="com.thoughtworks.gauge.extract.ExtractConceptAction"
+              text="Extract to Concept">
+          <keyboard-shortcut first-keystroke="ctrl alt c" keymap="$default"/>
       </action>
   </actions>
 
