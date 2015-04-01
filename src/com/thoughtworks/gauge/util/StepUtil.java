@@ -35,15 +35,17 @@ import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import com.thoughtworks.gauge.reference.ReferenceCache;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.thoughtworks.gauge.GaugeConstant.STEP_ANNOTATION_QUALIFIER;
 
 public class StepUtil {
+
+    private static HashMap<String, String> stepValueCache = new HashMap<String, String>();
 
     public static PsiElement findStepImpl(SpecStep step, Module module) {
         ReferenceCache cache = Gauge.getReferenceCache(module);
@@ -113,10 +115,6 @@ public class StepUtil {
         return conceptFiles.toArray(new VirtualFile[conceptFiles.size()]);
     }
 
-    private static String getConceptFileName(ConceptInfo conceptInfo) {
-        return new File(conceptInfo.getFilePath()).getName();
-    }
-
     private static PsiMethod findStepImplementationMethod(Collection<PsiMethod> stepMethods, SpecStep step) {
         String stepText = step.getStepValue().getStepText();
         for (PsiMethod stepMethod : stepMethods) {
@@ -138,11 +136,20 @@ public class StepUtil {
 
         List<String> annotationValues = getGaugeStepAnnotationValues(stepMethod);
         for (String value : annotationValues) {
-            if (connection.getStepValue(value).getStepText().equals(stepText)) {
+            if (getStepValue(connection, value).equals(stepText)) {
                 return true;
             }
         }
         return false;
+    }
+
+    private static String getStepValue(final GaugeConnection connection, final String text) {
+        String value = stepValueCache.get(text);
+        if (value == null || value.isEmpty()) {
+            value = connection.getStepValue(text).getStepText();
+            stepValueCache.put(text, value);
+        }
+        return value;
     }
 
     public static List<String> getGaugeStepAnnotationValues(PsiMethod stepMethod) {
@@ -160,7 +167,7 @@ public class StepUtil {
         if (module == null) {
             PsiFile file = annotation.getContainingFile();
             if (file != null) {
-               return ModuleUtil.findModuleForPsiElement(file);
+                return ModuleUtil.findModuleForPsiElement(file);
             }
         }
         return module;
@@ -249,4 +256,7 @@ public class StepUtil {
         return element instanceof PsiMethod;
     }
 
+    public static boolean isGaugeFileExtension(String name) {
+        return (name.equals(Constants.CONCEPT_EXTENSION) || name.equals(Constants.MD_EXTENSION) || name.equals(Constants.SPEC_EXTENSION));
+    }
 }

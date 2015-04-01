@@ -38,6 +38,9 @@ public class Gauge {
     }
 
     public static ReferenceCache getReferenceCache(Module module) {
+        if (module == null) {
+            return null;
+        }
         ReferenceCache referenceCache = moduleReferenceCaches.get(module);
         if (referenceCache == null) {
             referenceCache = new ReferenceCache();

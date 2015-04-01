@@ -29,17 +29,10 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.projectRoots.SdkTypeId;
 import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.thoughtworks.gauge.GaugeConnection;
-import com.thoughtworks.gauge.GaugeModuleComponent;
-import com.thoughtworks.gauge.PluginNotInstalledException;
-import com.thoughtworks.gauge.core.Gauge;
-import com.thoughtworks.gauge.core.GaugeService;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
+import com.thoughtworks.gauge.module.lib.GaugeLibHelper;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,48 +44,15 @@ import java.util.List;
 
 import static com.thoughtworks.gauge.GaugeConstant.INIT_FLAG;
 import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeExecPath;
-import static com.thoughtworks.gauge.util.GaugeUtil.moduleDirFromModule;
 
 public class GaugeModuleBuilder extends JavaModuleBuilder {
 
-    @Override
+
     public void setupRootModel(ModifiableRootModel modifiableRootModel) throws ConfigurationException {
         super.setupRootModel(modifiableRootModel);
         checkGaugeIsInstalled();
         gaugeInit(modifiableRootModel);
-        addLibsToModule(modifiableRootModel);
-    }
-
-    private void addLibsToModule(ModifiableRootModel modifiableRootModel) {
-        Module module = modifiableRootModel.getModule();
-        ProjectLib gaugeLib = gaugeLib(module);
-        if (gaugeLib != null) {
-            addGaugeLibToModule(gaugeLib, modifiableRootModel);
-        }
-        addGaugeLibToModule(projectLib(module), modifiableRootModel);
-    }
-
-    private ProjectLib projectLib(Module module) {
-        return new ProjectLib("project-lib", new File(moduleDirFromModule(module), "libs"));
-    }
-
-    private ProjectLib gaugeLib(Module module) {
-        String libRoot;
-        try {
-            GaugeService gaugeService = GaugeModuleComponent.createGaugeService(module);
-            Gauge.addModule(module, gaugeService);
-            GaugeConnection gaugeConnection = gaugeService.getGaugeConnection();
-            if (gaugeConnection == null) {
-                throw new IOException("Gauge api connection not established");
-            }
-            libRoot = gaugeConnection.getLibPath(getLanguage());
-        } catch (IOException e) {
-            System.err.println("Could not add gauge lib, add it manually: " + e.getMessage());
-            return null;
-        } catch (PluginNotInstalledException e) {
-            throw new RuntimeException(getLanguage() + "could not be installed, try it manually");
-        }
-        return new ProjectLib( "gauge-lib" ,new File(libRoot));
+        new GaugeLibHelper().addGaugeLibs(modifiableRootModel);
     }
 
     private void checkGaugeIsInstalled() {
@@ -144,14 +104,6 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
         });
     }
 
-    private void addGaugeLibToModule(ProjectLib lib, ModifiableRootModel modifiableRootModel) {
-        final Library library = modifiableRootModel.getModuleLibraryTable().createLibrary(lib.getLibName());
-        final VirtualFile libDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(lib.getDir());
-        final Library.ModifiableModel libModel = library.getModifiableModel();
-        libModel.addJarDirectory(libDir, true);
-        libModel.commit();
-    }
-
     private String getLanguage() {
         return "java";
     }
@@ -181,21 +133,4 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
         return paths;
     }
 
-    private class ProjectLib {
-        private String libName;
-        public File dir;
-
-        public ProjectLib(String libName, File dir) {
-            this.libName = libName;
-            this.dir = dir;
-        }
-
-        public String getLibName() {
-            return libName;
-        }
-
-        public File getDir() {
-            return dir;
-        }
-    }
 }
