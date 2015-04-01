@@ -17,9 +17,15 @@ public class ExtractConceptAction extends AnAction {
         Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
         PsiFile file = CommonDataKeys.PSI_FILE.getData(dataContext);
         Project project = CommonDataKeys.PROJECT.getData(dataContext);
-        if (file == null || project == null || editor == null || !StepUtil.isGaugeFileExtension(file.getVirtualFile().getExtension())) {
+        if (file == null || project == null || editor == null) {
             return;
         }
-        new ExtractConceptHandler().invoke(project,editor,file,dataContext);
+        new ExtractConceptHandler().invoke(project, editor, file, dataContext);
+    }
+
+    @Override
+    public void update(@NotNull AnActionEvent e) {
+        PsiFile file = CommonDataKeys.PSI_FILE.getData(e.getDataContext());
+        e.getPresentation().setEnabled(!(file != null && !StepUtil.isGaugeFileExtension(file.getVirtualFile().getExtension())));
     }
 }
