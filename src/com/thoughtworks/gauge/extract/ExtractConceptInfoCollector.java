@@ -36,8 +36,7 @@ public class ExtractConceptInfoCollector {
         List<String> args = getArgs(steps);
         final ExtractConceptDialog form = new ExtractConceptDialog(this.editor.getProject(), args, FileManager.getDirNamesUnderSpecs(editor.getProject()));
         showDialog(steps, form);
-        if (form.getInfo().conceptName.equals("") || this.isCancelled)
-            return new ExtractConceptInfo("", "", false);
+        if (form.getInfo().conceptName.equals("") || form.getInfo().fileName.equals("") || this.isCancelled)  return new ExtractConceptInfo("", "", false);
         String conceptName = form.getInfo().conceptName;
         String fileName = editor.getProject().getBasePath() + form.getInfo().fileName;
         boolean shouldContinue = conceptName != null;
@@ -54,9 +53,7 @@ public class ExtractConceptInfoCollector {
     private void matchPatterns(String steps, List<String> args, String regex, String suffix, String prefix) {
         Pattern pattern = Pattern.compile(regex);
         final Matcher matcher = pattern.matcher(steps);
-        while (matcher.find()) {
-            args.add(prefix + matcher.group(1) + suffix);
-        }
+        while (matcher.find()) args.add(prefix + matcher.group(1) + suffix);
     }
 
     private void showDialog(String steps, ExtractConceptDialog form) {

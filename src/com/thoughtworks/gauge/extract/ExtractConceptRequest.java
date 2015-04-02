@@ -31,7 +31,7 @@ public class ExtractConceptRequest {
         this.textInfo = textInfo;
     }
 
-    public void convertToSteps(List<PsiElement> specSteps, Map<String,String> tableMap){
+    public void convertToSteps(List<PsiElement> specSteps, Map<String, String> tableMap) {
         this.steps = new ArrayList<Api.step>();
         for (PsiElement specStep : specSteps) {
             String text = specStep.getText().trim().substring(2).trim();
@@ -46,17 +46,13 @@ public class ExtractConceptRequest {
 
     private Api.step formatTable(Map<String, String> tableMap, SpecStepImpl specStep, String text, Api.step stepToAdd) {
         SpecTable table = specStep.getInlineTable();
-        if (table != null) {
-            stepToAdd = getStep(tableMap, text, table.getText().trim());
-        }
+        if (table != null) stepToAdd = getStep(tableMap, text, table.getText().trim());
         return stepToAdd;
     }
 
-    private Api.step formatTable(Map<String, String> tableMap, ConceptStepImpl specStep, String text, Api.step stepToAdd) {
-        ConceptTable table = specStep.getTable();
-        if (table != null) {
-            stepToAdd = getStep(tableMap, text, table.getText().trim());
-        }
+    private Api.step formatTable(Map<String, String> tableMap, ConceptStepImpl conceptStep, String text, Api.step stepToAdd) {
+        ConceptTable table = conceptStep.getTable();
+        if (table != null) stepToAdd = getStep(tableMap, text, table.getText().trim());
         return stepToAdd;
     }
 
@@ -80,13 +76,14 @@ public class ExtractConceptRequest {
     }
 
     public Api.ExtractConceptResponse makeExtractConceptRequest(PsiElement element) {
-        final Module module = ModuleUtil.findModuleForPsiElement(element);
-        GaugeService gaugeService = Gauge.getGaugeService(module);
-        try {
-            return gaugeService.getGaugeConnection().sendGetExtractConceptRequest(steps, concept, refactorOtherUsages, fileName, textInfo);
-        } catch (Exception e) {
-            return Api.ExtractConceptResponse.newBuilder().setIsSuccess(false).setError("Unable to make request").build();
-        }
+        GaugeService gaugeService = Gauge.getGaugeService(ModuleUtil.findModuleForPsiElement(element));
+        String message = "Cannot connect to gauge service.";
+        if (gaugeService != null)
+            try {
+                return gaugeService.getGaugeConnection().sendGetExtractConceptRequest(steps, concept, refactorOtherUsages, fileName, textInfo);
+            } catch (Exception ignored) {
+                message = "Something went wrong during extract concept request.";
+            }
+        return Api.ExtractConceptResponse.newBuilder().setIsSuccess(false).setError(message).build();
     }
-
 }

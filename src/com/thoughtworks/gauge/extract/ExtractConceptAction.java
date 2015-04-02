@@ -17,9 +17,7 @@ public class ExtractConceptAction extends AnAction {
         Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
         PsiFile file = CommonDataKeys.PSI_FILE.getData(dataContext);
         Project project = CommonDataKeys.PROJECT.getData(dataContext);
-        if (file == null || project == null || editor == null) {
-            return;
-        }
+        if (file == null || project == null || editor == null) return;
         new ExtractConceptHandler().invoke(project, editor, file, dataContext);
     }
 
