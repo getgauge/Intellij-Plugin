@@ -1,4 +1,19 @@
 # Intellij-Plugin
+Intellij support for [Gauge](https://github.com/getgauge/gauge) project.
+
+Features
+-------
+The plugin provides the following basic features: 
+* Basic language parsing and highlighting
+* Project Creation
+* Auto completion
+* Navigation from step to implementation
+* Quick Fix for unimplemented steps
+* Execution and Debugging specs
+* Support for Concepts
+* Support for Refactoring
+
+See the [documentation](http://getgauge.io/documentation/user/current/ide_support/intellij_idea.html) for more details.
 License
 -------
 

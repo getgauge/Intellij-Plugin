@@ -18,7 +18,7 @@
 <idea-plugin version="2">
   <id>com.thoughtworks.gauge</id>
   <name>Gauge</name>
-  <version>0.0.6</version>
+  <version>0.0.8</version>
   <vendor email="getgauge@googlegroups.com" url="http://getgauge.io">Gauge</vendor>
 
   <description><![CDATA[
@@ -35,6 +35,11 @@
         </ul>
 
       Change Notes:
+      <p>0.0.7</p>
+      <ul>
+           <li> Importing the project seamlessly </li>
+           <li> Adding caching mechanism, improves performance.</li>
+      </ul>
       <p>0.0.6</p>
       <ul>
            <li> Bug fixes : #50 </li>
@@ -106,7 +111,7 @@
       <runConfigurationProducer implementation="com.thoughtworks.gauge.execution.SpecsExecutionProducer"/>
       <enterHandlerDelegate implementation="com.thoughtworks.gauge.GaugeEnterHandlerDelegate"/>
       <renameHandler implementation="com.thoughtworks.gauge.rename.CustomRenameHandler"/>
-      <fileTemplateGroup implementation="com.thoughtworks.gauge.core.SpecificationLiveTemplate"/>
+      <fileTemplateGroup implementation="com.thoughtworks.gauge.idea.template.SpecificationLiveTemplate"/>
       <defaultLiveTemplatesProvider implementation="com.thoughtworks.gauge.core.TableTemplateProvider"/>
       <lang.findUsagesProvider language="Specification" implementationClass="com.thoughtworks.gauge.findUsages.SpecStepFindUsagesProvider"/>
       <lang.findUsagesProvider language="Concept" implementationClass="com.thoughtworks.gauge.findUsages.ConceptStepFindUsagesProvider"/>

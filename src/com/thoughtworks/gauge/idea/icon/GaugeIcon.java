@@ -15,16 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with getgauge/Intellij-plugin.  If not, see <http://www.gnu.org/licenses/>.
 
-package com.thoughtworks.gauge.language;
+package com.thoughtworks.gauge.idea.icon;
 
 import com.intellij.openapi.util.IconLoader;
 
 import javax.swing.*;
-import java.awt.*;
 
 public interface GaugeIcon {
 
-    public final Icon GAUGE_SPEC_FILE_ICON = IconLoader.findIcon("/com/thoughtworks/gauge/language/logo.png");
-    public final Icon GAUGE_CONCEPT_FILE_ICON = IconLoader.findIcon("/com/thoughtworks/gauge/language/logo.png");
+    public final Icon GAUGE_SPEC_FILE_ICON = IconLoader.findIcon("/com/thoughtworks/gauge/idea/icon/logo.png");
+    public final Icon GAUGE_CONCEPT_FILE_ICON = IconLoader.findIcon("/com/thoughtworks/gauge/idea/icon/logo.png");
 
 }

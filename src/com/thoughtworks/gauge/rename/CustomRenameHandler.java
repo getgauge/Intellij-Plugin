@@ -32,6 +32,7 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.refactoring.rename.RenameHandler;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
+import com.thoughtworks.gauge.util.GaugeUtil;
 import com.thoughtworks.gauge.util.StepUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,7 +49,7 @@ public class CustomRenameHandler implements RenameHandler {
         PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
         Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
         VirtualFile file = CommonDataKeys.VIRTUAL_FILE.getData(dataContext);
-        if (file != null && !StepUtil.isGaugeFileExtension(file.getExtension())) return false;
+        if(file != null && !GaugeUtil.isGaugeFile(file)) return false;
         this.editor = editor;
         if (element == null) {
             if (editor == null) return false;
