@@ -7,7 +7,7 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
-import com.thoughtworks.gauge.util.StepUtil;
+import com.thoughtworks.gauge.util.GaugeUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class ExtractConceptAction extends AnAction {
@@ -24,6 +24,6 @@ public class ExtractConceptAction extends AnAction {
     @Override
     public void update(@NotNull AnActionEvent e) {
         PsiFile file = CommonDataKeys.PSI_FILE.getData(e.getDataContext());
-        e.getPresentation().setEnabled(!(file != null && !StepUtil.isGaugeFileExtension(file.getVirtualFile().getExtension())));
+        e.getPresentation().setEnabled(!(file != null && !GaugeUtil.isGaugeFile(file.getVirtualFile())));
     }
 }
