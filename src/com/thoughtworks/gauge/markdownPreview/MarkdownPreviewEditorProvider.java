@@ -6,13 +6,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.thoughtworks.gauge.language.ConceptFileType;
 import com.thoughtworks.gauge.language.SpecFileType;
+import com.thoughtworks.gauge.util.GaugeUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 public class MarkdownPreviewEditorProvider implements FileEditorProvider, PossiblyDumbAware{
     @Override
     public boolean accept(Project project, VirtualFile file) {
-        return file.getFileType() instanceof SpecFileType || file.getFileType() instanceof ConceptFileType;
+        return GaugeUtil.isGaugeFile(file) && GaugeUtil.isGaugeProjectDir(project.getBaseDir());
     }
 
     @NotNull
