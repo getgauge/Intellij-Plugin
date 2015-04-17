@@ -40,13 +40,15 @@ public class ExtractConceptDialog extends JDialog {
                 onCancel();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        this.textField2.setEnabled(false);
+        this.textField2.setVisible(false);
+        this.textField1.setPlaceholder("Enter Concept Name");
+        this.textField2.setPlaceholder("Enter File Name");
         this.comboBox1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ExtractConceptDialog.this.textField2.setEnabled(false);
+                ExtractConceptDialog.this.textField2.setVisible(false);
                 if (ExtractConceptDialog.this.comboBox1.getSelectedItem().toString().equals(ExtractConceptInfoCollector.CREATE_NEW_FILE))
-                    ExtractConceptDialog.this.textField2.setEnabled(true);
+                    ExtractConceptDialog.this.textField2.setVisible(true);
             }
         });
     }
