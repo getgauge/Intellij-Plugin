@@ -1,6 +1,7 @@
 package com.thoughtworks.gauge.extract;
 
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -22,23 +23,25 @@ public class ExtractConceptInfoCollector {
     private final Editor editor;
     private final Map<String, String> tableMap;
     private final List<PsiElement> specSteps;
+    private Project project;
     private boolean isCancelled = false;
 
-    public ExtractConceptInfoCollector(Editor editor, Map<String, String> tableMap, List<PsiElement> specSteps) {
+    public ExtractConceptInfoCollector(Editor editor, Map<String, String> tableMap, List<PsiElement> specSteps, Project project) {
         this.editor = editor;
         this.tableMap = tableMap;
         this.specSteps = specSteps;
+        this.project = project;
     }
 
     public ExtractConceptInfo getAllInfo() {
         this.isCancelled = false;
         String steps = getFormattedSteps();
         List<String> args = getArgs(steps);
-        final ExtractConceptDialog form = new ExtractConceptDialog(this.editor.getProject(), args, FileManager.getDirNamesUnderSpecs(editor.getProject()));
+        final ExtractConceptDialog form = new ExtractConceptDialog(this.editor.getProject(), args, FileManager.getDirNamesUnderSpecs(project));
         showDialog(steps, form);
         if (form.getInfo().conceptName.equals("") || form.getInfo().fileName.equals("") || this.isCancelled)  return new ExtractConceptInfo("", "", false);
         String conceptName = form.getInfo().conceptName;
-        String fileName = editor.getProject().getBasePath() + form.getInfo().fileName;
+        String fileName = project.getBasePath() + form.getInfo().fileName;
         boolean shouldContinue = conceptName != null;
         return new ExtractConceptInfo(conceptName, fileName, shouldContinue);
     }
@@ -80,7 +83,7 @@ public class ExtractConceptInfoCollector {
         List<String> names = new ArrayList<String>();
         names.add(CREATE_NEW_FILE);
         for (PsiFile file : files)
-            names.add(file.getVirtualFile().getPath().replace(editor.getProject().getBasePath(), ""));
+            names.add(file.getVirtualFile().getPath().replace(project.getBasePath(), ""));
         return names;
     }
 

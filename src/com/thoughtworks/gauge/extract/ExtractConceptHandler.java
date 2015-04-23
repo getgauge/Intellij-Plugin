@@ -1,7 +1,6 @@
 package com.thoughtworks.gauge.extract;
 
 import com.intellij.codeInsight.hint.HintManager;
-import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -18,13 +17,13 @@ public class ExtractConceptHandler {
     private PsiFile psiFile;
     private Editor editor;
 
-    public void invoke(@NotNull final Project project,@NotNull final Editor editor,@NotNull final PsiFile psiFile,@NotNull final DataContext dataContext) {
+    public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile psiFile) {
         this.psiFile = psiFile;
         this.editor = editor;
         try {
             List<PsiElement> steps = getSteps(this.editor, this.psiFile);
             if (steps.size() == 0) throw new RuntimeException("Invalid selection");
-            ExtractConceptInfoCollector collector = new ExtractConceptInfoCollector(editor, builder.getTextToTableMap(), steps);
+            ExtractConceptInfoCollector collector = new ExtractConceptInfoCollector(editor, builder.getTextToTableMap(), steps, project);
             ExtractConceptInfo info = collector.getAllInfo();
             if (info.shouldContinue) {
                 Api.ExtractConceptResponse response = makeExtractConceptRequest(steps, info.fileName, info.conceptName, false, psiFile);

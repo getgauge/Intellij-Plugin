@@ -22,7 +22,7 @@ public class ExtractConceptAction extends AnAction {
             Messages.showErrorDialog("Cannot find project details, rejecting extract to concept request.", "Extract To Concept");
             return;
         }
-        new ExtractConceptHandler().invoke(project, editor, file, dataContext);
+        new ExtractConceptHandler().invoke(project, editor, file);
     }
 
     @Override
