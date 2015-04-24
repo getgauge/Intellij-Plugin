@@ -48,6 +48,9 @@ public class StepUtil {
     private static HashMap<String, String> stepValueCache = new HashMap<String, String>();
 
     public static PsiElement findStepImpl(SpecStep step, Module module) {
+        if (module == null) {
+            return null;
+        }
         ReferenceCache cache = Gauge.getReferenceCache(module);
         PsiElement reference = cache.searchReferenceFor(step);
         if (reference == null) {

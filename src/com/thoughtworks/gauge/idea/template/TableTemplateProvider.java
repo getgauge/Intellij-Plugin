@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with getgauge/Intellij-plugin.  If not, see <http://www.gnu.org/licenses/>.
 
-package com.thoughtworks.gauge.core;
+package com.thoughtworks.gauge.idea.template;
 
 import com.intellij.codeInsight.template.impl.DefaultLiveTemplatesProvider;
 import org.jetbrains.annotations.Nullable;

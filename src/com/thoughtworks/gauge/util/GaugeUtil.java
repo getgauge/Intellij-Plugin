@@ -2,6 +2,7 @@ package com.thoughtworks.gauge.util;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.EnvironmentUtil;
 import com.thoughtworks.gauge.Constants;
@@ -70,10 +71,7 @@ public class GaugeUtil {
 
     public static boolean isGaugeProjectDir(VirtualFile dir) {
         File projectDir = new File(dir.getPath());
-        if (containsManifest(projectDir) && containsSpecsDir(projectDir)) {
-            return true;
-        }
-        return false;
+        return containsManifest(projectDir) && containsSpecsDir(projectDir);
     }
 
     private static boolean containsSpecsDir(File projectDir) {
