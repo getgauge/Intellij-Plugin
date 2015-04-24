@@ -11,6 +11,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.language.ConceptFileType;
+import com.thoughtworks.gauge.language.SpecFileType;
 
 import java.io.File;
 import java.util.*;
@@ -77,5 +78,15 @@ public class FileManager {
                 dirs.add(file.getPath().replace(basePath,"") + File.separator);
                 getDirectories(file.listFiles(), dirs, basePath);
             }
+    }
+
+    public static List<VirtualFile> getAllSpecFiles(Project project) {
+        Collection<VirtualFile> virtualFiles = FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, SpecFileType.INSTANCE, GlobalSearchScope.projectScope(project));
+        return new ArrayList<VirtualFile>(virtualFiles);
+    }
+
+    public static List<VirtualFile> getConceptFiles(Project project) {
+        Collection<VirtualFile> virtualFiles = FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, ConceptFileType.INSTANCE, GlobalSearchScope.projectScope(project));
+        return new ArrayList<VirtualFile>(virtualFiles);
     }
 }

@@ -118,6 +118,7 @@
       <referencesSearch implementation="com.thoughtworks.gauge.findUsages.ReferenceSearch"/>
       <findUsagesHandlerFactory implementation="com.thoughtworks.gauge.findUsages.CustomFindUsagesHandlerFactory"/>
       <fileEditorProvider implementation="com.thoughtworks.gauge.markdownPreview.MarkdownPreviewEditorProvider"/>
+      <fileBasedIndex implementation="com.thoughtworks.gauge.stub.FileStub"/>
   </extensions>
 
   <application-components>
