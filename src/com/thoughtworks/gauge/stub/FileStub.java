@@ -4,10 +4,6 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.impl.file.PsiFileImplUtil;
-import com.intellij.psi.impl.source.PsiFileImpl;
-import com.intellij.psi.stubs.PsiFileStubImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.indexing.*;
@@ -26,31 +22,28 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class FileStub extends FileBasedIndexExtension<String, List<Integer>> {
+public class FileStub extends FileBasedIndexExtension<String, Set<Integer>> {
     @NonNls
-    public static final ID<String,List<Integer>> NAME = ID.create("FormClassIndex");
+    public static final ID<String, Set<Integer>> NAME = ID.create("FormClassIndex");
 
     @NotNull
     @Override
-    public ID<String, List<Integer>> getName() {
+    public ID<String, Set<Integer>> getName() {
         return NAME;
     }
 
     @NotNull
     @Override
-    public DataIndexer<String, List<Integer>, FileContent> getIndexer() {
-        return new DataIndexer<String, List<Integer>, FileContent>() {
+    public DataIndexer<String, Set<Integer>, FileContent> getIndexer() {
+        return new DataIndexer<String, Set<Integer>, FileContent>() {
             @NotNull
             @Override
-            public Map<String, List<Integer>> map(@NotNull FileContent fileContent) {
-                List<Integer> offsets = new ArrayList<Integer>();
+            public Map<String, Set<Integer>> map(@NotNull FileContent fileContent) {
+                Set<Integer> offsets = new HashSet<Integer>();
                 List<PsiElement> steps = new ArrayList<PsiElement>();
-                PsiFile psiFile = null;
+                PsiFile psiFile;
                 try {
                     psiFile = ((FileContentImpl) fileContent).createFileFromText(FileUtils.readFileToString(new File(fileContent.getFile().getPath())));
                 } catch (IOException e) {
@@ -96,19 +89,19 @@ public class FileStub extends FileBasedIndexExtension<String, List<Integer>> {
 
     @NotNull
     @Override
-    public DataExternalizer<List<Integer>> getValueExternalizer() {
-        return new DataExternalizer<List<Integer>>() {
+    public DataExternalizer<Set<Integer>> getValueExternalizer() {
+        return new DataExternalizer<Set<Integer>>() {
 
             @Override
-            public void save(@NotNull DataOutput dataOutput, List<Integer> integers) throws IOException {
+            public void save(@NotNull DataOutput dataOutput, Set<Integer> integers) throws IOException {
                 String offsets = "";
                 for (Integer integer : integers) offsets += integer.toString() + ",";
                 IOUtil.writeUTF(dataOutput, offsets);
             }
 
             @Override
-            public List<Integer> read(@NotNull DataInput dataInput) throws IOException {
-                ArrayList<Integer> offsets = new ArrayList<Integer>();
+            public Set<Integer> read(@NotNull DataInput dataInput) throws IOException {
+                Set<Integer> offsets = new HashSet<Integer>();
                 String s = IOUtil.readUTF(dataInput);
                 for (String offset : s.split(","))
                     if (!offset.equals(""))

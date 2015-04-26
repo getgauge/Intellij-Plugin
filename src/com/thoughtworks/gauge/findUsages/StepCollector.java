@@ -17,43 +17,48 @@ import java.util.*;
 public class StepCollector {
 
     private Project project;
-    private HashMap<PsiFile, List<Integer>> map = new HashMap<PsiFile, List<Integer>>();
+    private HashMap<String, List<PsiElement>> stepTextToElement;
 
     public StepCollector(Project project) {
         this.project = project;
+        stepTextToElement = new HashMap<String, List<PsiElement>>();
     }
 
-    public StepsCollection getAllSteps() {
+    public void collect() {
         List<VirtualFile> conceptFiles = FileManager.getConceptFiles(project);
         List<VirtualFile> files = FileManager.getAllSpecFiles(project);
         files.addAll(conceptFiles);
         for (VirtualFile file : files) {
-            List<List<Integer>> values = FileBasedIndex.getInstance().getValues(FileStub.NAME, file.getPath(), GlobalSearchScope.allScope(project));
-            if (values.size() > 0)
-                map.put(PsiManager.getInstance(project).findFile(file), values.get(0));
-            else
-                map.put(PsiManager.getInstance(project).findFile(file), new ArrayList<Integer>());
+            List<Set<Integer>> values = FileBasedIndex.getInstance().getValues(FileStub.NAME, file.getPath(), GlobalSearchScope.allScope(project));
+            PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+            if (values.size() > 0) getSteps(psiFile, new HashSet<Integer>(values.get(0)));
         }
-        return getSteps();
     }
 
-    public StepsCollection getSteps() {
-        List<SpecStepImpl> specSteps = new ArrayList<SpecStepImpl>();
-        List<ConceptStepImpl> conceptSteps = new ArrayList<ConceptStepImpl>();
-        for (PsiFile psiFile : map.keySet()) {
-            Set<Integer> offsets = new HashSet<Integer>(map.get(psiFile));
-            for (Integer offset : offsets) {
-                PsiElement stepElement = getStepElement(psiFile.findElementAt(offset));
-                if (stepElement == null) {
-                    continue;
-                }
-                if (stepElement.getClass().equals(SpecStepImpl.class))
-                    specSteps.add((SpecStepImpl) stepElement);
-                else
-                    conceptSteps.add((ConceptStepImpl) getStepElement(psiFile.findElementAt(offset)));
-            }
+    public List<PsiElement> get(String stepText) {
+        return stepTextToElement.get(stepText);
+    }
+
+    private void getSteps(PsiFile psiFile, Set<Integer> offsets) {
+        for (Integer offset : offsets) {
+            PsiElement stepElement = getStepElement(psiFile.findElementAt(offset));
+            if (stepElement == null) continue;
+            if (stepElement.getClass().equals(SpecStepImpl.class))
+                addElement(stepElement, ((SpecStepImpl) stepElement).getStepValue().getStepText().trim());
+            else
+                addElement(stepElement, ((ConceptStepImpl) stepElement).getStepValue().getStepText().trim());
         }
-        return new StepsCollection(specSteps, conceptSteps);
+    }
+
+    private void addElement(PsiElement stepElement, String stepText) {
+        List<PsiElement> elementsList = stepTextToElement.get(stepText);
+        if (elementsList == null) {
+            List<PsiElement> elements = new ArrayList<PsiElement>();
+            elements.add(stepElement);
+            stepTextToElement.put(stepText, elements);
+            return;
+        }
+        elementsList.add(stepElement);
     }
 
     private PsiElement getStepElement(PsiElement selectedElement) {

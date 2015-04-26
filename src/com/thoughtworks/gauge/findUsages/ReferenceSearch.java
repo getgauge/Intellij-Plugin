@@ -21,7 +21,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.PsiMethodImpl;
 import com.intellij.psi.impl.source.tree.java.PsiAnnotationImpl;
@@ -34,7 +33,7 @@ import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import com.thoughtworks.gauge.util.StepUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
@@ -50,46 +49,31 @@ public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesS
         ApplicationManager.getApplication().runReadAction(new Runnable() {
             @Override
             public void run() {
-                StepsCollection allSteps = new StepCollector(elementToSearch.getProject()).getAllSteps();
-                Collection<ConceptStepImpl> conceptSteps = allSteps.getConceptSteps();
-                Collection<SpecStepImpl> specSteps = allSteps.getSpecSteps();
-                if (elementClass.equals(ConceptStepImpl.class))
-                    handleConceptStep(conceptSteps, specSteps, processor);
-                else if (elementClass.equals(PsiMethodImpl.class))
-                    handleAnnotation(conceptSteps, specSteps, processor);
-                else if (elementClass.equals(SpecStepImpl.class))
-                    handleSpecStep(conceptSteps, specSteps, processor);
+                StepCollector collector = new StepCollector(elementToSearch.getProject());
+                collector.collect();
+                List<PsiElement> elements = new ArrayList<PsiElement>();
+                elements = getPsiElements(collector, elements, elementClass);
+                processElements(elements, processor);
             }
         });
     }
 
-    private void handleSpecStep(Collection<ConceptStepImpl> conceptSteps, Collection<SpecStepImpl> specSteps, Processor<PsiReference> processor) {
-        String text = getStepText((SpecStepImpl) elementToSearch);
-        for (ConceptStepImpl conceptStep : conceptSteps)
-            process(processor, conceptStep, text.equals(getConceptStepText(conceptStep)));
-        text = ((SpecStepImpl) elementToSearch).getName();
-        for (final SpecStep specStep : specSteps)
-            process(processor, specStep, text != null && specStep.getName() != null && specStep.getName().trim().equals(text.trim()));
+    private void processElements(List<PsiElement> elements, Processor<PsiReference> processor) {
+        for (PsiElement element : elements)
+            processor.process(element.getReference());
     }
 
-    private void handleAnnotation(Collection<ConceptStepImpl> conceptSteps, Collection<SpecStepImpl> specSteps, Processor<PsiReference> processor) {
-        List<String> steps = StepUtil.getGaugeStepAnnotationValues((PsiMethod) elementToSearch);
-        for (ConceptStepImpl conceptStep : conceptSteps)
-            handleAnnotation(processor, conceptStep, getConceptStepText(conceptStep), steps);
-        for (final SpecStep specStep : specSteps)
-            handleAnnotation(processor, specStep, getStepText(specStep), steps);
-    }
-
-    private void handleConceptStep(Collection<ConceptStepImpl> conceptSteps, Collection<SpecStepImpl> specSteps, Processor<PsiReference> processor) {
-        String conceptStepText = getConceptStepText((ConceptStepImpl) elementToSearch);
-        for (ConceptStepImpl conceptStep : conceptSteps)
-            process(processor, conceptStep, conceptStepText.equals(getConceptStepText(conceptStep)));
-        for (final SpecStep specStep : specSteps)
-            process(processor, specStep, conceptStepText.equals(getStepText(specStep)));
-    }
-
-    private void process(Processor<PsiReference> processor, PsiNamedElement conceptStep, boolean equals) {
-        if (equals) processor.process(conceptStep.getReference());
+    private List<PsiElement> getPsiElements(StepCollector collector, List<PsiElement> elements, Class<? extends PsiElement> elementClass) {
+        if (elementClass.equals(ConceptStepImpl.class))
+            elements = collector.get(getConceptStepText((ConceptStepImpl) elementToSearch));
+        else if (elementClass.equals(PsiMethodImpl.class))
+            for (String alias : StepUtil.getGaugeStepAnnotationValues((PsiMethod) elementToSearch))
+                elements.addAll(collector.get(getStepText(alias)));
+        else if (elementClass.equals(SpecStepImpl.class)) {
+            elements = collector.get(getStepText((SpecStepImpl) elementToSearch));
+            elements.addAll(collector.get(((SpecStepImpl) elementToSearch).getName()));
+        }
+        return elements;
     }
 
     private String getConceptStepText(ConceptStepImpl elementToSearch) {
@@ -99,11 +83,6 @@ public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesS
 
     private String getStepText(SpecStep elementToSearch) {
         return elementToSearch.getStepValue().getStepText().trim();
-    }
-
-    private void handleAnnotation(Processor<PsiReference> processor, PsiNamedElement conceptStep, String text, List<String> steps) {
-        for (String step : steps)
-            process(processor, conceptStep, text.equals(getStepText(step)));
     }
 
     private String getStepText(String text) {
