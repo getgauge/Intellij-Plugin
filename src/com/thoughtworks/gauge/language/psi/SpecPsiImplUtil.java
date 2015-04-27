@@ -27,6 +27,7 @@ import com.thoughtworks.gauge.StepValue;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
+import com.thoughtworks.gauge.util.StepUtil;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -54,11 +55,7 @@ public class SpecPsiImplUtil {
         if (apiConnection == null) {
             return getDefaultStepValue(element);
         }
-        if (hasInlineTable) {
-            return apiConnection.getStepValue(stepText, true);
-        } else {
-            return apiConnection.getStepValue(stepText);
-        }
+        return StepUtil.getStepValue(apiConnection,stepText, hasInlineTable);
     }
 
     private static StepValue getDefaultStepValue(PsiElement element) {

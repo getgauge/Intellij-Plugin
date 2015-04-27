@@ -45,7 +45,7 @@ import static com.thoughtworks.gauge.GaugeConstant.STEP_ANNOTATION_QUALIFIER;
 
 public class StepUtil {
 
-    private static HashMap<String, String> stepValueCache = new HashMap<String, String>();
+    private static HashMap<String, StepValue> stepValueCache = new HashMap<String, StepValue>();
 
     public static PsiElement findStepImpl(SpecStep step, Module module) {
         if (module == null) {
@@ -139,17 +139,17 @@ public class StepUtil {
 
         List<String> annotationValues = getGaugeStepAnnotationValues(stepMethod);
         for (String value : annotationValues) {
-            if (getStepValue(connection, value).equals(stepText)) {
+            if (getStepValue(connection, value, false).getStepText().equals(stepText)) {
                 return true;
             }
         }
         return false;
     }
 
-    private static String getStepValue(final GaugeConnection connection, final String text) {
-        String value = stepValueCache.get(text);
-        if (value == null || value.isEmpty()) {
-            value = connection.getStepValue(text).getStepText();
+    public static StepValue getStepValue(final GaugeConnection connection, final String text, Boolean hasInlineTable) {
+        StepValue value = stepValueCache.get(text);
+        if (value == null || value.getStepText().isEmpty()) {
+            value = connection.getStepValue(text, hasInlineTable);
             stepValueCache.put(text, value);
         }
         return value;
