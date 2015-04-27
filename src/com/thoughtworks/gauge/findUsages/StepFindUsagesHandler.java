@@ -32,8 +32,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-public class SpecStepFindUsagesHandler extends FindUsagesHandler {
-    protected SpecStepFindUsagesHandler(PsiElement psiElement) {
+public class StepFindUsagesHandler extends FindUsagesHandler {
+    protected StepFindUsagesHandler(PsiElement psiElement) {
         super(psiElement);
     }
 

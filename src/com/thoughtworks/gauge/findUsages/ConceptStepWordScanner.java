@@ -21,11 +21,12 @@ import com.intellij.lang.cacheBuilder.DefaultWordsScanner;
 import com.intellij.psi.tree.TokenSet;
 import com.thoughtworks.gauge.language.token.ConceptTokenTypes;
 import com.thoughtworks.gauge.language.token.SpecTokenTypes;
+import com.thoughtworks.gauge.lexer.ConceptLexer;
 import com.thoughtworks.gauge.lexer.SpecLexer;
 
 
 public class ConceptStepWordScanner extends DefaultWordsScanner {
     public ConceptStepWordScanner() {
-        super(new SpecLexer(), TokenSet.create(ConceptTokenTypes.STEP), TokenSet.create(ConceptTokenTypes.COMMENT), TokenSet.create(ConceptTokenTypes.STEP));
+        super(new ConceptLexer(), TokenSet.create(ConceptTokenTypes.STEP), TokenSet.create(ConceptTokenTypes.COMMENT), TokenSet.create(ConceptTokenTypes.STEP));
     }
 }

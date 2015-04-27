@@ -31,6 +31,6 @@ public class CustomFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
     @Nullable
     @Override
     public FindUsagesHandler createFindUsagesHandler(PsiElement psiElement, boolean b) {
-        return new SpecStepFindUsagesHandler(psiElement);
+        return new StepFindUsagesHandler(psiElement);
     }
 }

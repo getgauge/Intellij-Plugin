@@ -36,7 +36,7 @@ public class StepCollector {
     }
 
     public List<PsiElement> get(String stepText) {
-        return stepTextToElement.get(stepText);
+        return stepTextToElement.get(stepText) == null ? new ArrayList<PsiElement>() : stepTextToElement.get(stepText);
     }
 
     private void getSteps(PsiFile psiFile, Set<Integer> offsets) {
@@ -44,10 +44,14 @@ public class StepCollector {
             PsiElement stepElement = getStepElement(psiFile.findElementAt(offset));
             if (stepElement == null) continue;
             if (stepElement.getClass().equals(SpecStepImpl.class))
-                addElement(stepElement, ((SpecStepImpl) stepElement).getStepValue().getStepText().trim());
+                addElement(stepElement, removeIdentifiers(((SpecStepImpl) stepElement).getStepValue().getStepText()));
             else
-                addElement(stepElement, ((ConceptStepImpl) stepElement).getStepValue().getStepText().trim());
+                addElement(stepElement, removeIdentifiers(((ConceptStepImpl) stepElement).getStepValue().getStepText()));
         }
+    }
+
+    private String removeIdentifiers(String text) {
+        return text.charAt(0) == '*' || text.charAt(0) == '#' ? text.substring(1).trim() : text.trim();
     }
 
     private void addElement(PsiElement stepElement, String stepText) {
