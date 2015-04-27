@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.thoughtworks.gauge.annotator.FileManager;
 import com.thoughtworks.gauge.language.psi.ConceptTable;
+import com.thoughtworks.gauge.language.psi.SpecPsiImplUtil;
 import com.thoughtworks.gauge.language.psi.SpecTable;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
@@ -14,22 +15,20 @@ import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 public class ExtractConceptInfoCollector {
     public static final String CREATE_NEW_FILE = "Create New File(Enter info in the below field)";
     private final Editor editor;
     private final Map<String, String> tableMap;
-    private final List<PsiElement> specSteps;
+    private final List<PsiElement> steps;
     private Project project;
     private boolean isCancelled = false;
 
-    public ExtractConceptInfoCollector(Editor editor, Map<String, String> tableMap, List<PsiElement> specSteps, Project project) {
+    public ExtractConceptInfoCollector(Editor editor, Map<String, String> tableMap, List<PsiElement> steps, Project project) {
         this.editor = editor;
         this.tableMap = tableMap;
-        this.specSteps = specSteps;
+        this.steps = steps;
         this.project = project;
     }
 
@@ -48,19 +47,14 @@ public class ExtractConceptInfoCollector {
 
     private List<String> getArgs(String steps) {
         List<String> args = new ArrayList<String>();
-        matchPatterns(steps, args, "<(.*?)>", ">", "<");
-        matchPatterns(steps, args, "\"(.*?)\"", "\"", "\"");
+        for (String step : steps.split("\n"))
+            for (String p : SpecPsiImplUtil.getStepValueFor(this.steps.get(0), step, false).getParameters())
+                args.add(step.charAt(step.indexOf(p) - 1) + p + step.charAt(step.indexOf(p) + p.length()));
         return args;
     }
 
-    private void matchPatterns(String steps, List<String> args, String regex, String suffix, String prefix) {
-        Pattern pattern = Pattern.compile(regex);
-        final Matcher matcher = pattern.matcher(steps);
-        while (matcher.find()) args.add(prefix + matcher.group(1) + suffix);
-    }
-
     private void showDialog(String steps, ExtractConceptDialog form) {
-        form.setData(steps, getConceptNames());
+        form.setData(steps, getConceptFileNames());
         final DialogBuilder builder = new DialogBuilder(editor.getProject());
         builder.setCenterPanel(form.getRootPane());
         builder.setTitle("Extract Concept");
@@ -78,7 +72,7 @@ public class ExtractConceptInfoCollector {
         builder.show();
     }
 
-    private List<String> getConceptNames() {
+    private List<String> getConceptFileNames() {
         List<PsiFile> files = FileManager.getAllConceptFiles(editor.getProject());
         List<String> names = new ArrayList<String>();
         names.add(CREATE_NEW_FILE);
@@ -89,7 +83,7 @@ public class ExtractConceptInfoCollector {
 
     private String getFormattedSteps() {
         StringBuilder builder = new StringBuilder();
-        for (PsiElement step : specSteps)
+        for (PsiElement step : steps)
             builder = step.getClass().equals(SpecStepImpl.class) ? formatStep(builder, (SpecStepImpl) step) : formatStep(builder, (ConceptStepImpl) step);
         return builder.toString();
     }
