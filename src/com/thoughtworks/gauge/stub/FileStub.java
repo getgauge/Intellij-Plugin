@@ -14,6 +14,7 @@ import com.thoughtworks.gauge.language.ConceptFileType;
 import com.thoughtworks.gauge.language.SpecFileType;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
+import com.thoughtworks.gauge.util.GaugeUtil;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -123,7 +124,7 @@ public class FileStub extends FileBasedIndexExtension<String, Set<Integer>> {
 
             @Override
             public boolean acceptInput(@NotNull VirtualFile virtualFile) {
-                return virtualFile.getExtension() != null && (virtualFile.getExtension().equals("spec") || virtualFile.getExtension().equals("cpt"));
+                return virtualFile.getExtension() != null && GaugeUtil.isGaugeFile(virtualFile);
             }
         };
     }

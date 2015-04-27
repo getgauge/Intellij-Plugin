@@ -37,11 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
-    private PsiElement elementToSearch;
-
     @Override
     public void processQuery(@NotNull final ReferencesSearch.SearchParameters searchParameters, @NotNull final Processor<PsiReference> processor) {
-        elementToSearch = searchParameters.getElementToSearch();
         final Class<? extends PsiElement> elementClass = searchParameters.getElementToSearch().getClass();
         Boolean shouldFindUsages = elementClass.equals(ConceptStepImpl.class) || elementClass.equals(SpecStepImpl.class) ||
                 elementClass.equals(PsiAnnotationImpl.class) || elementClass.equals(PsiMethodImpl.class);
@@ -49,10 +46,10 @@ public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesS
         ApplicationManager.getApplication().runReadAction(new Runnable() {
             @Override
             public void run() {
-                StepCollector collector = new StepCollector(elementToSearch.getProject());
+                StepCollector collector = new StepCollector(searchParameters.getElementToSearch().getProject());
                 collector.collect();
                 List<PsiElement> elements = new ArrayList<PsiElement>();
-                elements = getPsiElements(collector, elements, elementClass);
+                elements = getPsiElements(collector, elements, searchParameters.getElementToSearch());
                 processElements(elements, processor);
             }
         });
@@ -63,21 +60,21 @@ public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesS
             processor.process(element.getReference());
     }
 
-    private List<PsiElement> getPsiElements(StepCollector collector, List<PsiElement> elements, Class<? extends PsiElement> elementClass) {
-        if (elementClass.equals(ConceptStepImpl.class))
-            elements = collector.get(getConceptStepText((ConceptStepImpl) elementToSearch));
-        else if (elementClass.equals(PsiMethodImpl.class))
-            for (String alias : StepUtil.getGaugeStepAnnotationValues((PsiMethod) elementToSearch))
-                elements.addAll(collector.get(getStepText(alias)));
-        else if (elementClass.equals(SpecStepImpl.class)) {
-            elements = collector.get(getStepText((SpecStepImpl) elementToSearch));
-            elements.addAll(collector.get(((SpecStepImpl) elementToSearch).getName()));
+    private List<PsiElement> getPsiElements(StepCollector collector, List<PsiElement> elements, PsiElement element) {
+        if (element.getClass().equals(ConceptStepImpl.class))
+            elements = collector.get(getConceptStepText((ConceptStepImpl) element));
+        else if (element.getClass().equals(PsiMethodImpl.class))
+            for (String alias : StepUtil.getGaugeStepAnnotationValues((PsiMethod) element))
+                elements.addAll(collector.get(getStepText(alias, element)));
+        else if (element.getClass().equals(SpecStepImpl.class)) {
+            elements = collector.get(getStepText((SpecStepImpl) element));
+            elements.addAll(collector.get(((SpecStepImpl) element).getName()));
         }
         return elements;
     }
 
-    private String getConceptStepText(ConceptStepImpl elementToSearch) {
-        String text = elementToSearch.getStepValue().getStepText().trim();
+    private String getConceptStepText(ConceptStepImpl element) {
+        String text = element.getStepValue().getStepText().trim();
         return !text.equals("") && text.charAt(0) == '*' || text.charAt(0) == '#' ? text.substring(1).trim() : text;
     }
 
@@ -85,7 +82,7 @@ public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesS
         return elementToSearch.getStepValue().getStepText().trim();
     }
 
-    private String getStepText(String text) {
-        return SpecPsiImplUtil.getStepValueFor(elementToSearch, text.charAt(0) == '"' ? text.substring(1, text.length() - 1) : text, false).getStepText();
+    private String getStepText(String text, PsiElement element) {
+        return SpecPsiImplUtil.getStepValueFor(element, text.charAt(0) == '"' ? text.substring(1, text.length() - 1) : text, false).getStepText();
     }
 }
