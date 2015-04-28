@@ -3,10 +3,10 @@ package com.thoughtworks.gauge.extract;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.thoughtworks.gauge.extract.stepBuilder.StepsBuilder;
+import com.thoughtworks.gauge.undo.UndoHandler;
 import gauge.messages.Api;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,7 +28,7 @@ public class ExtractConceptHandler {
             if (info.shouldContinue) {
                 Api.ExtractConceptResponse response = makeExtractConceptRequest(steps, info.fileName, info.conceptName, false, psiFile);
                 if (!response.getIsSuccess()) throw new RuntimeException(response.getError());
-                VirtualFileManager.getInstance().refreshWithoutFileWatcher(false);
+                new UndoHandler(response.getFilesChangedList(), project,"Extract Concept").handle();
             }
         } catch (Exception e) {
             HintManager.getInstance().showErrorHint(editor, e.getMessage());

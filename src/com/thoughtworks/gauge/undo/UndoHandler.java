@@ -28,7 +28,7 @@ public class UndoHandler {
         this.name = name;
     }
 
-    public void undo() {
+    public void handle() {
         refreshFiles();
         runWriteAction();
     }

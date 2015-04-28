@@ -62,7 +62,7 @@ public class RenameInputValidator implements InputValidator {
         } catch (Exception e) {
             HintManager.getInstance().showErrorHint(editor, String.format("Could not execute refactor command: %s", e.toString()));
         }
-        new UndoHandler(response.getFilesChangedList(), project, "Refactoring").undo();
+        new UndoHandler(response.getFilesChangedList(), project, "Refactoring").handle();
         showMessage(response);
         return true;
     }
