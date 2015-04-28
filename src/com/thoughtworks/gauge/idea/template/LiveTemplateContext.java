@@ -7,8 +7,8 @@ import com.thoughtworks.gauge.language.SpecFileType;
 import com.thoughtworks.gauge.util.GaugeUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class TableLiveTemplateContext extends TemplateContextType {
-    protected TableLiveTemplateContext() {
+public class LiveTemplateContext extends TemplateContextType {
+    protected LiveTemplateContext() {
         super("GAUGE", "Gauge");
     }
 

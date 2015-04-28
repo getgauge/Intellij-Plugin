@@ -113,7 +113,7 @@
       <renameHandler implementation="com.thoughtworks.gauge.rename.CustomRenameHandler"/>
       <fileTemplateGroup implementation="com.thoughtworks.gauge.idea.template.SpecificationLiveTemplate"/>
       <defaultLiveTemplatesProvider implementation="com.thoughtworks.gauge.idea.template.TableTemplateProvider"/>
-      <liveTemplateContext implementation="com.thoughtworks.gauge.idea.template.TableLiveTemplateContext"/>
+      <liveTemplateContext implementation="com.thoughtworks.gauge.idea.template.LiveTemplateContext"/>
       <fileEditorProvider implementation="com.thoughtworks.gauge.markdownPreview.MarkdownPreviewEditorProvider"/>
   </extensions>
 
