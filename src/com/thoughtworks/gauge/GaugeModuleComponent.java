@@ -23,6 +23,7 @@ import com.intellij.openapi.module.ModuleComponent;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
+import com.thoughtworks.gauge.execution.GaugeRunConfiguration;
 import com.thoughtworks.gauge.module.GaugeModuleType;
 import com.thoughtworks.gauge.module.lib.GaugeLibHelper;
 import com.thoughtworks.gauge.util.GaugeUtil;
@@ -99,6 +100,7 @@ public class GaugeModuleComponent implements ModuleComponent {
             String path = getGaugeExecPath();
             ProcessBuilder gauge = new ProcessBuilder(path, GaugeConstant.DAEMONIZE_FLAG);
             gauge.environment().put(GaugeConstant.GAUGE_API_PORT, String.valueOf(apiPort));
+            gauge.environment().put(GaugeRunConfiguration.GAUGE_CUSTOM_CLASSPATH, GaugeUtil.classpathForModule(module));
             gauge.directory(projectDir(module));
             return gauge.start();
         } catch (IOException e) {
