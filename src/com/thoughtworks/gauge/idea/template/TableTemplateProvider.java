@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 public class TableTemplateProvider implements DefaultLiveTemplatesProvider {
     @Override
     public String[] getDefaultLiveTemplateFiles() {
-        return new String[]{"liveTemplates/Tables"};
+        return new String[]{"liveTemplates/gaugeTemplates"};
     }
 
     @Nullable
