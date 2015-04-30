@@ -2,7 +2,7 @@ package com.thoughtworks.gauge.util;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.roots.OrderEnumerator;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.EnvironmentUtil;
 import com.thoughtworks.gauge.Constants;
@@ -13,8 +13,6 @@ import com.thoughtworks.gauge.language.SpecFileType;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
-
-import static com.thoughtworks.gauge.Constants.*;
 
 public class GaugeUtil {
     private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.GaugeUtil");
@@ -90,5 +88,9 @@ public class GaugeUtil {
         } else {
             return new File(module.getModuleFilePath()).getParentFile();
         }
+    }
+
+    public static String classpathForModule(Module module) {
+        return OrderEnumerator.orderEntries(module).recursively().getPathsList().getPathsString();
     }
 }

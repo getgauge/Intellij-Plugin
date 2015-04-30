@@ -58,6 +58,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
     public static final String PARALLEL_FLAG = "--parallel";
     private static final String PARALLEL_NODES_FLAG = "--n";
     private static final String TABLE_ROWS_FLAG = "--table-rows";
+    public static final String GAUGE_CUSTOM_CLASSPATH = "gauge_custom_classpath";
     private String specsToExecute;
     private Module module;
     private String environment;
@@ -111,7 +112,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         addTableRowsRangeFlags(commandLine);
         addParallelExecFlags(commandLine);
         addProgramArguments(commandLine);
-      
+        addProjectClasspath(commandLine);
         if (!Strings.isBlank(specsToExecute)) {
             addSpecs(commandLine, specsToExecute);
         }
@@ -119,6 +120,10 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
             commandLine.getEnvironment().put(GAUGE_DEBUG_OPTS_ENV, JAVA_DEBUG_PORT);
         }
         
+    }
+
+    private void addProjectClasspath(GeneralCommandLine commandLine) {
+        commandLine.getEnvironment().put(GAUGE_CUSTOM_CLASSPATH, GaugeUtil.classpathForModule(getModule()));
     }
 
     private void addTableRowsRangeFlags(GeneralCommandLine commandLine) {

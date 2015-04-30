@@ -121,7 +121,7 @@ public class RenameInputValidator implements InputValidator {
                 if (virtualFile != null) {
                     Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
                     getInstance().refreshAndFindFileByIoFile(new File(fileName));
-                    if (document != null) document.setText(FileUtils.readFileToString(new File(fileName)));
+                    if (document != null) document.setText(FileUtils.readFileToString(new File(fileName)).replaceAll(System.getProperty("line.separator"), "\n"));
                 }
             } catch (Exception ignored) {
             }
