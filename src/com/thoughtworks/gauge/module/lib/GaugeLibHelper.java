@@ -163,7 +163,6 @@ public class GaugeLibHelper {
             GaugeService gaugeService = Gauge.getGaugeService(module);
             if (gaugeService == null) {
                  gaugeService = GaugeModuleComponent.createGaugeService(module);
-                Gauge.addModule(module, gaugeService);
             }
             GaugeConnection gaugeConnection = gaugeService.getGaugeConnection();
             if (gaugeConnection == null) {

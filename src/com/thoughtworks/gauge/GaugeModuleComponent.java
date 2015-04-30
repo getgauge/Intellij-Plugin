@@ -58,9 +58,9 @@ public class GaugeModuleComponent implements ModuleComponent {
 
     public void projectOpened() {
         if (isGaugeModule(module)) {
+            module.setOption("type", GaugeModuleType.MODULE_TYPE_ID);
             if (Gauge.getGaugeService(module) == null) {
-                GaugeService gaugeService = createGaugeService(module);
-                Gauge.addModule(module, gaugeService);
+                createGaugeService(module);
                 new GaugeLibHelper().checkGaugeLibs(module);
             }
         }
@@ -81,10 +81,11 @@ public class GaugeModuleComponent implements ModuleComponent {
 
     public static GaugeService createGaugeService(Module module) {
         int freePortForApi = SocketUtils.findFreePortForApi();
-        Process gaugeProcess;
-        gaugeProcess = initializeGaugeProcess(freePortForApi, module);
+        Process gaugeProcess = initializeGaugeProcess(freePortForApi, module);
         GaugeConnection gaugeConnection = initializeGaugeConnection(freePortForApi);
-        return new GaugeService(gaugeProcess, gaugeConnection);
+        GaugeService gaugeService = new GaugeService(gaugeProcess, gaugeConnection);
+        Gauge.addModule(module, gaugeService);
+        return gaugeService;
     }
 
     private static GaugeConnection initializeGaugeConnection(int apiPort) {
