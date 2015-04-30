@@ -19,6 +19,7 @@ package com.thoughtworks.gauge.module;
 
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleTypeManager;
+import com.thoughtworks.gauge.idea.icon.GaugeIcon;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -55,11 +56,11 @@ public class GaugeModuleType extends ModuleType<GaugeModuleBuilder> {
 
     @Override
     public Icon getBigIcon() {
-        return null;
+        return GaugeIcon.GAUGE_LOGO;
     }
 
     @Override
     public Icon getNodeIcon(@Deprecated boolean isOpened) {
-        return null;
+        return GaugeIcon.GAUGE_LOGO;
     }
 }
