@@ -25,7 +25,7 @@ import com.thoughtworks.gauge.core.GaugeService;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import com.thoughtworks.gauge.execution.GaugeRunConfiguration;
 import com.thoughtworks.gauge.module.GaugeModuleType;
-import com.thoughtworks.gauge.module.lib.GaugeLibHelper;
+import com.thoughtworks.gauge.module.lib.LibHelperFactory;
 import com.thoughtworks.gauge.util.GaugeUtil;
 import com.thoughtworks.gauge.util.SocketUtils;
 import org.jetbrains.annotations.NotNull;
@@ -57,13 +57,7 @@ public class GaugeModuleComponent implements ModuleComponent {
     }
 
     public void projectOpened() {
-        if (isGaugeModule(module)) {
-            module.setOption("type", GaugeModuleType.MODULE_TYPE_ID);
-            if (Gauge.getGaugeService(module) == null) {
-                createGaugeService(module);
-                new GaugeLibHelper().checkGaugeLibs(module);
-            }
-        }
+        new LibHelperFactory().helperFor(module).checkDeps();
     }
 
     public void projectClosed() {
@@ -122,7 +116,11 @@ public class GaugeModuleComponent implements ModuleComponent {
         return projectDir;
     }
 
-    private boolean isGaugeModule(Module module) {
+    public static void makeGaugeModuleType(Module module) {
+        module.setOption("type", GaugeModuleType.MODULE_TYPE_ID);
+    }
+
+    public static boolean isGaugeModule(Module module) {
         return GaugeModuleType.MODULE_TYPE_ID.equals(module.getOptionValue(Module.ELEMENT_TYPE)) || GaugeUtil.isGaugeProjectDir(module.getProject().getBaseDir());
     }
 

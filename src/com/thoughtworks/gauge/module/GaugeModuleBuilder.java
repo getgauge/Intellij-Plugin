@@ -52,7 +52,7 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
         super.setupRootModel(modifiableRootModel);
         checkGaugeIsInstalled();
         gaugeInit(modifiableRootModel);
-        new GaugeLibHelper().addGaugeLibs(modifiableRootModel);
+        new GaugeLibHelper(modifiableRootModel.getModule()).checkDeps();
     }
 
     private void checkGaugeIsInstalled() {

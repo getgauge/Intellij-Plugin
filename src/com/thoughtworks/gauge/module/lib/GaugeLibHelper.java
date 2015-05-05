@@ -38,16 +38,19 @@ import java.net.URL;
 
 import static com.thoughtworks.gauge.util.GaugeUtil.moduleDirFromModule;
 
-public class GaugeLibHelper {
+public class GaugeLibHelper extends AbstractLibHelper {
     public static final String PROJECT_LIB = "project-lib";
     public static final String GAUGE_LIB = "gauge-lib";
     public static final String JAVA = "java";
     private static final String SRC_DIR = new File(new File("src", "test"), JAVA).getPath();
     public static final String LIBS = "libs";
 
-    public void checkGaugeLibs(final Module module) {
-        final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
+    public GaugeLibHelper(Module module) {
+        super(module);
+    }
 
+    public void checkDeps() {
+        final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(getModule()).getModifiableModel();
         if (!gaugeJavaLibIsAdded(modifiableModel)) {
             addGaugeJavaLib(modifiableModel);
         } else {
@@ -123,11 +126,6 @@ public class GaugeLibHelper {
     private boolean gaugeJavaLibIsAdded(ModifiableRootModel model) {
         Library library = model.getModuleLibraryTable().getLibraryByName(GAUGE_LIB);
         return !(library == null);
-    }
-
-    public void addGaugeLibs(ModifiableRootModel modifiableRootModel) {
-        addGaugeJavaLib(modifiableRootModel);
-        addProjectLib(modifiableRootModel);
     }
 
     private void addGaugeJavaLib(ModifiableRootModel modifiableRootModel) {
