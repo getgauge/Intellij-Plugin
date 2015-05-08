@@ -56,7 +56,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
     public static final String SIMPLE_CONSOLE_FLAG = "--simple-console";
     public static final String TAGS_FLAG = "--tags";
     public static final String PARALLEL_FLAG = "--parallel";
-    private static final String PARALLEL_NODES_FLAG = "--n";
+    private static final String PARALLEL_NODES_FLAG = "-n";
     private static final String TABLE_ROWS_FLAG = "--table-rows";
     public static final String GAUGE_CUSTOM_CLASSPATH = "gauge_custom_classpath";
     private String specsToExecute;
