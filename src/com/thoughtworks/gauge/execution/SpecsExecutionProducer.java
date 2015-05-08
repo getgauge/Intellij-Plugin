@@ -55,6 +55,7 @@ public class     SpecsExecutionProducer extends RunConfigurationProducer {
             } else if (selectedFiles[0].equals(configurationContext.getProject().getBaseDir())) {
                 configuration.setName(DEFAULT_CONFIGURATION_NAME);
                 ((GaugeRunConfiguration) configuration).setSpecsToExecute(projectSpecsDirectory(configurationContext.getProject()));
+                ((GaugeRunConfiguration) configuration).setModule(configurationContext.getModule());
                 return true;
             }
         }
@@ -72,6 +73,7 @@ public class     SpecsExecutionProducer extends RunConfigurationProducer {
         }
         configuration.setName(DEFAULT_CONFIGURATION_NAME);
         ((GaugeRunConfiguration) configuration).setSpecsArrayToExecute(specsToExecute);
+        ((GaugeRunConfiguration) configuration).setModule(configurationContext.getModule());
         return true;
     }
 
