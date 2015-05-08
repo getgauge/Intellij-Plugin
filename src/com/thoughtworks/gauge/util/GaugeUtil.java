@@ -4,11 +4,13 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.OrderEnumerator;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
 import com.intellij.util.EnvironmentUtil;
 import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.GaugeConstant;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import com.thoughtworks.gauge.language.ConceptFileType;
+import com.thoughtworks.gauge.language.SpecFile;
 import com.thoughtworks.gauge.language.SpecFileType;
 import org.apache.commons.lang.StringUtils;
 
@@ -92,5 +94,9 @@ public class GaugeUtil {
 
     public static String classpathForModule(Module module) {
         return OrderEnumerator.orderEntries(module).recursively().getPathsList().getPathsString();
+    }
+
+    public static boolean isSpecFile(PsiFile file) {
+            return file instanceof SpecFile;
     }
 }

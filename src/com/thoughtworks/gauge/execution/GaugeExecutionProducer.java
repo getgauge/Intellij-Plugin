@@ -29,7 +29,8 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import com.thoughtworks.gauge.language.SpecFile;
+
+import static com.thoughtworks.gauge.util.GaugeUtil.isSpecFile;
 
 public class GaugeExecutionProducer extends RunConfigurationProducer {
 
@@ -53,7 +54,7 @@ public class GaugeExecutionProducer extends RunConfigurationProducer {
         }
 
         PsiFile file = context.getPsiLocation().getContainingFile();
-        if (!(file instanceof SpecFile)) {
+        if (!isSpecFile(file)) {
             return false;
         }
 
@@ -78,6 +79,7 @@ public class GaugeExecutionProducer extends RunConfigurationProducer {
         return true;
 
     }
+
 
     @Override
     public boolean isConfigurationFromContext(RunConfiguration configuration, ConfigurationContext context) {

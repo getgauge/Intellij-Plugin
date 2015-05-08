@@ -73,6 +73,11 @@ public class GaugeModuleComponent implements ModuleComponent {
         // loaded and added to the project.
     }
 
+    /**
+     * Creates a gauge service for the particular module. GaugeService is used to make api calls to the gauge daemon process.
+     * @param module
+     * @return
+     */
     public static GaugeService createGaugeService(Module module) {
         int freePortForApi = SocketUtils.findFreePortForApi();
         Process gaugeProcess = initializeGaugeProcess(freePortForApi, module);
