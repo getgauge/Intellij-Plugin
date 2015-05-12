@@ -19,7 +19,6 @@ package com.thoughtworks.gauge.util;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.search.FilenameIndex;
@@ -60,7 +59,7 @@ public class StepUtil {
     }
 
     private static PsiElement findStepReference(SpecStep step, Module module) {
-        Collection<PsiMethod> stepMethods = getStepMethods(module.getProject());
+        Collection<PsiMethod> stepMethods = getStepMethods(module);
         PsiMethod method = findStepImplementationMethod(stepMethods, step);
         PsiElement referenceElement;
         if (method == null) {
@@ -202,10 +201,10 @@ public class StepUtil {
     }
 
 
-    public static Collection<PsiMethod> getStepMethods(Project project) {
-        final PsiClass step = JavaPsiFacade.getInstance(project).findClass(STEP_ANNOTATION_QUALIFIER, GlobalSearchScope.allScope(project));
+    public static Collection<PsiMethod> getStepMethods(Module module) {
+        final PsiClass step = JavaPsiFacade.getInstance(module.getProject()).findClass(STEP_ANNOTATION_QUALIFIER, GlobalSearchScope.allScope(module.getProject()));
         if (step != null) {
-            final Query<PsiMethod> psiMethods = AnnotatedElementsSearch.searchPsiMethods(step, GlobalSearchScope.allScope(project));
+            final Query<PsiMethod> psiMethods = AnnotatedElementsSearch.searchPsiMethods(step, GlobalSearchScope.moduleScope(module));
             return psiMethods.findAll();
         }
         return new ArrayList<PsiMethod>();

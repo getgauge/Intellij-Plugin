@@ -13,8 +13,11 @@ import com.thoughtworks.gauge.language.ConceptFileType;
 import com.thoughtworks.gauge.language.SpecFile;
 import com.thoughtworks.gauge.language.SpecFileType;
 import org.apache.commons.lang.StringUtils;
+import org.jetbrains.jps.model.serialization.PathMacroUtil;
 
 import java.io.File;
+
+import static com.thoughtworks.gauge.Constants.SPECS_DIR;
 
 public class GaugeUtil {
     private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.GaugeUtil");
@@ -69,13 +72,12 @@ public class GaugeUtil {
         return file.getFileType() instanceof SpecFileType || file.getFileType() instanceof ConceptFileType;
     }
 
-    public static boolean isGaugeProjectDir(VirtualFile dir) {
-        File projectDir = new File(dir.getPath());
-        return containsManifest(projectDir) && containsSpecsDir(projectDir);
+    public static boolean isGaugeProjectDir(File dir) {
+        return containsManifest(dir) && containsSpecsDir(dir);
     }
 
     private static boolean containsSpecsDir(File projectDir) {
-        File specDir = new File(projectDir, Constants.SPECS_DIR);
+        File specDir = new File(projectDir, SPECS_DIR);
         return specDir.exists() && specDir.isDirectory();
     }
 
@@ -83,14 +85,14 @@ public class GaugeUtil {
         return new File(projectDir, Constants.MANIFEST_FILE).exists();
     }
 
-    public static File moduleDirFromModule(Module module) {
-        VirtualFile baseDir = module.getProject().getBaseDir();
-        if (baseDir.exists()) {
-            return new File(baseDir.getPath());
-        } else {
-            return new File(module.getModuleFilePath()).getParentFile();
-        }
+    public static File moduleDir(Module module) {
+        return new File(moduleDirPath(module));
     }
+
+    public static String moduleDirPath(Module module) {
+        return PathMacroUtil.getModuleDir(module.getModuleFilePath());
+    }
+
 
     public static String classpathForModule(Module module) {
         return OrderEnumerator.orderEntries(module).recursively().getPathsList().getPathsString();
@@ -98,5 +100,9 @@ public class GaugeUtil {
 
     public static boolean isSpecFile(PsiFile file) {
             return file instanceof SpecFile;
+    }
+
+    public static boolean isGaugeModule(Module module) {
+        return isGaugeProjectDir(moduleDir(module));
     }
 }

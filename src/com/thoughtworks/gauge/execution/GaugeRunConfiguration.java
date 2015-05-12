@@ -105,7 +105,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
             commandLine.addParameter(TAGS_FLAG);
             commandLine.addParameter(tags);
         }
-        commandLine.setWorkDirectory(getProject().getBaseDir().getPath());
+        commandLine.setWorkDirectory(GaugeUtil.moduleDir(getModule()));
         if (!Strings.isBlank(environment)) {
             commandLine.addParameters(ENV_FLAG, environment);
         }

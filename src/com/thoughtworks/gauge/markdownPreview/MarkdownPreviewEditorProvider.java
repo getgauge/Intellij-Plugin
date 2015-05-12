@@ -1,11 +1,11 @@
 package com.thoughtworks.gauge.markdownPreview;
 
 import com.intellij.openapi.fileEditor.*;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.PossiblyDumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.thoughtworks.gauge.language.ConceptFileType;
-import com.thoughtworks.gauge.language.SpecFileType;
 import com.thoughtworks.gauge.util.GaugeUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +13,8 @@ import org.jetbrains.annotations.NotNull;
 public class MarkdownPreviewEditorProvider implements FileEditorProvider, PossiblyDumbAware{
     @Override
     public boolean accept(Project project, VirtualFile file) {
-        return GaugeUtil.isGaugeFile(file) && GaugeUtil.isGaugeProjectDir(project.getBaseDir());
+        Module module = ModuleUtil.findModuleForFile(file, project);
+        return module != null && GaugeUtil.isGaugeFile(file) && GaugeUtil.isGaugeModule(module);
     }
 
     @NotNull

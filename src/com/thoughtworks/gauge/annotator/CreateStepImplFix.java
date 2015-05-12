@@ -30,6 +30,8 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
@@ -72,7 +74,8 @@ public class CreateStepImplFix extends BaseIntentionAction {
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        return GaugeUtil.isGaugeFile(file.getVirtualFile()) && GaugeUtil.isGaugeProjectDir(project.getBaseDir());
+        Module module = ModuleUtil.findModuleForPsiElement(step);
+        return module != null && GaugeUtil.isGaugeFile(file.getVirtualFile()) && GaugeUtil.isGaugeModule(module);
     }
 
     @Override

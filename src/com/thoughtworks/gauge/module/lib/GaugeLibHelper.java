@@ -19,7 +19,6 @@ package com.thoughtworks.gauge.module.lib;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
@@ -36,7 +35,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static com.thoughtworks.gauge.util.GaugeUtil.moduleDirFromModule;
+import static com.thoughtworks.gauge.util.GaugeUtil.moduleDir;
+import static com.thoughtworks.gauge.util.GaugeUtil.moduleDirPath;
 
 public class GaugeLibHelper extends AbstractLibHelper {
     public static final String PROJECT_LIB = "project-lib";
@@ -75,28 +75,27 @@ public class GaugeLibHelper extends AbstractLibHelper {
                 contentEntry.addSourceFolder(srcPath, false);
             }
             CompilerModuleExtension compilerModuleExtension = modifiableModel.getModuleExtension(CompilerModuleExtension.class);
-            compilerModuleExtension.setCompilerOutputPath(outputPath(modifiableModel.getProject()));
-            compilerModuleExtension.setCompilerOutputPathForTests(testOutputPath(modifiableModel.getProject()));
+            compilerModuleExtension.setCompilerOutputPath(outputPath(modifiableModel.getModule()));
+            compilerModuleExtension.setCompilerOutputPathForTests(testOutputPath(modifiableModel.getModule()));
             compilerModuleExtension.inheritCompilerOutputPath(false);
             compilerModuleExtension.commit();
         }
     }
 
-    private VirtualFile testOutputPath(Project project) {
-        File outputDir = new File(String.format("%s%sout%stest%s%s", project.getBasePath(), File.separator, File.separator, File.separator, project.getBaseDir().getName()));
+    private VirtualFile testOutputPath(Module module) {
+        File outputDir = new File(String.format("%s%sout%stest%s%s", moduleDirPath(module), File.separator, File.separator, File.separator, module.getName()));
         outputDir.mkdirs();
         return  LocalFileSystem.getInstance().refreshAndFindFileByIoFile(outputDir);
     }
 
-    private VirtualFile outputPath(Project project) {
-        File outputDir = new File(String.format("%s%sout%sproduction%s%s", project.getBasePath(), File.separator, File.separator, File.separator, project.getBaseDir().getName()));
+    private VirtualFile outputPath(Module module) {
+        File outputDir = new File(String.format("%s%sout%sproduction%s%s", moduleDirPath(module), File.separator, File.separator, File.separator, module.getName()));
         outputDir.mkdirs();
         return  LocalFileSystem.getInstance().refreshAndFindFileByIoFile(outputDir);
     }
 
     private VirtualFile srcPath(ModifiableRootModel modifiableModel) {
-        Project project = modifiableModel.getProject();
-        return  LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(project.getBaseDir().getPath(), SRC_DIR));
+        return  LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(moduleDir(modifiableModel.getModule()), SRC_DIR));
     }
 
     private void addProjectLibIfNeeded(ModifiableRootModel model) {
@@ -152,7 +151,7 @@ public class GaugeLibHelper extends AbstractLibHelper {
 
 
     private ProjectLib projectLib(Module module) {
-        return new ProjectLib(PROJECT_LIB, new File(moduleDirFromModule(module), LIBS));
+        return new ProjectLib(PROJECT_LIB, new File(moduleDir(module), LIBS));
     }
 
     private ProjectLib gaugeLib(Module module) {
