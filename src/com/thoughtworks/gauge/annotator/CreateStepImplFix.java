@@ -31,7 +31,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
@@ -79,11 +78,11 @@ public class CreateStepImplFix extends BaseIntentionAction {
     }
 
     @Override
-    public void invoke(@NotNull final Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull final Project project, Editor editor, final PsiFile file) throws IncorrectOperationException {
         ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
             public void run() {
-                List<PsiFile> javaFiles = FileManager.getAllJavaFiles(project);
+                List<PsiFile> javaFiles = FileManager.getAllJavaFiles(GaugeUtil.moduleForPsiElement(file));
 
                 javaFiles.add(0, NEW_FILE_HOLDER);
                 ListPopup stepImplChooser = JBPopupFactory.getInstance().createListPopup(new BaseListPopupStep<PsiFile>("Choose implementation class", javaFiles) {

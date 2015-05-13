@@ -1,6 +1,7 @@
 package com.thoughtworks.gauge.annotator;
 
 import com.intellij.ide.highlighter.JavaFileType;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -13,13 +14,15 @@ import com.thoughtworks.gauge.language.ConceptFileType;
 
 import java.util.*;
 
+import static com.intellij.psi.search.GlobalSearchScope.moduleScope;
+
 public class FileManager {
-    public static List<PsiFile> getAllJavaFiles(Project project){
-        Collection<VirtualFile> javaVirtualFiles = FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, JavaFileType.INSTANCE, GlobalSearchScope.projectScope(project));
+    public static List<PsiFile> getAllJavaFiles(Module module){
+        Collection<VirtualFile> javaVirtualFiles = FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, JavaFileType.INSTANCE, moduleScope(module));
         List<PsiFile> javaFiles = new ArrayList<PsiFile>();
 
         for (VirtualFile javaVFile : javaVirtualFiles) {
-            PsiFile file = PsiManager.getInstance(project).findFile(javaVFile);
+            PsiFile file = PsiManager.getInstance(module.getProject()).findFile(javaVFile);
             if (file != null) {
                 javaFiles.add(file);
             }
