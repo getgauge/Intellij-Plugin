@@ -26,6 +26,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidator;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -74,7 +75,8 @@ public class RenameInputValidator implements InputValidator {
             response = gaugeService.getGaugeConnection().sendPerformRefactoringRequest(text, inputString);
             refreshFiles(response);
         } catch (Exception e) {
-            HintManager.getInstance().showErrorHint(editor, String.format("Could not execute refactor command: %s", e.toString()));
+            Messages.showErrorDialog(String.format("Could not execute refactor command: %s", e.toString()), "Rephrase Failed");
+            return true;
         }
         runWriteAction(response);
         showMessage(response);
