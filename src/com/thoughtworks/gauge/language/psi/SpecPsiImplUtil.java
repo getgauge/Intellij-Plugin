@@ -20,13 +20,13 @@ package com.thoughtworks.gauge.language.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.psi.PsiElement;
 import com.thoughtworks.gauge.GaugeConnection;
 import com.thoughtworks.gauge.StepValue;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
+import com.thoughtworks.gauge.util.GaugeUtil;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -45,7 +45,7 @@ public class SpecPsiImplUtil {
     }
 
     protected static StepValue getStepValueFor(PsiElement element, String stepText, Boolean hasInlineTable) {
-        Module moduleForElement = ModuleUtil.findModuleForPsiElement(element);
+        Module moduleForElement = GaugeUtil.moduleForPsiElement(element);
         GaugeService gaugeService = Gauge.getGaugeService(moduleForElement);
         if (gaugeService == null) {
             return getDefaultStepValue(element);

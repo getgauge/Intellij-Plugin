@@ -18,7 +18,6 @@
 package com.thoughtworks.gauge.util;
 
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.search.FilenameIndex;
@@ -165,11 +164,11 @@ public class StepUtil {
     }
 
     private static Module findModule(PsiElement annotation) {
-        Module module = ModuleUtil.findModuleForPsiElement(annotation);
+        Module module = GaugeUtil.moduleForPsiElement(annotation);
         if (module == null) {
             PsiFile file = annotation.getContainingFile();
             if (file != null) {
-                return ModuleUtil.findModuleForPsiElement(file);
+                return GaugeUtil.moduleForPsiElement(file);
             }
         }
         return module;
@@ -204,7 +203,7 @@ public class StepUtil {
     public static Collection<PsiMethod> getStepMethods(Module module) {
         final PsiClass step = JavaPsiFacade.getInstance(module.getProject()).findClass(STEP_ANNOTATION_QUALIFIER, GlobalSearchScope.allScope(module.getProject()));
         if (step != null) {
-            final Query<PsiMethod> psiMethods = AnnotatedElementsSearch.searchPsiMethods(step, GlobalSearchScope.moduleScope(module));
+            final Query<PsiMethod> psiMethods = AnnotatedElementsSearch.searchPsiMethods(step, GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, true));
             return psiMethods.findAll();
         }
         return new ArrayList<PsiMethod>();
@@ -218,7 +217,7 @@ public class StepUtil {
     //Check if the step is a concept using list of concepts got from gauge API
     private static boolean isConcept(SpecStep step) {
         try {
-            Module module = ModuleUtil.findModuleForPsiElement(step);
+            Module module = GaugeUtil.moduleForPsiElement(step);
             List<ConceptInfo> conceptInfos = fetchAllConcepts(module);
             return conceptExists(conceptInfos, step.getStepValue());
         } catch (Exception e) {

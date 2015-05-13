@@ -74,7 +74,7 @@ public class CreateStepImplFix extends BaseIntentionAction {
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        Module module = ModuleUtil.findModuleForPsiElement(step);
+        Module module = GaugeUtil.moduleForPsiElement(step);
         return module != null && GaugeUtil.isGaugeFile(file.getVirtualFile()) && GaugeUtil.isGaugeModule(module);
     }
 

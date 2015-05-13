@@ -24,7 +24,6 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -33,6 +32,7 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
+import com.thoughtworks.gauge.util.GaugeUtil;
 import gauge.messages.Api;
 import org.apache.commons.io.FileUtils;
 
@@ -69,7 +69,7 @@ public class RenameInputValidator implements InputValidator {
         FileDocumentManager.getInstance().saveAllDocuments();
         try {
             FileDocumentManager.getInstance().saveDocumentAsIs(editor.getDocument());
-            final Module module = ModuleUtil.findModuleForPsiElement(psiElement);
+            final Module module = GaugeUtil.moduleForPsiElement(psiElement);
             GaugeService gaugeService = Gauge.getGaugeService(module);
             response = gaugeService.getGaugeConnection().sendPerformRefactoringRequest(text, inputString);
             refreshFiles(response);

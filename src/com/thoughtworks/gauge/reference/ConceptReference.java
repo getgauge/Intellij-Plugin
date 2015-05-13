@@ -17,13 +17,13 @@
 
 package com.thoughtworks.gauge.reference;
 
-import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReferenceBase;
 import com.thoughtworks.gauge.language.psi.ConceptStep;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
+import com.thoughtworks.gauge.util.GaugeUtil;
 import com.thoughtworks.gauge.util.StepUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +40,7 @@ public class ConceptReference extends PsiReferenceBase<ConceptStep> {
     public PsiElement resolve() {
         SpecStepImpl step = new SpecStepImpl(this.myElement.getNode());
         step.setConcept(true);
-        return StepUtil.findStepImpl(step, ModuleUtil.findModuleForPsiElement(this.myElement));
+        return StepUtil.findStepImpl(step, GaugeUtil.moduleForPsiElement(this.myElement));
     }
 
     @NotNull

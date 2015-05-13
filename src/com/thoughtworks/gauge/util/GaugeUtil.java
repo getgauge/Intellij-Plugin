@@ -2,8 +2,10 @@ package com.thoughtworks.gauge.util;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.roots.OrderEnumerator;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.EnvironmentUtil;
 import com.thoughtworks.gauge.Constants;
@@ -104,5 +106,13 @@ public class GaugeUtil {
 
     public static boolean isGaugeModule(Module module) {
         return isGaugeProjectDir(moduleDir(module));
+    }
+
+    public static Module moduleForPsiElement(PsiElement element) {
+        PsiFile file = element.getContainingFile();
+        if (file == null) {
+            return ModuleUtil.findModuleForPsiElement(element);
+        }
+        return ModuleUtil.findModuleForPsiElement(file);
     }
 }

@@ -12,7 +12,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorModificationUtil;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -28,6 +27,7 @@ import com.thoughtworks.gauge.annotator.FileManager;
 import com.thoughtworks.gauge.annotator.GaugeDataContext;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
+import com.thoughtworks.gauge.util.GaugeUtil;
 import gauge.messages.Api;
 import org.jetbrains.annotations.NotNull;
 
@@ -104,7 +104,7 @@ public class ExtractConceptHandler implements RefactoringActionHandler {
     }
 
     private ExtractConceptResponse getResponse(PsiElement psiElement, String text) {
-        final Module module = ModuleUtil.findModuleForPsiElement(psiElement);
+        final Module module = GaugeUtil.moduleForPsiElement(psiElement);
         GaugeService gaugeService = Gauge.getGaugeService(module);
         GaugeConnection gaugeConnection = gaugeService.getGaugeConnection();
         try {
