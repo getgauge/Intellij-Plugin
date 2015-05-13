@@ -24,7 +24,6 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -33,7 +32,6 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
-import com.thoughtworks.gauge.util.GaugeUtil;
 import gauge.messages.Api;
 import org.apache.commons.io.FileUtils;
 
@@ -45,13 +43,13 @@ import java.util.Map;
 import static com.intellij.openapi.vfs.LocalFileSystem.getInstance;
 
 public class RenameInputValidator implements InputValidator {
-    private final Project project;
+    private final Module module;
     private Editor editor;
     private String text;
     private PsiElement psiElement;
 
-    public RenameInputValidator(final Project project, Editor editor, String text, PsiElement psiElement) {
-        this.project = project;
+    public RenameInputValidator(final Module module, Editor editor, String text, PsiElement psiElement) {
+        this.module = module;
         this.editor = editor;
         this.text = text;
         this.psiElement = psiElement;
@@ -70,7 +68,6 @@ public class RenameInputValidator implements InputValidator {
         FileDocumentManager.getInstance().saveAllDocuments();
         try {
             FileDocumentManager.getInstance().saveDocumentAsIs(editor.getDocument());
-            final Module module = GaugeUtil.moduleForPsiElement(psiElement);
             GaugeService gaugeService = Gauge.getGaugeService(module);
             response = gaugeService.getGaugeConnection().sendPerformRefactoringRequest(text, inputString);
             refreshFiles(response);
@@ -106,7 +103,7 @@ public class RenameInputValidator implements InputValidator {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
-                CommandProcessor.getInstance().executeCommand(project, new Runnable() {
+                CommandProcessor.getInstance().executeCommand(module.getProject(), new Runnable() {
                     @Override
                     public void run() {
                         performUndoableAction(finalResponse.getFilesChangedList());
