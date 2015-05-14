@@ -170,7 +170,7 @@ public class GaugeLibHelper extends AbstractLibHelper {
             System.err.println("Could not add gauge lib, add it manually: " + e.getMessage());
             return null;
         } catch (PluginNotInstalledException e) {
-            throw new RuntimeException(JAVA + "could not be installed, try it manually");
+            throw new RuntimeException("Gauge " + JAVA + " plugin is not installed.");
         }
         return new ProjectLib(GAUGE_LIB, new File(libRoot));
     }
