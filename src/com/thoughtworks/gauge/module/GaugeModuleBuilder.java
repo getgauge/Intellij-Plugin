@@ -21,9 +21,9 @@ import com.intellij.ide.util.projectWizard.JavaModuleBuilder;
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
 import com.intellij.ide.util.projectWizard.ProjectWizardStepFactory;
 import com.intellij.ide.util.projectWizard.SettingsStep;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.progress.PerformInBackgroundOption;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
@@ -78,8 +78,7 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
         ProgressManager.getInstance().run(new Task.Modal(modifiableRootModel.getProject(), "Initializing gauge-" + getLanguage() + " project", false) {
             public void run(@NotNull ProgressIndicator progressIndicator) {
                 progressIndicator.setIndeterminate(true);
-                progressIndicator.setText2("This might take a few minutes if gauge-" + getLanguage() + " runner is not installed");
-                final String path = getPathForInitialization(modifiableRootModel);
+                progressIndicator.setText("Installing gauge-" + getLanguage() + " plugin if not installed");
                 String failureMessage = "Project initialization unsuccessful";
                 try {
                     final String[] init = {
@@ -106,18 +105,6 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
 
     private String getLanguage() {
         return "java";
-    }
-
-    private String getPathForInitialization(ModifiableRootModel modifiableRootModel) {
-        final Module module = modifiableRootModel.getModule();
-        final boolean initialized = module.getProject().isInitialized();
-        final String path;
-        if (initialized) {
-            path = module.getProject().getBasePath();
-        } else {
-            path = module.getProject().getBaseDir().getParent().getPath();
-        }
-        return path;
     }
 
     @Override
