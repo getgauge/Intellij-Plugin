@@ -31,7 +31,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 
-public class     SpecsExecutionProducer extends RunConfigurationProducer {
+public class SpecsExecutionProducer extends RunConfigurationProducer {
 
     public static final String DEFAULT_CONFIGURATION_NAME = "Specifications";
     public static final String SPECS_DIR = "specs";
@@ -49,13 +49,13 @@ public class     SpecsExecutionProducer extends RunConfigurationProducer {
         VirtualFile[] selectedFiles = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(configurationContext.getDataContext());
         if (selectedFiles == null)
             return false;
+        ((GaugeRunConfiguration) configuration).setModule(configurationContext.getModule());
         if (selectedFiles.length == 1) {
             if (!selectedFiles[0].isDirectory()) {
                 return false;
             } else if (selectedFiles[0].equals(configurationContext.getProject().getBaseDir())) {
                 configuration.setName(DEFAULT_CONFIGURATION_NAME);
                 ((GaugeRunConfiguration) configuration).setSpecsToExecute(projectSpecsDirectory(configurationContext.getProject()));
-                ((GaugeRunConfiguration) configuration).setModule(configurationContext.getModule());
                 return true;
             }
         }
@@ -73,7 +73,6 @@ public class     SpecsExecutionProducer extends RunConfigurationProducer {
         }
         configuration.setName(DEFAULT_CONFIGURATION_NAME);
         ((GaugeRunConfiguration) configuration).setSpecsArrayToExecute(specsToExecute);
-        ((GaugeRunConfiguration) configuration).setModule(configurationContext.getModule());
         return true;
     }
 

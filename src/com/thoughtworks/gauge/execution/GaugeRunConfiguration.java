@@ -67,10 +67,11 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
     private String parallelNodes;
     public ApplicationConfiguration programParameters;
     private String rowsRange;
+    private String moduleName;
 
     public GaugeRunConfiguration(String name, Project project, ConfigurationFactoryEx configurationFactory) {
         super(project, configurationFactory, name);
-        this.programParameters  = new ApplicationConfiguration(name, project, ApplicationConfigurationType.getInstance());
+        this.programParameters = new ApplicationConfiguration(name, project, ApplicationConfigurationType.getInstance());
     }
 
     @NotNull
@@ -199,8 +200,9 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         execInParallel = JDOMExternalizer.readBoolean(element, "execInParallel");
         programParameters.setProgramParameters(JDOMExternalizer.readString(element, "programParameters"));
         programParameters.setWorkingDirectory(JDOMExternalizer.readString(element, "workingDirectory"));
+        this.moduleName = JDOMExternalizer.readString(element, "moduleName");
         HashMap<String, String> envMap = new HashMap<String, String>();
-        JDOMExternalizer.readMap(element, envMap, "envMap", "envMap" );
+        JDOMExternalizer.readMap(element, envMap, "envMap", "envMap");
         programParameters.setEnvs(envMap);
         rowsRange = JDOMExternalizer.readString(element, "rowsRange");
     }
@@ -215,6 +217,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         JDOMExternalizer.write(element, "execInParallel", execInParallel);
         JDOMExternalizer.write(element, "programParameters", programParameters.getProgramParameters());
         JDOMExternalizer.write(element, "workingDirectory", programParameters.getWorkingDirectory());
+        JDOMExternalizer.write(element, "moduleName", moduleName);
         JDOMExternalizer.writeMap(element, programParameters.getEnvs(), "envMap", "envMap");
         JDOMExternalizer.write(element, "rowsRange", rowsRange);
     }
@@ -233,12 +236,15 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         return specsToExecute;
     }
 
-
     public void setModule(Module module) {
         this.module = module;
+        this.moduleName = module.getName();
     }
 
     public Module getModule() {
+        if (module == null) {
+            return ModuleManager.getInstance(getProject()).findModuleByName(this.moduleName);
+        }
         return module;
     }
 
