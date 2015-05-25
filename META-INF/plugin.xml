@@ -37,6 +37,12 @@
     ]]></description>
 
   <change-notes><![CDATA[
+      <p>0.0.9</p>
+      <ul>
+           <li> Improving debugger support. Do not need to launch remote config after launching specs in debug mode</li>
+           <li> Fixed #65 #71 #70</li>
+      </ul>
+      <br>
       <p>0.0.8</p>
       <ul>
            <li> Support for using gauge-maven-plugin</li>
