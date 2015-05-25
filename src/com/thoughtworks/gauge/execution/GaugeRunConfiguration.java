@@ -94,7 +94,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
                 } catch (GaugeNotFoundException e) {
                     commandLine.setExePath(GaugeConstant.GAUGE);
                 } finally {
-                    addFlags(commandLine);
+                    addFlags(commandLine, env);
                     DebugInfo debugInfo = createDebugInfo(commandLine, env);
                     return GaugeRunProcessHandler.runCommandLine(commandLine, debugInfo, getProject());
                 }
@@ -115,7 +115,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         return String.valueOf(SocketUtils.findFreePortForApi());
     }
 
-    private void addFlags(GeneralCommandLine commandLine) {
+    private void addFlags(GeneralCommandLine commandLine, ExecutionEnvironment env) {
         commandLine.addParameter(SIMPLE_CONSOLE_FLAG);
         if (!Strings.isBlank(tags)) {
             commandLine.addParameter(TAGS_FLAG);
@@ -126,7 +126,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
             commandLine.addParameters(ENV_FLAG, environment);
         }
         addTableRowsRangeFlags(commandLine);
-        addParallelExecFlags(commandLine);
+        addParallelExecFlags(commandLine, env);
         addProgramArguments(commandLine);
         addProjectClasspath(commandLine);
         if (!Strings.isBlank(specsToExecute)) {
@@ -166,8 +166,8 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         }
     }
 
-    private void addParallelExecFlags(GeneralCommandLine commandLine) {
-        if (execInParallel) {
+    private void addParallelExecFlags(GeneralCommandLine commandLine, ExecutionEnvironment env) {
+        if (parallelExec(env)) {
             commandLine.addParameter(PARALLEL_FLAG);
             try {
                 if (!Strings.isEmpty(parallelNodes)) {
@@ -179,6 +179,10 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
                 e.printStackTrace();
             }
         }
+    }
+
+    private boolean parallelExec(ExecutionEnvironment env) {
+        return execInParallel && !isDebugExecution(env);
     }
 
     private void addSpecs(GeneralCommandLine commandLine, String specsToExecute) {
