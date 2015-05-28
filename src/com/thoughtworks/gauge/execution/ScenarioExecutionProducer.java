@@ -50,13 +50,16 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
             return false;
         }
 
+        Module module = GaugeUtil.moduleForPsiElement(context.getPsiLocation());
+        if (module == null) {
+            return false;
+        }
 
         if (context.getPsiLocation() == null || !(isSpecFile(context.getPsiLocation().getContainingFile())) || context.getPsiLocation().getContainingFile().getVirtualFile() == null) {
             return false;
         }
 
         try {
-            Module module = GaugeUtil.moduleForPsiElement(context.getPsiLocation());
             String name = context.getPsiLocation().getContainingFile().getVirtualFile().getCanonicalPath();
             int scenarioIndex = getScenarioIndex(context, context.getPsiLocation().getContainingFile());
             if(scenarioIndex == NO_SCENARIOS){

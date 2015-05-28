@@ -47,7 +47,8 @@ public class GaugeExecutionProducer extends RunConfigurationProducer {
         if (selectedFiles == null || selectedFiles.length>1)
             return false;
 
-        if (context.getPsiLocation() == null) {
+        Module module = context.getModule();
+        if (context.getPsiLocation() == null || module == null) {
             return false;
         }
 
@@ -62,7 +63,6 @@ public class GaugeExecutionProducer extends RunConfigurationProducer {
                 return false;
             }
 
-            Module module = context.getModule();
             String name = file.getVirtualFile().getCanonicalPath();
 
             configuration.setName(file.getName());
