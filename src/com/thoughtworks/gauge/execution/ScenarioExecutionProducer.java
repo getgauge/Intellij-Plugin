@@ -22,14 +22,13 @@ import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.thoughtworks.gauge.language.SpecFile;
 import com.thoughtworks.gauge.language.psi.impl.SpecScenarioImpl;
+import com.thoughtworks.gauge.util.GaugeUtil;
 
 import static com.thoughtworks.gauge.util.GaugeUtil.isSpecFile;
 
@@ -57,8 +56,7 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
         }
 
         try {
-            Project project = context.getPsiLocation().getContainingFile().getProject();
-            Module module = ProjectRootManager.getInstance(project).getFileIndex().getModuleForFile(context.getPsiLocation().getContainingFile().getVirtualFile());
+            Module module = GaugeUtil.moduleForPsiElement(context.getPsiLocation());
             String name = context.getPsiLocation().getContainingFile().getVirtualFile().getCanonicalPath();
             int scenarioIndex = getScenarioIndex(context, context.getPsiLocation().getContainingFile());
             if(scenarioIndex == NO_SCENARIOS){

@@ -104,6 +104,11 @@ public class GaugeUtil {
             return file instanceof SpecFile;
     }
 
+
+    public static boolean isSpecFile(VirtualFile selectedFile) {
+        return selectedFile.getFileType().getClass().equals(SpecFileType.class);
+    }
+
     public static boolean isGaugeModule(Module module) {
         return isGaugeProjectDir(moduleDir(module));
     }
