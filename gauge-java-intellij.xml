@@ -129,6 +129,7 @@
       <include name="lib/jna-utils.jar"/>
       <include name="lib/jna.jar"/>
       <include name="lib/jps-launcher.jar"/>
+      <include name="lib/jps-model.jar"/>
       <include name="lib/jps-server.jar"/>
       <include name="lib/jsch-0.1.50.jar"/>
       <include name="lib/jsch.agentproxy.connector-factory.jar"/>
@@ -336,8 +337,9 @@
     <delete dir="${gauge-java-intellij.output.dir}"/>
     <delete dir="${gauge-java-intellij.testoutput.dir}"/>
   </target>
-  
-  <property name="gauge-java-intellij.plugin.path.jar" value="${module.gauge-java-intellij.basedir}/Gauge-Java-Intellij.zip"/>
+
+  <xmlproperty file="${module.gauge-java-intellij.basedir}/META-INF/plugin.xml"/>
+  <property name="gauge-java-intellij.plugin.path.jar" value="${module.gauge-java-intellij.basedir}/Gauge-Java-Intellij-${idea-plugin.version}.zip"/>
   
   <!-- Build archive for plugin 'Gauge-Java-Intellij' -->
   <target name="plugin.build.jar.gauge-java-intellij" depends="compile.module.gauge-java-intellij" description="Build plugin archive for module &#39;Gauge-Java-Intellij&#39;">
