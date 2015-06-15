@@ -37,6 +37,11 @@
     ]]></description>
 
   <change-notes><![CDATA[
+      <p>0.0.10</p>
+      <ul>
+           <li> Fixed #72</li>
+      </ul>
+      <br>
       <p>0.0.9</p>
       <ul>
            <li> Improving debugger support. Do not need to launch remote config after launching specs in debug mode</li>
