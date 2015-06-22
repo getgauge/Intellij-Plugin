@@ -24,4 +24,6 @@ public class Constants {
     public static final String CONCEPT_EXTENSION = "cpt";
     public static final String MANIFEST_FILE = "manifest.json";
     public static final String SPECS_DIR = "specs";
+    public static final String FILE_ENCODING = "utf-8";
+    public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 }

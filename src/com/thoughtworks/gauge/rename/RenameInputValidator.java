@@ -30,12 +30,14 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
+import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
 import gauge.messages.Api;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -120,7 +122,7 @@ public class RenameInputValidator implements InputValidator {
                 if (virtualFile != null) {
                     Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
                     getInstance().refreshAndFindFileByIoFile(new File(fileName));
-                    if (document != null) document.setText(FileUtils.readFileToString(new File(fileName)).replaceAll(System.getProperty("line.separator"), "\n"));
+                    if (document != null) document.setText(FileUtils.readFileToString(new File(fileName), Charset.forName(Constants.FILE_ENCODING)).replaceAll(Constants.LINE_SEPARATOR, "\n"));
                 }
             } catch (Exception ignored) {
             }
