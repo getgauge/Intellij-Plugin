@@ -23,10 +23,11 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReferenceBase;
 import com.thoughtworks.gauge.language.psi.ConceptStep;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
-import com.thoughtworks.gauge.util.GaugeUtil;
 import com.thoughtworks.gauge.util.StepUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.thoughtworks.gauge.util.GaugeUtil.moduleForPsiElement;
 
 public class ConceptReference extends PsiReferenceBase<ConceptStep> {
 
@@ -40,7 +41,7 @@ public class ConceptReference extends PsiReferenceBase<ConceptStep> {
     public PsiElement resolve() {
         SpecStepImpl step = new SpecStepImpl(this.myElement.getNode());
         step.setConcept(true);
-        return StepUtil.findStepImpl(step, GaugeUtil.moduleForPsiElement(this.myElement));
+        return StepUtil.findStepImpl(step, moduleForPsiElement(this.myElement));
     }
 
     @NotNull
@@ -58,7 +59,7 @@ public class ConceptReference extends PsiReferenceBase<ConceptStep> {
     public boolean isReferenceTo(PsiElement element) {
         if (element instanceof PsiMethod) {
             PsiMethod method = (PsiMethod) element;
-            return StepUtil.isMatch(method, this.myElement.getStepValue().getStepText());
+            return StepUtil.isMatch(method, this.myElement.getStepValue().getStepText(), moduleForPsiElement(element));
         } else {
             return false;
         }

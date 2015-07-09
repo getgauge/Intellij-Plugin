@@ -27,6 +27,8 @@ import com.thoughtworks.gauge.util.StepUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.thoughtworks.gauge.util.GaugeUtil.moduleForPsiElement;
+
 public class StepReference extends PsiReferenceBase<SpecStep> {
 
 
@@ -55,7 +57,7 @@ public class StepReference extends PsiReferenceBase<SpecStep> {
     public boolean isReferenceTo(PsiElement element) {
         if (element instanceof PsiMethod) {
             PsiMethod method = (PsiMethod) element;
-            return StepUtil.isMatch(method, this.myElement.getStepValue().getStepText());
+            return StepUtil.isMatch(method, this.myElement.getStepValue().getStepText(), moduleForPsiElement(element));
         } else {
             return false;
         }

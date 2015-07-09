@@ -59,7 +59,7 @@ public class StepUtil {
 
     private static PsiElement findStepReference(SpecStep step, Module module) {
         Collection<PsiMethod> stepMethods = getStepMethods(module);
-        PsiMethod method = findStepImplementationMethod(stepMethods, step);
+        PsiMethod method = findStepImplementationMethod(stepMethods, step, module);
         PsiElement referenceElement;
         if (method == null) {
             referenceElement = searchConceptsForImpl(step, module);
@@ -116,18 +116,17 @@ public class StepUtil {
         return conceptFiles.toArray(new VirtualFile[conceptFiles.size()]);
     }
 
-    private static PsiMethod findStepImplementationMethod(Collection<PsiMethod> stepMethods, SpecStep step) {
+    private static PsiMethod findStepImplementationMethod(Collection<PsiMethod> stepMethods, SpecStep step, Module module) {
         String stepText = step.getStepValue().getStepText();
         for (PsiMethod stepMethod : stepMethods) {
-            if (isMatch(stepMethod, stepText)) {
+            if (isMatch(stepMethod, stepText, module)) {
                 return stepMethod;
             }
         }
         return null;
     }
 
-    public static boolean isMatch(PsiMethod stepMethod, String stepText) {
-        Module module = findModule(stepMethod);
+    public static boolean isMatch(PsiMethod stepMethod, String stepText, Module module) {
         GaugeService gaugeService = Gauge.getGaugeService(module);
         if (gaugeService == null) {
             return false;
