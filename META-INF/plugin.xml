@@ -37,6 +37,11 @@
     ]]></description>
 
   <change-notes><![CDATA[
+      <p>0.0.11</p>
+      <ul>
+           <li> Fixed #75, #77</li>
+      </ul>
+      <br>
       <p>0.0.10</p>
       <ul>
            <li> Fixed #72</li>
