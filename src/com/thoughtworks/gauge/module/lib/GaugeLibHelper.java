@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import static com.intellij.openapi.roots.OrderRootType.CLASSES;
 import static com.thoughtworks.gauge.util.GaugeUtil.moduleDir;
 import static com.thoughtworks.gauge.util.GaugeUtil.moduleDirPath;
 
@@ -111,15 +112,25 @@ public class GaugeLibHelper extends AbstractLibHelper {
         ProjectLib latestGaugeLib = gaugeLib(model.getModule());
         boolean updateLibEntry;
         try {
-            String libEntry = library.getModifiableModel().getUrls(OrderRootType.CLASSES)[0];
+            String libEntry = getClassesRootFrom(library.getModifiableModel());
             updateLibEntry = !(new URL(libEntry).getFile().equals(latestGaugeLib.getDir().getAbsolutePath()));
         } catch (MalformedURLException e) {
             updateLibEntry = true;
         }
         if (updateLibEntry) {
-            libraryTable.removeLibrary(library);
-            addLib(latestGaugeLib, model);
+            updateLibrary(library, latestGaugeLib);
         }
+    }
+
+    private void updateLibrary(Library library, ProjectLib newLib) {
+        Library.ModifiableModel model = library.getModifiableModel();
+        model.removeRoot(getClassesRootFrom(model), CLASSES);
+        model.addRoot(newLib.getDir().getAbsolutePath(), CLASSES);
+        model.commit();
+    }
+
+    private String getClassesRootFrom(Library.ModifiableModel model) {
+        return model.getUrls(CLASSES)[0];
     }
 
     private boolean gaugeJavaLibIsAdded(ModifiableRootModel model) {
