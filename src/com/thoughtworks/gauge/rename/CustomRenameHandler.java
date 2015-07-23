@@ -92,7 +92,7 @@ public class CustomRenameHandler implements RenameHandler {
             text = removeIdentifiers(((ConceptStepImpl) element).getStepValue().getStepAnnotationText());
         }
         Messages.showInputDialog(project, String.format("Refactoring \"%s\" to : ", text), "Refactor", Messages.getInformationIcon(), text,
-                new RenameInputValidator(project, this.editor, text, this.psiElement));
+                new RenameInputValidator(GaugeUtil.moduleForPsiElement(file), this.editor, text, this.psiElement));
 
     }
 

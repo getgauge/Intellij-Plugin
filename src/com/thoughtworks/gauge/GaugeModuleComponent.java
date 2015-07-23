@@ -24,15 +24,16 @@ import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import com.thoughtworks.gauge.module.GaugeModuleType;
-import com.thoughtworks.gauge.module.lib.GaugeLibHelper;
-import com.thoughtworks.gauge.util.GaugeUtil;
+import com.thoughtworks.gauge.module.lib.LibHelperFactory;
 import com.thoughtworks.gauge.util.SocketUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.IOException;
 
-import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeExecPath;
+import static com.thoughtworks.gauge.GaugeConstant.DAEMONIZE_FLAG;
+import static com.thoughtworks.gauge.GaugeConstant.GAUGE_API_PORT;
+import static com.thoughtworks.gauge.execution.GaugeRunConfiguration.GAUGE_CUSTOM_CLASSPATH;
+import static com.thoughtworks.gauge.util.GaugeUtil.*;
 
 
 public class GaugeModuleComponent implements ModuleComponent {
@@ -56,17 +57,10 @@ public class GaugeModuleComponent implements ModuleComponent {
     }
 
     public void projectOpened() {
-        if (isGaugeModule(module)) {
-            if (Gauge.getGaugeService(module) == null) {
-                GaugeService gaugeService = createGaugeService(module);
-                Gauge.addModule(module, gaugeService);
-                new GaugeLibHelper().checkGaugeLibs(module);
-            }
-        }
+        new LibHelperFactory().helperFor(module).checkDeps();
     }
 
     public void projectClosed() {
-        // called when project is being closed
         GaugeService gaugeService = Gauge.getGaugeService(module);
         if (gaugeService != null && gaugeService.getGaugeProcess() != null) {
             gaugeService.getGaugeProcess().destroy();
@@ -74,16 +68,21 @@ public class GaugeModuleComponent implements ModuleComponent {
     }
 
     public void moduleAdded() {
-        // Invoked when the module corresponding to this component instance has been completely
-        // loaded and added to the project.
+        projectOpened();
     }
 
+    /**
+     * Creates a gauge service for the particular module. GaugeService is used to make api calls to the gauge daemon process.
+     * @param module
+     * @return
+     */
     public static GaugeService createGaugeService(Module module) {
         int freePortForApi = SocketUtils.findFreePortForApi();
-        Process gaugeProcess;
-        gaugeProcess = initializeGaugeProcess(freePortForApi, module);
+        Process gaugeProcess = initializeGaugeProcess(freePortForApi, module);
         GaugeConnection gaugeConnection = initializeGaugeConnection(freePortForApi);
-        return new GaugeService(gaugeProcess, gaugeConnection);
+        GaugeService gaugeService = new GaugeService(gaugeProcess, gaugeConnection);
+        Gauge.addModule(module, gaugeService);
+        return gaugeService;
     }
 
     private static GaugeConnection initializeGaugeConnection(int apiPort) {
@@ -97,9 +96,10 @@ public class GaugeModuleComponent implements ModuleComponent {
     private static Process initializeGaugeProcess(int apiPort, Module module) {
         try {
             String path = getGaugeExecPath();
-            ProcessBuilder gauge = new ProcessBuilder(path, GaugeConstant.DAEMONIZE_FLAG);
-            gauge.environment().put(GaugeConstant.GAUGE_API_PORT, String.valueOf(apiPort));
-            gauge.directory(projectDir(module));
+            ProcessBuilder gauge = new ProcessBuilder(path, DAEMONIZE_FLAG);
+            gauge.environment().put(GAUGE_API_PORT, String.valueOf(apiPort));
+            gauge.environment().put(GAUGE_CUSTOM_CLASSPATH, classpathForModule(module));
+            gauge.directory(moduleDir(module));
             return gauge.start();
         } catch (IOException e) {
             LOG.error("Could not start gauge api:" + e.getMessage(), e);
@@ -111,16 +111,12 @@ public class GaugeModuleComponent implements ModuleComponent {
         return null;
     }
 
-    private static File projectDir(Module module) {
-        File projectDir = new File(module.getProject().getBaseDir().getPath());
-        if (projectDir == null || !projectDir.exists()) {
-            projectDir = new File(module.getModuleFilePath()).getParentFile();
-        }
-        return projectDir;
+    public static void makeGaugeModuleType(Module module) {
+        module.setOption("type", GaugeModuleType.MODULE_TYPE_ID);
     }
 
-    private boolean isGaugeModule(Module module) {
-        return GaugeModuleType.MODULE_TYPE_ID.equals(module.getOptionValue(Module.ELEMENT_TYPE)) || GaugeUtil.isGaugeProjectDir(module.getProject().getBaseDir());
+    public static boolean isGaugeModule(Module module) {
+        return GaugeModuleType.MODULE_TYPE_ID.equals(module.getOptionValue(Module.ELEMENT_TYPE)) || isGaugeProjectDir(moduleDir(module));
     }
 
 }

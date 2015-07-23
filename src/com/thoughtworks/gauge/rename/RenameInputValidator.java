@@ -21,9 +21,8 @@ import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidator;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.psi.PsiElement;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
@@ -31,13 +30,13 @@ import com.thoughtworks.gauge.undo.UndoHandler;
 import gauge.messages.Api;
 
 public class RenameInputValidator implements InputValidator {
-    private final Project project;
+    private final Module module;
     private Editor editor;
     private String text;
     private PsiElement psiElement;
 
-    public RenameInputValidator(final Project project, Editor editor, String text, PsiElement psiElement) {
-        this.project = project;
+    public RenameInputValidator(final Module module, Editor editor, String text, PsiElement psiElement) {
+        this.module = module;
         this.editor = editor;
         this.text = text;
         this.psiElement = psiElement;
@@ -56,13 +55,13 @@ public class RenameInputValidator implements InputValidator {
         FileDocumentManager.getInstance().saveAllDocuments();
         try {
             FileDocumentManager.getInstance().saveDocumentAsIs(editor.getDocument());
-            final Module module = ModuleUtil.findModuleForPsiElement(psiElement);
             GaugeService gaugeService = Gauge.getGaugeService(module);
             response = gaugeService.getGaugeConnection().sendPerformRefactoringRequest(text, inputString);
         } catch (Exception e) {
-            HintManager.getInstance().showErrorHint(editor, String.format("Could not execute refactor command: %s", e.toString()));
+            Messages.showErrorDialog(String.format("Could not execute refactor command: %s", e.toString()), "Rephrase Failed");
+            return true;
         }
-        new UndoHandler(response.getFilesChangedList(), project, "Refactoring").handle();
+        new UndoHandler(response.getFilesChangedList(), module.getProject(), "Refactoring").handle();
         showMessage(response);
         return true;
     }

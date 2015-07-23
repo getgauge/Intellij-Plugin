@@ -22,16 +22,18 @@ import com.intellij.execution.actions.RunConfigurationProducer;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.thoughtworks.gauge.language.SpecFileType;
 
 import java.io.File;
 import java.util.ArrayList;
 
+import static com.thoughtworks.gauge.util.GaugeUtil.isSpecFile;
 
-public class     SpecsExecutionProducer extends RunConfigurationProducer {
+
+public class SpecsExecutionProducer extends RunConfigurationProducer {
 
     public static final String DEFAULT_CONFIGURATION_NAME = "Specifications";
     public static final String SPECS_DIR = "specs";
@@ -47,13 +49,15 @@ public class     SpecsExecutionProducer extends RunConfigurationProducer {
     @Override
     protected boolean setupConfigurationFromContext(RunConfiguration configuration, ConfigurationContext configurationContext, Ref ref) {
         VirtualFile[] selectedFiles = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(configurationContext.getDataContext());
-        if (selectedFiles == null)
+        Module module = configurationContext.getModule();
+        if (selectedFiles == null || module == null)
             return false;
         if (selectedFiles.length == 1) {
             if (!selectedFiles[0].isDirectory()) {
                 return false;
             } else if (selectedFiles[0].equals(configurationContext.getProject().getBaseDir())) {
                 configuration.setName(DEFAULT_CONFIGURATION_NAME);
+                ((GaugeRunConfiguration) configuration).setModule(module);
                 ((GaugeRunConfiguration) configuration).setSpecsToExecute(projectSpecsDirectory(configurationContext.getProject()));
                 return true;
             }
@@ -61,7 +65,7 @@ public class     SpecsExecutionProducer extends RunConfigurationProducer {
         
         ArrayList<String> specsToExecute = new ArrayList<String>();
         for (VirtualFile selectedFile : selectedFiles) {
-            if (selectedFile.getFileType().getClass().equals(SpecFileType.class)) {
+            if (isSpecFile(selectedFile)) {
                 specsToExecute.add(selectedFile.getPath());
             } else if (selectedFile.isDirectory() && shouldAddDirToExecute(selectedFile)) {
                 specsToExecute.add(selectedFile.getPath());
@@ -71,6 +75,7 @@ public class     SpecsExecutionProducer extends RunConfigurationProducer {
             return false;
         }
         configuration.setName(DEFAULT_CONFIGURATION_NAME);
+        ((GaugeRunConfiguration) configuration).setModule(module);
         ((GaugeRunConfiguration) configuration).setSpecsArrayToExecute(specsToExecute);
         return true;
     }
@@ -86,7 +91,7 @@ public class     SpecsExecutionProducer extends RunConfigurationProducer {
     private int numberOfSpecFiles(VirtualFile directory) {
         int numberOfSpecs = 0;
         for (VirtualFile file : directory.getChildren()) {
-            if (file.getFileType().getClass().equals(SpecFileType.class))
+            if (isSpecFile(file))
                 numberOfSpecs++;
         }
         return numberOfSpecs;

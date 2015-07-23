@@ -15,15 +15,29 @@
 // You should have received a copy of the GNU General Public License
 // along with getgauge/Intellij-plugin.  If not, see <http://www.gnu.org/licenses/>.
 
-package com.thoughtworks.gauge;
+package com.thoughtworks.gauge.module.lib;
 
-public class Constants {
+import com.intellij.openapi.module.Module;
+import com.thoughtworks.gauge.GaugeModuleComponent;
+import com.thoughtworks.gauge.core.Gauge;
 
-    public static final String SPEC_EXTENSION = "spec";
-    public static final String MD_EXTENSION = "md";
-    public static final String CONCEPT_EXTENSION = "cpt";
-    public static final String MANIFEST_FILE = "manifest.json";
-    public static final String SPECS_DIR = "specs";
-    public static final String FILE_ENCODING = "utf-8";
-    public static final String LINE_SEPARATOR = System.getProperty("line.separator");
+import static com.thoughtworks.gauge.GaugeModuleComponent.isGaugeModule;
+
+public abstract class AbstractLibHelper implements LibHelper {
+
+    private Module module;
+
+    public AbstractLibHelper(Module module) {
+        this.module = module;
+        if (isGaugeModule(module)) {
+            GaugeModuleComponent.makeGaugeModuleType(module);
+            if (Gauge.getGaugeService(module) == null) {
+                GaugeModuleComponent.createGaugeService(module);
+            }
+        }
+    }
+
+    public Module getModule() {
+        return module;
+    }
 }

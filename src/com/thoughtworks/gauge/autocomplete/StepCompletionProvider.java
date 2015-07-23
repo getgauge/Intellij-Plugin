@@ -23,7 +23,6 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.template.TemplateBuilder;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -35,6 +34,7 @@ import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
 import com.thoughtworks.gauge.language.psi.ConceptArg;
 import com.thoughtworks.gauge.language.psi.SpecArg;
+import com.thoughtworks.gauge.util.GaugeUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -57,7 +57,7 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
         resultSet.stopHere();
         String prefix = getPrefix(parameters);
         resultSet = resultSet.withPrefixMatcher(new PlainPrefixMatcher(prefix));
-        Module moduleForPsiElement = ModuleUtil.findModuleForPsiElement(parameters.getPosition());
+        Module moduleForPsiElement = GaugeUtil.moduleForPsiElement(parameters.getPosition());
         if (moduleForPsiElement == null) {
             return;
         }

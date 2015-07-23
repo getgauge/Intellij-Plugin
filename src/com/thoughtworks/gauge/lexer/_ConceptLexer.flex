@@ -57,7 +57,7 @@ ConceptHeadingIdentifier = "#"
 }
 
 <INCONCEPTHEADING> {
-  [^<\"\r\n]*                   {yybegin(INCONCEPTHEADING); return CONCEPT_HEADING;}
+  [^<\r\n]*                     {yybegin(INCONCEPTHEADING); return CONCEPT_HEADING;}
   [<]                           {yybegin(INDYNAMICCONCEPTARG); return DYNAMIC_ARG_START;}
   {LineTerminator}?             {yybegin(YYINITIAL); return NEW_LINE;}
 }

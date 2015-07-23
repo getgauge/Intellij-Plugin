@@ -19,7 +19,6 @@ package com.thoughtworks.gauge.module.lib;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
@@ -36,18 +35,23 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static com.thoughtworks.gauge.util.GaugeUtil.moduleDirFromModule;
+import static com.intellij.openapi.roots.OrderRootType.CLASSES;
+import static com.thoughtworks.gauge.util.GaugeUtil.moduleDir;
+import static com.thoughtworks.gauge.util.GaugeUtil.moduleDirPath;
 
-public class GaugeLibHelper {
+public class GaugeLibHelper extends AbstractLibHelper {
     public static final String PROJECT_LIB = "project-lib";
     public static final String GAUGE_LIB = "gauge-lib";
     public static final String JAVA = "java";
     private static final String SRC_DIR = new File(new File("src", "test"), JAVA).getPath();
     public static final String LIBS = "libs";
 
-    public void checkGaugeLibs(final Module module) {
-        final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
+    public GaugeLibHelper(Module module) {
+        super(module);
+    }
 
+    public void checkDeps() {
+        final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(getModule()).getModifiableModel();
         if (!gaugeJavaLibIsAdded(modifiableModel)) {
             addGaugeJavaLib(modifiableModel);
         } else {
@@ -72,28 +76,27 @@ public class GaugeLibHelper {
                 contentEntry.addSourceFolder(srcPath, false);
             }
             CompilerModuleExtension compilerModuleExtension = modifiableModel.getModuleExtension(CompilerModuleExtension.class);
-            compilerModuleExtension.setCompilerOutputPath(outputPath(modifiableModel.getProject()));
-            compilerModuleExtension.setCompilerOutputPathForTests(testOutputPath(modifiableModel.getProject()));
+            compilerModuleExtension.setCompilerOutputPath(outputPath(modifiableModel.getModule()));
+            compilerModuleExtension.setCompilerOutputPathForTests(testOutputPath(modifiableModel.getModule()));
             compilerModuleExtension.inheritCompilerOutputPath(false);
             compilerModuleExtension.commit();
         }
     }
 
-    private VirtualFile testOutputPath(Project project) {
-        File outputDir = new File(String.format("%s%sout%stest%s%s", project.getBasePath(), File.separator, File.separator, File.separator, project.getBaseDir().getName()));
+    private VirtualFile testOutputPath(Module module) {
+        File outputDir = new File(String.format("%s%sout%stest%s%s", moduleDirPath(module), File.separator, File.separator, File.separator, module.getName()));
         outputDir.mkdirs();
         return  LocalFileSystem.getInstance().refreshAndFindFileByIoFile(outputDir);
     }
 
-    private VirtualFile outputPath(Project project) {
-        File outputDir = new File(String.format("%s%sout%sproduction%s%s", project.getBasePath(), File.separator, File.separator, File.separator, project.getBaseDir().getName()));
+    private VirtualFile outputPath(Module module) {
+        File outputDir = new File(String.format("%s%sout%sproduction%s%s", moduleDirPath(module), File.separator, File.separator, File.separator, module.getName()));
         outputDir.mkdirs();
         return  LocalFileSystem.getInstance().refreshAndFindFileByIoFile(outputDir);
     }
 
     private VirtualFile srcPath(ModifiableRootModel modifiableModel) {
-        Project project = modifiableModel.getProject();
-        return  LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(project.getBaseDir().getPath(), SRC_DIR));
+        return  LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(moduleDir(modifiableModel.getModule()), SRC_DIR));
     }
 
     private void addProjectLibIfNeeded(ModifiableRootModel model) {
@@ -109,25 +112,30 @@ public class GaugeLibHelper {
         ProjectLib latestGaugeLib = gaugeLib(model.getModule());
         boolean updateLibEntry;
         try {
-            String libEntry = library.getModifiableModel().getUrls(OrderRootType.CLASSES)[0];
+            String libEntry = getClassesRootFrom(library.getModifiableModel());
             updateLibEntry = !(new URL(libEntry).getFile().equals(latestGaugeLib.getDir().getAbsolutePath()));
         } catch (MalformedURLException e) {
             updateLibEntry = true;
         }
         if (updateLibEntry) {
-            libraryTable.removeLibrary(library);
-            addLib(latestGaugeLib, model);
+            updateLibrary(library, latestGaugeLib);
         }
+    }
+
+    private void updateLibrary(Library library, ProjectLib newLib) {
+        Library.ModifiableModel model = library.getModifiableModel();
+        model.removeRoot(getClassesRootFrom(model), CLASSES);
+        model.addRoot(newLib.getDir().getAbsolutePath(), CLASSES);
+        model.commit();
+    }
+
+    private String getClassesRootFrom(Library.ModifiableModel model) {
+        return model.getUrls(CLASSES)[0];
     }
 
     private boolean gaugeJavaLibIsAdded(ModifiableRootModel model) {
         Library library = model.getModuleLibraryTable().getLibraryByName(GAUGE_LIB);
         return !(library == null);
-    }
-
-    public void addGaugeLibs(ModifiableRootModel modifiableRootModel) {
-        addGaugeJavaLib(modifiableRootModel);
-        addProjectLib(modifiableRootModel);
     }
 
     private void addGaugeJavaLib(ModifiableRootModel modifiableRootModel) {
@@ -154,7 +162,7 @@ public class GaugeLibHelper {
 
 
     private ProjectLib projectLib(Module module) {
-        return new ProjectLib(PROJECT_LIB, new File(moduleDirFromModule(module), LIBS));
+        return new ProjectLib(PROJECT_LIB, new File(moduleDir(module), LIBS));
     }
 
     private ProjectLib gaugeLib(Module module) {
@@ -163,7 +171,6 @@ public class GaugeLibHelper {
             GaugeService gaugeService = Gauge.getGaugeService(module);
             if (gaugeService == null) {
                  gaugeService = GaugeModuleComponent.createGaugeService(module);
-                Gauge.addModule(module, gaugeService);
             }
             GaugeConnection gaugeConnection = gaugeService.getGaugeConnection();
             if (gaugeConnection == null) {
@@ -174,7 +181,7 @@ public class GaugeLibHelper {
             System.err.println("Could not add gauge lib, add it manually: " + e.getMessage());
             return null;
         } catch (PluginNotInstalledException e) {
-            throw new RuntimeException(JAVA + "could not be installed, try it manually");
+            throw new RuntimeException("Gauge " + JAVA + " plugin is not installed.");
         }
         return new ProjectLib(GAUGE_LIB, new File(libRoot));
     }

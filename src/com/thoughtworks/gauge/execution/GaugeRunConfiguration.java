@@ -38,6 +38,7 @@ import com.jgoodies.common.base.Strings;
 import com.thoughtworks.gauge.GaugeConstant;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import com.thoughtworks.gauge.util.GaugeUtil;
+import com.thoughtworks.gauge.util.SocketUtils;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,12 +53,12 @@ import static com.thoughtworks.gauge.GaugeConstant.GAUGE_DEBUG_OPTS_ENV;
 
 public class GaugeRunConfiguration extends LocatableConfigurationBase implements RunProfileWithCompileBeforeLaunchOption {
 
-    public static final String JAVA_DEBUG_PORT = "50005";
     public static final String SIMPLE_CONSOLE_FLAG = "--simple-console";
     public static final String TAGS_FLAG = "--tags";
     public static final String PARALLEL_FLAG = "--parallel";
-    private static final String PARALLEL_NODES_FLAG = "--n";
+    private static final String PARALLEL_NODES_FLAG = "-n";
     private static final String TABLE_ROWS_FLAG = "--table-rows";
+    public static final String GAUGE_CUSTOM_CLASSPATH = "gauge_custom_classpath";
     private String specsToExecute;
     private Module module;
     private String environment;
@@ -66,16 +67,18 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
     private String parallelNodes;
     public ApplicationConfiguration programParameters;
     private String rowsRange;
+    private String moduleName;
 
     public GaugeRunConfiguration(String name, Project project, ConfigurationFactoryEx configurationFactory) {
         super(project, configurationFactory, name);
-        this.programParameters  = new ApplicationConfiguration(name, project, ApplicationConfigurationType.getInstance());
+        this.programParameters = new ApplicationConfiguration(name, project, ApplicationConfigurationType.getInstance());
     }
 
     @NotNull
     @Override
     public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
         return new GaugeExecutionConfigurationSettingsEditor();
+
     }
 
     @Nullable
@@ -92,10 +95,24 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
                     commandLine.setExePath(GaugeConstant.GAUGE);
                 } finally {
                     addFlags(commandLine, env);
-                    return GaugeRunProcessHandler.runCommandLine(commandLine);
+                    DebugInfo debugInfo = createDebugInfo(commandLine, env);
+                    return GaugeRunProcessHandler.runCommandLine(commandLine, debugInfo, getProject());
                 }
             }
         };
+    }
+
+    private DebugInfo createDebugInfo(GeneralCommandLine commandLine, ExecutionEnvironment env) {
+        if (isDebugExecution(env)) {
+            String port = debugPort();
+            commandLine.getEnvironment().put(GAUGE_DEBUG_OPTS_ENV, port);
+            return new DebugInfo(true, port);
+        }
+        return new DebugInfo(false, "");
+    }
+
+    private String debugPort() {
+        return String.valueOf(SocketUtils.findFreePortForApi());
     }
 
     private void addFlags(GeneralCommandLine commandLine, ExecutionEnvironment env) {
@@ -104,21 +121,25 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
             commandLine.addParameter(TAGS_FLAG);
             commandLine.addParameter(tags);
         }
-        commandLine.setWorkDirectory(getProject().getBaseDir().getPath());
+        commandLine.setWorkDirectory(GaugeUtil.moduleDir(getModule()));
         if (!Strings.isBlank(environment)) {
             commandLine.addParameters(ENV_FLAG, environment);
         }
         addTableRowsRangeFlags(commandLine);
-        addParallelExecFlags(commandLine);
+        addParallelExecFlags(commandLine, env);
         addProgramArguments(commandLine);
-      
+        addProjectClasspath(commandLine);
         if (!Strings.isBlank(specsToExecute)) {
             addSpecs(commandLine, specsToExecute);
         }
-        if (DefaultDebugExecutor.EXECUTOR_ID.equals(env.getExecutor().getId())) {
-            commandLine.getEnvironment().put(GAUGE_DEBUG_OPTS_ENV, JAVA_DEBUG_PORT);
-        }
-        
+    }
+
+    private boolean isDebugExecution(ExecutionEnvironment env) {
+        return DefaultDebugExecutor.EXECUTOR_ID.equals(env.getExecutor().getId());
+    }
+
+    private void addProjectClasspath(GeneralCommandLine commandLine) {
+        commandLine.getEnvironment().put(GAUGE_CUSTOM_CLASSPATH, GaugeUtil.classpathForModule(getModule()));
     }
 
     private void addTableRowsRangeFlags(GeneralCommandLine commandLine) {
@@ -145,8 +166,8 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         }
     }
 
-    private void addParallelExecFlags(GeneralCommandLine commandLine) {
-        if (execInParallel) {
+    private void addParallelExecFlags(GeneralCommandLine commandLine, ExecutionEnvironment env) {
+        if (parallelExec(env)) {
             commandLine.addParameter(PARALLEL_FLAG);
             try {
                 if (!Strings.isEmpty(parallelNodes)) {
@@ -158,6 +179,10 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
                 e.printStackTrace();
             }
         }
+    }
+
+    private boolean parallelExec(ExecutionEnvironment env) {
+        return execInParallel && !isDebugExecution(env);
     }
 
     private void addSpecs(GeneralCommandLine commandLine, String specsToExecute) {
@@ -179,8 +204,9 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         execInParallel = JDOMExternalizer.readBoolean(element, "execInParallel");
         programParameters.setProgramParameters(JDOMExternalizer.readString(element, "programParameters"));
         programParameters.setWorkingDirectory(JDOMExternalizer.readString(element, "workingDirectory"));
+        this.moduleName = JDOMExternalizer.readString(element, "moduleName");
         HashMap<String, String> envMap = new HashMap<String, String>();
-        JDOMExternalizer.readMap(element, envMap, "envMap", "envMap" );
+        JDOMExternalizer.readMap(element, envMap, "envMap", "envMap");
         programParameters.setEnvs(envMap);
         rowsRange = JDOMExternalizer.readString(element, "rowsRange");
     }
@@ -195,6 +221,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         JDOMExternalizer.write(element, "execInParallel", execInParallel);
         JDOMExternalizer.write(element, "programParameters", programParameters.getProgramParameters());
         JDOMExternalizer.write(element, "workingDirectory", programParameters.getWorkingDirectory());
+        JDOMExternalizer.write(element, "moduleName", moduleName);
         JDOMExternalizer.writeMap(element, programParameters.getEnvs(), "envMap", "envMap");
         JDOMExternalizer.write(element, "rowsRange", rowsRange);
     }
@@ -213,12 +240,15 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         return specsToExecute;
     }
 
-
     public void setModule(Module module) {
         this.module = module;
+        this.moduleName = module.getName();
     }
 
     public Module getModule() {
+        if (module == null) {
+            return ModuleManager.getInstance(getProject()).findModuleByName(this.moduleName);
+        }
         return module;
     }
 
@@ -275,5 +305,32 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
 
     public void setRowsRange(String rowsRange) {
         this.rowsRange = rowsRange;
+    }
+
+    public class DebugInfo {
+        private final boolean shouldDebug;
+        private final String port;
+        private String host = "localhost";
+
+        public DebugInfo(boolean shouldDebug, String port) {
+            this.shouldDebug = shouldDebug;
+            this.port = port;
+        }
+
+        public boolean shouldDebug() {
+            return shouldDebug;
+        }
+
+        public String getPort() {
+            return port;
+        }
+
+        public int getPortInt() {
+            return Integer.parseInt(port);
+        }
+
+        public String getHost() {
+            return host;
+        }
     }
 }

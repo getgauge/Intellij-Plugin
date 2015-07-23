@@ -24,12 +24,11 @@ import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import com.thoughtworks.gauge.language.SpecFile;
+
+import static com.thoughtworks.gauge.util.GaugeUtil.isSpecFile;
 
 public class GaugeExecutionProducer extends RunConfigurationProducer {
 
@@ -48,12 +47,13 @@ public class GaugeExecutionProducer extends RunConfigurationProducer {
         if (selectedFiles == null || selectedFiles.length>1)
             return false;
 
-        if (context.getPsiLocation() == null) {
+        Module module = context.getModule();
+        if (context.getPsiLocation() == null || module == null) {
             return false;
         }
 
         PsiFile file = context.getPsiLocation().getContainingFile();
-        if (!(file instanceof SpecFile)) {
+        if (!isSpecFile(file)) {
             return false;
         }
 
@@ -63,8 +63,6 @@ public class GaugeExecutionProducer extends RunConfigurationProducer {
                 return false;
             }
 
-            Project project = file.getProject();
-            Module module = ProjectRootManager.getInstance(project).getFileIndex().getModuleForFile(virtualFile);
             String name = file.getVirtualFile().getCanonicalPath();
 
             configuration.setName(file.getName());
@@ -78,6 +76,7 @@ public class GaugeExecutionProducer extends RunConfigurationProducer {
         return true;
 
     }
+
 
     @Override
     public boolean isConfigurationFromContext(RunConfiguration configuration, ConfigurationContext context) {

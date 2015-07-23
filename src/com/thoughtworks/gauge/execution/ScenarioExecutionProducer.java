@@ -22,14 +22,15 @@ import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.thoughtworks.gauge.language.SpecFile;
 import com.thoughtworks.gauge.language.psi.impl.SpecScenarioImpl;
+import com.thoughtworks.gauge.util.GaugeUtil;
+
+import static com.thoughtworks.gauge.util.GaugeUtil.isSpecFile;
 
 public class ScenarioExecutionProducer extends GaugeExecutionProducer {
     private final int NO_SCENARIOS = -1;
@@ -45,16 +46,20 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
     @Override
     protected boolean setupConfigurationFromContext(RunConfiguration configuration, ConfigurationContext context, Ref sourceElement) {
         VirtualFile[] selectedFiles = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(context.getDataContext());
-        if (selectedFiles == null || selectedFiles.length>1)
+        if (selectedFiles == null || selectedFiles.length>1) {
             return false;
+        }
 
-
-        if (context.getPsiLocation() == null || !(context.getPsiLocation().getContainingFile() instanceof SpecFile) || context.getPsiLocation().getContainingFile().getVirtualFile() == null)
+        Module module = GaugeUtil.moduleForPsiElement(context.getPsiLocation());
+        if (module == null) {
             return false;
+        }
+
+        if (context.getPsiLocation() == null || !(isSpecFile(context.getPsiLocation().getContainingFile())) || context.getPsiLocation().getContainingFile().getVirtualFile() == null) {
+            return false;
+        }
 
         try {
-            Project project = context.getPsiLocation().getContainingFile().getProject();
-            Module module = ProjectRootManager.getInstance(project).getFileIndex().getModuleForFile(context.getPsiLocation().getContainingFile().getVirtualFile());
             String name = context.getPsiLocation().getContainingFile().getVirtualFile().getCanonicalPath();
             int scenarioIndex = getScenarioIndex(context, context.getPsiLocation().getContainingFile());
             if(scenarioIndex == NO_SCENARIOS){
@@ -79,7 +84,7 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
 
     private String getScenarioName(ConfigurationContext context) {
         PsiElement selectedElement = context.getPsiLocation();
-        String scenarioName = null;
+        String scenarioName = "";
 
         if(selectedElement== null) return null;
         if(selectedElement.getClass().equals(SpecScenarioImpl.class)){
@@ -93,10 +98,11 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
         if(scenarioName.startsWith("##"))
             scenarioName = scenarioName.replaceFirst("##","");
         scenarioName = scenarioName.trim();
-        if(scenarioName.contains("\n"))
+        if(scenarioName.contains("\n")) {
             return scenarioName.substring(0,scenarioName.indexOf("\n"));
-        else
+        } else {
             return scenarioName;
+        }
     }
 
     private int getScenarioIndex(ConfigurationContext context, PsiFile file) {
@@ -105,8 +111,9 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
         if (selectedElement == null)    return NON_SCENARIO_CONTEXT;
         String scenarioHeading = (!selectedElement.getClass().equals(SpecScenarioImpl.class)) ? getScenarioHeading(selectedElement) : selectedElement.getText();
         if (scenarioHeading.equals("")) {
-            if (getNumberOfScenarios(file)==0)
+            if (getNumberOfScenarios(file)==0) {
                 return NO_SCENARIOS;
+            }
             return NON_SCENARIO_CONTEXT;
         }
         for (PsiElement psiElement : file.getChildren()) {
@@ -115,8 +122,11 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
                 if (psiElement.getNode().getFirstChildNode().getText().equals(scenarioHeading)) return count;
             }
         }
-        if(count == NO_SCENARIOS) return NO_SCENARIOS;
-        else return NON_SCENARIO_CONTEXT;
+        if(count == NO_SCENARIOS) {
+            return NO_SCENARIOS;
+        } else {
+            return NON_SCENARIO_CONTEXT;
+        }
     }
 
     private int getNumberOfScenarios(PsiFile file) {
