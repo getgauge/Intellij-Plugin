@@ -13,7 +13,7 @@ public class ExtractConceptDialog extends JDialog {
     private JPanel contentPane;
     private com.intellij.ui.TextFieldWithAutoCompletion textField1;
     private JTextArea textArea1;
-    private JComboBox<String> comboBox1;
+    private JComboBox comboBox1;
     private com.intellij.ui.TextFieldWithAutoCompletion textField2;
     private Project project;
     private List<String> args;
