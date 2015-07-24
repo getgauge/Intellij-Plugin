@@ -19,14 +19,12 @@ package com.thoughtworks.gauge.language.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiElement;
 import com.thoughtworks.gauge.GaugeConnection;
 import com.thoughtworks.gauge.StepValue;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
-import com.thoughtworks.gauge.util.GaugeUtil;
 import com.thoughtworks.gauge.util.StepUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,12 +40,11 @@ public class SpecPsiImplUtil {
         int endIndex = newLineIndex == -1 ? stepText.length() : newLineIndex;
         SpecTable inlineTable = element.getInlineTable();
         stepText = stepText.substring(1, endIndex).trim();
-        return getStepValueFor(element, stepText, inlineTable!=null);
+        return getStepValueFor(element, stepText, inlineTable != null);
     }
 
     public static StepValue getStepValueFor(PsiElement element, String stepText, Boolean hasInlineTable) {
-        Module moduleForElement = GaugeUtil.moduleForPsiElement(element);
-        GaugeService gaugeService = Gauge.getGaugeService(moduleForElement);
+        GaugeService gaugeService = Gauge.getGaugeService();
         if (gaugeService == null) {
             return getDefaultStepValue(element);
         }
@@ -55,7 +52,7 @@ public class SpecPsiImplUtil {
         if (apiConnection == null) {
             return getDefaultStepValue(element);
         }
-        return StepUtil.getStepValue(apiConnection,stepText, hasInlineTable);
+        return StepUtil.getStepValue(apiConnection, stepText, hasInlineTable);
     }
 
     private static StepValue getDefaultStepValue(PsiElement element) {

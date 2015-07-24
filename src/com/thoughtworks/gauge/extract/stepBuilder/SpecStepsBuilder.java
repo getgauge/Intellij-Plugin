@@ -10,7 +10,7 @@ import java.util.List;
 public class SpecStepsBuilder extends StepsBuilder {
 
     public SpecStepsBuilder(Editor editor, PsiFile psiFile) {
-        super(editor,psiFile);
+        super(editor, psiFile);
     }
 
     public List<PsiElement> build() {

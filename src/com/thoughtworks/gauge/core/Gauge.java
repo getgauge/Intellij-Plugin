@@ -21,6 +21,7 @@ import com.intellij.openapi.module.Module;
 import com.thoughtworks.gauge.reference.ReferenceCache;
 
 import java.util.Hashtable;
+import java.util.Iterator;
 
 public class Gauge {
     private static Hashtable<Module, GaugeService> gaugeProjectHandle = new Hashtable<Module, GaugeService>();
@@ -44,5 +45,10 @@ public class Gauge {
             moduleReferenceCaches.put(module, referenceCache);
         }
         return referenceCache;
+    }
+
+    public static GaugeService getGaugeService() {
+        Iterator<GaugeService> iterator = gaugeProjectHandle.values().iterator();
+        return iterator.hasNext() ? iterator.next() : null;
     }
 }

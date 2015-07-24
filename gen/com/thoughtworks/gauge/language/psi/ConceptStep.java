@@ -18,19 +18,20 @@
 // This is a generated file. Not intended for manual editing.
 package com.thoughtworks.gauge.language.psi;
 
-import java.util.List;
-import org.jetbrains.annotations.*;
-import com.intellij.psi.PsiElement;
 import com.thoughtworks.gauge.StepValue;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public interface ConceptStep extends ConceptNamedElement {
 
-  @NotNull
-  List<ConceptArg> getArgList();
+    @NotNull
+    List<ConceptArg> getArgList();
 
-  @Nullable
-  ConceptTable getTable();
+    @Nullable
+    ConceptTable getTable();
 
-  StepValue getStepValue();
+    StepValue getStepValue();
 
 }

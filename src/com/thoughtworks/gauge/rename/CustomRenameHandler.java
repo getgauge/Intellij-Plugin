@@ -49,7 +49,7 @@ public class CustomRenameHandler implements RenameHandler {
         PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
         Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
         VirtualFile file = CommonDataKeys.VIRTUAL_FILE.getData(dataContext);
-        if(file != null && !GaugeUtil.isGaugeFile(file)) return false;
+        if (file != null && !GaugeUtil.isGaugeFile(file)) return false;
         this.editor = editor;
         if (element == null) {
             if (editor == null) return false;

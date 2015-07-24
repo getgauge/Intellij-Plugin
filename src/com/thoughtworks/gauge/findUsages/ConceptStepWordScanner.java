@@ -20,9 +20,7 @@ package com.thoughtworks.gauge.findUsages;
 import com.intellij.lang.cacheBuilder.DefaultWordsScanner;
 import com.intellij.psi.tree.TokenSet;
 import com.thoughtworks.gauge.language.token.ConceptTokenTypes;
-import com.thoughtworks.gauge.language.token.SpecTokenTypes;
 import com.thoughtworks.gauge.lexer.ConceptLexer;
-import com.thoughtworks.gauge.lexer.SpecLexer;
 
 
 public class ConceptStepWordScanner extends DefaultWordsScanner {

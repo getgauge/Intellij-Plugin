@@ -6,7 +6,6 @@ import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.thoughtworks.gauge.language.ConceptFileType;
-import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,14 +32,14 @@ public abstract class StepsBuilder {
         return TextToTableMap;
     }
 
-    public List<PsiElement> build(){
+    public List<PsiElement> build() {
         return null;
     }
 
     public static StepsBuilder getBuilder(Editor editor, PsiFile psiFile) {
         if (psiFile.getFileType().getClass().equals(ConceptFileType.class))
-            return new ConceptStepsBuilder(editor,psiFile);
-        return new SpecStepsBuilder(editor,psiFile);
+            return new ConceptStepsBuilder(editor, psiFile);
+        return new SpecStepsBuilder(editor, psiFile);
     }
 
     protected PsiElement getStep(PsiElement element, Class stepClass) {

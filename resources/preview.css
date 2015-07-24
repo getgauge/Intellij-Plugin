@@ -10,10 +10,12 @@
     color: #000;
     font: 13px "Myriad Pro", "Lucida Grande", Lucida, Verdana, sans-serif;
 }
+
 #markdown-preview a {
-    color:blue;
+    color: blue;
     text-decoration: underline;
 }
+
 /* links */
 #markdown-preview a:link {
     color: blue;
@@ -35,23 +37,23 @@
     text-decoration: underline;
 }
 
-
 /* html tags */
 
 /*  Work around IE/Win code size bug - courtesy Jesper, waffle.wootest.net  */
 
-#markdown-preview html code	{
+#markdown-preview html code {
     font-size: 101%;
 }
 
-#markdown-preview  html pre {
+#markdown-preview html pre {
     font-size: 101%;
 }
 
 /* code */
 
 #markdown-preview pre, code {
-    font-size: 11px; font-family: monaco, courier, consolas, monospace;
+    font-size: 11px;
+    font-family: monaco, courier, consolas, monospace;
 }
 
 #markdown-preview pre {
@@ -72,20 +74,20 @@
 
 /* headers */
 
-
 #markdown-preview h1, h2, h3, h4, h5, h6 {
     font-family: "Myriad Pro", "Lucida Grande", Lucida, Verdana, sans-serif;
     font-weight: bold;
 }
 
-#markdown-preview h1	{
+#markdown-preview h1 {
     margin-top: 1em;
     margin-bottom: 25px;
     color: #000;
     font-weight: bold;
     font-size: 22px;
 }
-#markdown-preview h2	{
+
+#markdown-preview h2 {
     margin-top: 15px;
     margin-bottom: 12px;
     font-size: 18px;
@@ -93,19 +95,22 @@
     padding-bottom: 2px;
     border-bottom: 1px solid #919699;
 }
-#markdown-preview h3	{
+
+#markdown-preview h3 {
     margin-top: 2em;
     margin-bottom: .5em;
     font-size: 16px;
     color: #000;
 }
-#markdown-preview h4	{
+
+#markdown-preview h4 {
     margin-top: 2em;
     margin-bottom: .5em;
     font-size: 14px;
     color: #000;
 }
-#markdown-preview h5	{
+
+#markdown-preview h5 {
     margin-top: 20px;
     margin-bottom: .5em;
     padding: 0;
@@ -113,7 +118,7 @@
     color: #000;
 }
 
-#markdown-preview h6	{
+#markdown-preview h6 {
     margin-top: 20px;
     margin-bottom: .5em;
     padding: 0;
@@ -124,19 +129,19 @@
 #markdown-preview p {
     margin-top: 0px;
     margin-bottom: 10px;
-    font-size : 12px;
+    font-size: 12px;
 }
 
 /* lists */
 
-#markdown-preview ul	{
+#markdown-preview ul {
     list-style: square outside;
     margin: 0 0 0 30px;
     padding: 0 0 12px 6px;
     font-size: 12px;
 }
 
-#markdown-preview li	{
+#markdown-preview li {
     margin-top: 7px;
 }
 
@@ -159,10 +164,17 @@
     padding: 0 0 0 6px;
 }
 
-#markdown-preview li>p { display: inline }
-#markdown-preview li>p+p { display: block }
-#markdown-preview li>a+p { display: block }
+#markdown-preview li > p {
+    display: inline
+}
 
+#markdown-preview li > p + p {
+    display: block
+}
+
+#markdown-preview li > a + p {
+    display: block
+}
 
 /* table */
 
@@ -177,9 +189,10 @@
     border-style: solid;
     border-width: 1px;
     border-color: #919699;
-    border-collapse:collapse;
+    border-collapse: collapse;
 
 }
+
 #markdown-preview table th p {
     font-weight: bold;
     margin-bottom: 0px;
@@ -192,7 +205,7 @@
     border-style: solid;
     border-width: 1px;
     border-color: #919699;
-    border-collapse:collapse;
+    border-collapse: collapse;
 }
 
 #markdown-preview table tr {
@@ -204,9 +217,11 @@
 #markdown-preview table td p {
     margin-bottom: 0px;
 }
-#markdown-preview table td p + p  {
+
+#markdown-preview table td p + p {
     margin-top: 5px;
 }
+
 #markdown-preview table td p + p + p {
     margin-top: 5px;
 }
@@ -220,6 +235,7 @@
 #markdown-preview button {
     margin: 3px 0 10px 0;
 }
+
 #markdown-preview input {
     vertical-align: middle;
     padding: 0;

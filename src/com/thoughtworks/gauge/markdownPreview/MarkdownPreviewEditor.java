@@ -35,7 +35,7 @@ public class MarkdownPreviewEditor extends UserDataHolderBase implements FileEdi
         MarkdownExtensions markdownExtensions = new MarkdownExtensions();
         return new PegDownProcessor(markdownExtensions.getExtensionsValue(), markdownExtensions.getParsingTimeout());
     }
-    
+
     public MarkdownPreviewEditor(@NotNull Project project, @NotNull Document document) {
         this.document = document;
         this.processor = initProcessor();
@@ -54,7 +54,7 @@ public class MarkdownPreviewEditor extends UserDataHolderBase implements FileEdi
         kit.setStyleSheet(styleSheet);
 
         jEditorPane.setEditorKit(kit);
-        jEditorPane.setEditable(false); 
+        jEditorPane.setEditable(false);
         jEditorPane.setText(document.getText());
         jEditorPane.getCaret().setMagicCaretPosition(new Point(0, 0));
         ((DefaultCaret) jEditorPane.getCaret()).setUpdatePolicy(DefaultCaret.NEVER_UPDATE);

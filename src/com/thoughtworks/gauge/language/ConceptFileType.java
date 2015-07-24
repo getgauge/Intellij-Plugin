@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class ConceptFileType extends LanguageFileType{
+public class ConceptFileType extends LanguageFileType {
     public static final FileType INSTANCE = new ConceptFileType();
 
     public ConceptFileType() {

@@ -101,7 +101,7 @@ public class GaugeUtil {
     }
 
     public static boolean isSpecFile(PsiFile file) {
-            return file instanceof SpecFile;
+        return file instanceof SpecFile;
     }
 
 

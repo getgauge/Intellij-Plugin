@@ -31,19 +31,19 @@ import java.util.List;
 
 public class ConceptConceptHeadingImpl extends ASTWrapperPsiElement implements ConceptConceptHeading {
 
-  public ConceptConceptHeadingImpl(ASTNode node) {
-    super(node);
-  }
+    public ConceptConceptHeadingImpl(ASTNode node) {
+        super(node);
+    }
 
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof ConceptVisitor) ((ConceptVisitor)visitor).visitConceptHeading(this);
-    else super.accept(visitor);
-  }
+    public void accept(@NotNull PsiElementVisitor visitor) {
+        if (visitor instanceof ConceptVisitor) ((ConceptVisitor) visitor).visitConceptHeading(this);
+        else super.accept(visitor);
+    }
 
-  @Override
-  @NotNull
-  public List<ConceptDynamicArg> getDynamicArgList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, ConceptDynamicArg.class);
-  }
+    @Override
+    @NotNull
+    public List<ConceptDynamicArg> getDynamicArgList() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, ConceptDynamicArg.class);
+    }
 
 }

@@ -26,10 +26,10 @@ import java.util.List;
 
 public interface SpecDetail extends PsiElement {
 
-  @NotNull
-  List<SpecStep> getContextSteps();
+    @NotNull
+    List<SpecStep> getContextSteps();
 
-  @Nullable
-  SpecTable getDataTable();
+    @Nullable
+    SpecTable getDataTable();
 
 }

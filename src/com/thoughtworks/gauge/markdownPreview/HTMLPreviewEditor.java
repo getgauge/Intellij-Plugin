@@ -50,9 +50,11 @@ public class HTMLPreviewEditor extends HTMLEditorKit {
             return super.create(elem);
         }
     }
+
     private static class MarkdownImageView extends ImageView {
 
         private final Document document;
+
         private MarkdownImageView(@NotNull Document document, @NotNull Element elem) {
             super(elem);
             this.document = document;
@@ -71,6 +73,7 @@ public class HTMLPreviewEditor extends HTMLEditorKit {
 
             return super.getImageURL();
         }
+
         public VirtualFile resolveRelativePath(@NotNull Document document, @NotNull String target) {
             return FileDocumentManager.getInstance().getFile(document).getParent().findFileByRelativePath(target);
         }

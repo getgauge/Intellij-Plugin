@@ -34,7 +34,7 @@ public class UndoHandler {
     }
 
     private void refreshFiles() {
-        final Map<Document,String> documentTextMap = new HashMap<Document, String>();
+        final Map<Document, String> documentTextMap = new HashMap<Document, String>();
         for (String fileName : fileNames) {
             VirtualFile fileByIoFile = LocalFileSystem.getInstance().findFileByIoFile(new File(fileName));
             if (fileByIoFile != null) {

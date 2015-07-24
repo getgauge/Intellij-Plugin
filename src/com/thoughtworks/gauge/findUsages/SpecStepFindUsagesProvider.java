@@ -55,7 +55,7 @@ public class SpecStepFindUsagesProvider implements FindUsagesProvider {
     @NotNull
     @Override
     public String getDescriptiveName(@NotNull PsiElement psiElement) {
-        return ((PsiNamedElement)psiElement).getName();
+        return ((PsiNamedElement) psiElement).getName();
     }
 
     @NotNull

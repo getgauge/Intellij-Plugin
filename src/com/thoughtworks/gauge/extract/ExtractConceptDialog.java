@@ -78,8 +78,8 @@ public class ExtractConceptDialog extends JDialog {
     }
 
     private void createUIComponents() {
-        this.textField1 = new com.intellij.ui.TextFieldWithAutoCompletion<String>(this.project, getAutoCompleteTextField(this.args),true,"");
-        this.textField2 = new com.intellij.ui.TextFieldWithAutoCompletion<String>(this.project, getAutoCompleteTextField(this.dirNames),true,"");
+        this.textField1 = new com.intellij.ui.TextFieldWithAutoCompletion<String>(this.project, getAutoCompleteTextField(this.args), true, "");
+        this.textField2 = new com.intellij.ui.TextFieldWithAutoCompletion<String>(this.project, getAutoCompleteTextField(this.dirNames), true, "");
     }
 
     private TextFieldWithAutoCompletionListProvider<String> getAutoCompleteTextField(final List<String> dirNames) {

@@ -44,7 +44,7 @@ public class GaugeExecutionProducer extends RunConfigurationProducer {
     @Override
     protected boolean setupConfigurationFromContext(RunConfiguration configuration, ConfigurationContext context, Ref sourceElement) {
         VirtualFile[] selectedFiles = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(context.getDataContext());
-        if (selectedFiles == null || selectedFiles.length>1)
+        if (selectedFiles == null || selectedFiles.length > 1)
             return false;
 
         Module module = context.getModule();
@@ -88,7 +88,7 @@ public class GaugeExecutionProducer extends RunConfigurationProducer {
         }
 
         final String specsToExecute = ((GaugeRunConfiguration) configuration).getSpecsToExecute();
-        if(specsToExecute == null) {
+        if (specsToExecute == null) {
             return false;
         }
         return (specsToExecute.contains(location.getVirtualFile().getName()));

@@ -73,6 +73,7 @@ public class GaugeModuleComponent implements ModuleComponent {
 
     /**
      * Creates a gauge service for the particular module. GaugeService is used to make api calls to the gauge daemon process.
+     *
      * @param module
      * @return
      */

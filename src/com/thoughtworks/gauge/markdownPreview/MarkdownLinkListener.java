@@ -27,11 +27,13 @@ public class MarkdownLinkListener implements HyperlinkListener {
     private final JEditorPane editor;
     private final Project project;
     private final Document document;
+
     public MarkdownLinkListener(@NotNull JEditorPane editor, @NotNull Project project, @NotNull Document document) {
         this.editor = editor;
         this.project = project;
         this.document = document;
     }
+
     public void hyperlinkUpdate(HyperlinkEvent e) {
         if (HyperlinkEvent.EventType.ACTIVATED == e.getEventType()) {
             URL target = e.getURL();
@@ -49,7 +51,8 @@ public class MarkdownLinkListener implements HyperlinkListener {
             if (VirtualFileManager.getInstance().getFileSystem(target.getProtocol()) instanceof HttpFileSystem) {
                 browserLinkListener.hyperlinkUpdate(e);
             } else {
-                VirtualFile virtualTarget = VirtualFileManager.getInstance().getFileSystem(target.getProtocol()).findFileByPath(target.getFile());;
+                VirtualFile virtualTarget = VirtualFileManager.getInstance().getFileSystem(target.getProtocol()).findFileByPath(target.getFile());
+                ;
                 if (virtualTarget == null || !virtualTarget.exists())
                     virtualTarget = FileDocumentManager.getInstance().getFile(document).getParent().findFileByRelativePath(e.getDescription());
                 try {
@@ -63,6 +66,7 @@ public class MarkdownLinkListener implements HyperlinkListener {
             }
         }
     }
+
     public static VirtualFile resolveClassReference(@NotNull Project project, @NotNull String target) {
         final PsiClass classpathResource = JavaPsiFacade.getInstance(project).findClass(target, GlobalSearchScope.projectScope(project));
         if (classpathResource != null)

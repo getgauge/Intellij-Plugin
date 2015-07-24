@@ -23,7 +23,6 @@ import com.intellij.ide.util.projectWizard.ProjectWizardStepFactory;
 import com.intellij.ide.util.projectWizard.SettingsStep;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.progress.PerformInBackgroundOption;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;

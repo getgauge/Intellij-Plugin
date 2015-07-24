@@ -33,8 +33,7 @@ public class StepAnnotator implements Annotator {
         if (element instanceof SpecStep) {
             SpecStep step = (SpecStep) element;
             createWarning(element, holder, step);
-        }
-        else if (element instanceof ConceptStep) {
+        } else if (element instanceof ConceptStep) {
             SpecStepImpl step = new SpecStepImpl(element.getNode());
             step.setConcept(true);
             createWarning(element, holder, step);

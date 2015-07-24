@@ -30,29 +30,29 @@ import java.util.List;
 
 public class ConceptConceptImpl extends ASTWrapperPsiElement implements ConceptConcept {
 
-  public ConceptConceptImpl(ASTNode node) {
-    super(node);
-  }
+    public ConceptConceptImpl(ASTNode node) {
+        super(node);
+    }
 
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof ConceptVisitor) ((ConceptVisitor)visitor).visitConcept(this);
-    else super.accept(visitor);
-  }
+    public void accept(@NotNull PsiElementVisitor visitor) {
+        if (visitor instanceof ConceptVisitor) ((ConceptVisitor) visitor).visitConcept(this);
+        else super.accept(visitor);
+    }
 
-  @Override
-  @NotNull
-  public ConceptConceptHeading getConceptHeading() {
-    return findNotNullChildByClass(ConceptConceptHeading.class);
-  }
+    @Override
+    @NotNull
+    public ConceptConceptHeading getConceptHeading() {
+        return findNotNullChildByClass(ConceptConceptHeading.class);
+    }
 
-  @Override
-  @NotNull
-  public List<ConceptStep> getStepList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, ConceptStep.class);
-  }
+    @Override
+    @NotNull
+    public List<ConceptStep> getStepList() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, ConceptStep.class);
+    }
 
-   public StepValue getStepValue() {
-       return ConceptPsiImplUtil.getStepValue(this);
-   }
+    public StepValue getStepValue() {
+        return ConceptPsiImplUtil.getStepValue(this);
+    }
 
 }

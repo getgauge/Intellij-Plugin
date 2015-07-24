@@ -38,7 +38,7 @@ public class DynamicArgCompletionProvider extends CompletionProvider<CompletionP
         resultSet = resultSet.withPrefixMatcher(new PlainPrefixMatcher(prefix));
         SpecDetail specDetail = PsiTreeUtil.getChildOfType(parameters.getOriginalFile(), SpecDetail.class);
         if (specDetail == null)
-                return;
+            return;
         SpecTable table = specDetail.getDataTable();
         if (table != null) {
             List<String> headers = table.getTableHeader().getHeaders();

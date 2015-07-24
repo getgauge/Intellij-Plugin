@@ -16,25 +16,25 @@ import java.util.List;
 
 public class SpecDetailImpl extends ASTWrapperPsiElement implements SpecDetail {
 
-  public SpecDetailImpl(ASTNode node) {
-    super(node);
-  }
+    public SpecDetailImpl(ASTNode node) {
+        super(node);
+    }
 
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof SpecVisitor) ((SpecVisitor)visitor).visitSpecDetail(this);
-    else super.accept(visitor);
-  }
+    public void accept(@NotNull PsiElementVisitor visitor) {
+        if (visitor instanceof SpecVisitor) ((SpecVisitor) visitor).visitSpecDetail(this);
+        else super.accept(visitor);
+    }
 
-  @Override
-  @NotNull
-  public List<SpecStep> getContextSteps() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, SpecStep.class);
-  }
+    @Override
+    @NotNull
+    public List<SpecStep> getContextSteps() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, SpecStep.class);
+    }
 
-  @Override
-  @Nullable
-  public SpecTable getDataTable() {
-    return findChildByClass(SpecTable.class);
-  }
+    @Override
+    @Nullable
+    public SpecTable getDataTable() {
+        return findChildByClass(SpecTable.class);
+    }
 
 }

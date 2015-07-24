@@ -10,7 +10,7 @@ import com.thoughtworks.gauge.util.GaugeUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class MarkdownPreviewEditorProvider implements FileEditorProvider, PossiblyDumbAware{
+public class MarkdownPreviewEditorProvider implements FileEditorProvider, PossiblyDumbAware {
     @Override
     public boolean accept(Project project, VirtualFile file) {
         Module module = ModuleUtil.findModuleForFile(file, project);

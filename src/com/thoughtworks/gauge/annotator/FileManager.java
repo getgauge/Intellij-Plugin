@@ -20,7 +20,7 @@ import java.util.*;
 import static com.intellij.psi.search.GlobalSearchScope.moduleScope;
 
 public class FileManager {
-    public static List<PsiFile> getAllJavaFiles(Module module){
+    public static List<PsiFile> getAllJavaFiles(Module module) {
         Collection<VirtualFile> javaVirtualFiles = FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, JavaFileType.INSTANCE, moduleScope(module));
         List<PsiFile> javaFiles = new ArrayList<PsiFile>();
 
@@ -39,7 +39,7 @@ public class FileManager {
         return javaFiles;
     }
 
-    public static List<PsiFile> getAllConceptFiles(Project project){
+    public static List<PsiFile> getAllConceptFiles(Project project) {
         Collection<VirtualFile> virtualFiles = FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, ConceptFileType.INSTANCE, GlobalSearchScope.projectScope(project));
         List<PsiFile> files = new ArrayList<PsiFile>();
 
@@ -57,7 +57,7 @@ public class FileManager {
         });
         return files;
     }
-    
+
     public static String getJavaFileName(PsiFile value) {
         PsiJavaFile javaFile = (PsiJavaFile) value;
         if (!javaFile.getPackageName().equals("")) {
@@ -78,7 +78,7 @@ public class FileManager {
     private static void getDirectories(File[] files, List<String> dirs, String basePath) {
         for (File file : files)
             if (file.isDirectory()) {
-                dirs.add(file.getPath().replace(basePath,"") + File.separator);
+                dirs.add(file.getPath().replace(basePath, "") + File.separator);
                 getDirectories(file.listFiles(), dirs, basePath);
             }
     }

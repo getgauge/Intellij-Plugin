@@ -1,16 +1,18 @@
 // This is a generated file. Not intended for manual editing.
 package com.thoughtworks.gauge.language.psi;
 
-import java.util.List;
-import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public interface SpecScenario extends PsiElement {
 
-  @NotNull
-  List<SpecStep> getStepList();
+    @NotNull
+    List<SpecStep> getStepList();
 
-  @Nullable
-  SpecTags getTags();
+    @Nullable
+    SpecTags getTags();
 
 }

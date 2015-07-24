@@ -18,16 +18,15 @@
 // This is a generated file. Not intended for manual editing.
 package com.thoughtworks.gauge.language.psi;
 
-import java.util.List;
-import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Nullable;
 
 public interface ConceptArg extends PsiElement {
 
-  @Nullable
-  ConceptDynamicArg getDynamicArg();
+    @Nullable
+    ConceptDynamicArg getDynamicArg();
 
-  @Nullable
-  ConceptStaticArg getStaticArg();
+    @Nullable
+    ConceptStaticArg getStaticArg();
 
 }

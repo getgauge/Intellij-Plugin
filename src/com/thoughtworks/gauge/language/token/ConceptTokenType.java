@@ -19,7 +19,6 @@ package com.thoughtworks.gauge.language.token;
 
 import com.intellij.psi.tree.IElementType;
 import com.thoughtworks.gauge.language.Concept;
-import com.thoughtworks.gauge.language.Specification;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 

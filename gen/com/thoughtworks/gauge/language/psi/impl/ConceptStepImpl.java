@@ -18,73 +18,74 @@
 // This is a generated file. Not intended for manual editing.
 package com.thoughtworks.gauge.language.psi.impl;
 
-import java.util.List;
-
-import com.intellij.psi.PsiReference;
-import com.intellij.util.IncorrectOperationException;
-import com.thoughtworks.gauge.reference.ConceptReference;
-import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
-import static com.thoughtworks.gauge.language.token.ConceptTokenTypes.*;
-import com.thoughtworks.gauge.language.psi.*;
+import com.intellij.util.IncorrectOperationException;
 import com.thoughtworks.gauge.StepValue;
+import com.thoughtworks.gauge.language.psi.*;
+import com.thoughtworks.gauge.reference.ConceptReference;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class ConceptStepImpl extends ConceptNamedElementImpl implements ConceptStep {
 
-  private final boolean isConcept;
+    private final boolean isConcept;
 
-  public ConceptStepImpl(ASTNode node) {
-    super(node);
-    this.isConcept = false;
-  }
+    public ConceptStepImpl(ASTNode node) {
+        super(node);
+        this.isConcept = false;
+    }
 
-  public ConceptStepImpl(ASTNode node, boolean isConcept) {
-    super(node);
-    this.isConcept = isConcept;
-  }
+    public ConceptStepImpl(ASTNode node, boolean isConcept) {
+        super(node);
+        this.isConcept = isConcept;
+    }
 
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof ConceptVisitor) ((ConceptVisitor)visitor).visitStep(this);
-    else super.accept(visitor);
-  }
+    public void accept(@NotNull PsiElementVisitor visitor) {
+        if (visitor instanceof ConceptVisitor) ((ConceptVisitor) visitor).visitStep(this);
+        else super.accept(visitor);
+    }
 
-  @Override
-  @NotNull
-  public List<ConceptArg> getArgList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, ConceptArg.class);
-  }
+    @Override
+    @NotNull
+    public List<ConceptArg> getArgList() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, ConceptArg.class);
+    }
 
-  @Override
-  @Nullable
-  public ConceptTable getTable() {
-    return findChildByClass(ConceptTable.class);
-  }
+    @Override
+    @Nullable
+    public ConceptTable getTable() {
+        return findChildByClass(ConceptTable.class);
+    }
 
-  public StepValue getStepValue() {
-    return ConceptPsiImplUtil.getStepValue(this);
-  }
+    public StepValue getStepValue() {
+        return ConceptPsiImplUtil.getStepValue(this);
+    }
 
-  @Nullable
-  @Override
-  public PsiElement getNameIdentifier() {
-    return null;
-  }
+    @Nullable
+    @Override
+    public PsiElement getNameIdentifier() {
+        return null;
+    }
 
-  @Override
-  public PsiElement setName(@NonNls @NotNull String s) throws IncorrectOperationException {
-    return null;
-  }
+    @Override
+    public PsiElement setName(@NonNls @NotNull String s) throws IncorrectOperationException {
+        return null;
+    }
 
-  @Override
-  public PsiReference getReference() {
-    return new ConceptReference(this);
-  }
+    @Override
+    public PsiReference getReference() {
+        return new ConceptReference(this);
+    }
 
-  @Override
-  public String toString() {
-    return this.isConcept ? this.getStepValue().getStepAnnotationText() : super.toString();
-  }
+    @Override
+    public String toString() {
+        return this.isConcept ? this.getStepValue().getStepAnnotationText() : super.toString();
+    }
 }

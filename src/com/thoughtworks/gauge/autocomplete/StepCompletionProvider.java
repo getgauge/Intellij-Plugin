@@ -81,6 +81,7 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
             builder.replaceRange(new TextRange(arg.getStartOffsetInParent(), arg.getStartOffsetInParent() + arg.getTextLength()), arg.getText());
         return builder;
     }
+
     private TemplateBuilder addConceptArgs(PsiElement stepElement) {
         final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(stepElement);
         List<ConceptArg> args = PsiTreeUtil.getChildrenOfTypeAsList(stepElement, ConceptArg.class);
@@ -89,7 +90,7 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
         return builder;
     }
 
-    private class Type{
+    private class Type {
         private String text;
         private String type;
 

@@ -30,11 +30,12 @@ public class ConceptPsiImplUtil extends SpecPsiImplUtil {
         int endIndex = newLineIndex == -1 ? stepText.length() : newLineIndex;
         ConceptTable inlineTable = element.getTable();
         int index = 0;
-        if (stepText.trim().charAt(0)=='#')
+        if (stepText.trim().charAt(0) == '#')
             index = 1;
         stepText = stepText.substring(index, endIndex).trim();
-        return getStepValueFor(element, stepText, inlineTable!=null);
+        return getStepValueFor(element, stepText, inlineTable != null);
     }
+
     public static StepValue getStepValue(ConceptConceptImpl conceptConcept) {
         String conceptHeadingText = conceptConcept.getConceptHeading().getText();
         conceptHeadingText = conceptHeadingText.trim().split("\n")[0];

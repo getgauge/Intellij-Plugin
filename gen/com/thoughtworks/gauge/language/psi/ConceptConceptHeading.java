@@ -25,7 +25,7 @@ import java.util.List;
 
 public interface ConceptConceptHeading extends PsiElement {
 
-  @NotNull
-  List<ConceptDynamicArg> getDynamicArgList();
+    @NotNull
+    List<ConceptDynamicArg> getDynamicArgList();
 
 }

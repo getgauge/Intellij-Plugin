@@ -38,7 +38,8 @@ public class ExtractConceptInfoCollector {
         List<String> args = getArgs(steps);
         final ExtractConceptDialog form = new ExtractConceptDialog(this.editor.getProject(), args, FileManager.getDirNamesUnderSpecs(project));
         showDialog(steps, form);
-        if (form.getInfo().conceptName.equals("") || form.getInfo().fileName.equals("") || this.isCancelled)  return new ExtractConceptInfo("", "", false);
+        if (form.getInfo().conceptName.equals("") || form.getInfo().fileName.equals("") || this.isCancelled)
+            return new ExtractConceptInfo("", "", false);
         String conceptName = form.getInfo().conceptName;
         String fileName = project.getBasePath() + form.getInfo().fileName;
         boolean shouldContinue = conceptName != null;

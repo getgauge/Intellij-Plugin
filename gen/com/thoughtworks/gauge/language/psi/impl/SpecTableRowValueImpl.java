@@ -7,8 +7,8 @@ import com.thoughtworks.gauge.language.psi.SpecTableRowValue;
 
 public class SpecTableRowValueImpl extends ASTWrapperPsiElement implements SpecTableRowValue {
 
-  public SpecTableRowValueImpl(ASTNode node) {
-    super(node);
-  }
+    public SpecTableRowValueImpl(ASTNode node) {
+        super(node);
+    }
 
 }

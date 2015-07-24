@@ -25,7 +25,6 @@ import com.thoughtworks.gauge.language.Concept;
 import com.thoughtworks.gauge.language.Specification;
 import com.thoughtworks.gauge.language.token.ConceptTokenTypes;
 import com.thoughtworks.gauge.language.token.SpecTokenTypes;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 

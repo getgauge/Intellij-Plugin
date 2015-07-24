@@ -19,7 +19,10 @@ package com.thoughtworks.gauge.module.lib;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.CompilerModuleExtension;
+import com.intellij.openapi.roots.ContentEntry;
+import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -86,17 +89,17 @@ public class GaugeLibHelper extends AbstractLibHelper {
     private VirtualFile testOutputPath(Module module) {
         File outputDir = new File(String.format("%s%sout%stest%s%s", moduleDirPath(module), File.separator, File.separator, File.separator, module.getName()));
         outputDir.mkdirs();
-        return  LocalFileSystem.getInstance().refreshAndFindFileByIoFile(outputDir);
+        return LocalFileSystem.getInstance().refreshAndFindFileByIoFile(outputDir);
     }
 
     private VirtualFile outputPath(Module module) {
         File outputDir = new File(String.format("%s%sout%sproduction%s%s", moduleDirPath(module), File.separator, File.separator, File.separator, module.getName()));
         outputDir.mkdirs();
-        return  LocalFileSystem.getInstance().refreshAndFindFileByIoFile(outputDir);
+        return LocalFileSystem.getInstance().refreshAndFindFileByIoFile(outputDir);
     }
 
     private VirtualFile srcPath(ModifiableRootModel modifiableModel) {
-        return  LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(moduleDir(modifiableModel.getModule()), SRC_DIR));
+        return LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(moduleDir(modifiableModel.getModule()), SRC_DIR));
     }
 
     private void addProjectLibIfNeeded(ModifiableRootModel model) {
@@ -170,7 +173,7 @@ public class GaugeLibHelper extends AbstractLibHelper {
         try {
             GaugeService gaugeService = Gauge.getGaugeService(module);
             if (gaugeService == null) {
-                 gaugeService = GaugeModuleComponent.createGaugeService(module);
+                gaugeService = GaugeModuleComponent.createGaugeService(module);
             }
             GaugeConnection gaugeConnection = gaugeService.getGaugeConnection();
             if (gaugeConnection == null) {

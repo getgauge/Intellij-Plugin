@@ -9,9 +9,9 @@ import com.thoughtworks.gauge.language.token.SpecTokenTypes;
 
 public class SpecStaticArgImpl extends ASTWrapperPsiElement implements SpecStaticArg {
 
-  public SpecStaticArgImpl(ASTNode node) {
-    super(node);
-  }
+    public SpecStaticArgImpl(ASTNode node) {
+        super(node);
+    }
 
     @Override
     public String getText() {

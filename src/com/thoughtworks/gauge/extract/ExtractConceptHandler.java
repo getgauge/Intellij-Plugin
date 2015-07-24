@@ -28,7 +28,7 @@ public class ExtractConceptHandler {
             if (info.shouldContinue) {
                 Api.ExtractConceptResponse response = makeExtractConceptRequest(steps, info.fileName, info.conceptName, false, psiFile);
                 if (!response.getIsSuccess()) throw new RuntimeException(response.getError());
-                new UndoHandler(response.getFilesChangedList(), project,"Extract Concept").handle();
+                new UndoHandler(response.getFilesChangedList(), project, "Extract Concept").handle();
             }
         } catch (Exception e) {
             HintManager.getInstance().showErrorHint(editor, e.getMessage());

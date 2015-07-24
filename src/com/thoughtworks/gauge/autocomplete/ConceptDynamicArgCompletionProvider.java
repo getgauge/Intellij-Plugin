@@ -20,7 +20,7 @@ public class ConceptDynamicArgCompletionProvider extends CompletionProvider<Comp
         resultSet = resultSet.withPrefixMatcher(new PlainPrefixMatcher(prefix));
         Collection<ConceptDynamicArg> args = PsiTreeUtil.collectElementsOfType(parameters.getOriginalFile(), ConceptDynamicArg.class);
         for (ConceptDynamicArg arg : args) {
-            LookupElementBuilder item = LookupElementBuilder.create(arg.getText().replaceAll("<|>",""));
+            LookupElementBuilder item = LookupElementBuilder.create(arg.getText().replaceAll("<|>", ""));
             resultSet.addElement(item);
         }
     }

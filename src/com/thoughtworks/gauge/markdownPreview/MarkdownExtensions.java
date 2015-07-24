@@ -10,14 +10,14 @@ public class MarkdownExtensions {
     }
 
     public int getExtensionsValue() {
-        return  (Extensions.SMARTS ) +
-                        (Extensions.QUOTES) +
-                        (Extensions.ABBREVIATIONS ) +
-                        (Extensions.HARDWRAPS) +
-                        (Extensions.AUTOLINKS ) +
-                        (Extensions.WIKILINKS ) +
-                        (Extensions.TABLES) +
-                        (Extensions.DEFINITIONS) +
-                        (Extensions.STRIKETHROUGH);
+        return (Extensions.SMARTS) +
+                (Extensions.QUOTES) +
+                (Extensions.ABBREVIATIONS) +
+                (Extensions.HARDWRAPS) +
+                (Extensions.AUTOLINKS) +
+                (Extensions.WIKILINKS) +
+                (Extensions.TABLES) +
+                (Extensions.DEFINITIONS) +
+                (Extensions.STRIKETHROUGH);
     }
 }

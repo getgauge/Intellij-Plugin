@@ -18,16 +18,17 @@
 // This is a generated file. Not intended for manual editing.
 package com.thoughtworks.gauge.language.psi;
 
-import java.util.List;
-import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public interface ConceptConcept extends PsiElement {
 
-  @NotNull
-  ConceptConceptHeading getConceptHeading();
+    @NotNull
+    ConceptConceptHeading getConceptHeading();
 
-  @NotNull
-  List<ConceptStep> getStepList();
+    @NotNull
+    List<ConceptStep> getStepList();
 
 }

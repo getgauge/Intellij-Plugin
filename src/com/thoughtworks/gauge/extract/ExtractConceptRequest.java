@@ -1,6 +1,5 @@
 package com.thoughtworks.gauge.extract;
 
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.psi.PsiElement;
 import com.thoughtworks.gauge.core.Gauge;

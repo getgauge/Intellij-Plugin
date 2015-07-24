@@ -4,7 +4,6 @@ import com.intellij.codeInsight.template.TemplateContextType;
 import com.intellij.psi.PsiFile;
 import com.thoughtworks.gauge.language.ConceptFileType;
 import com.thoughtworks.gauge.language.SpecFileType;
-import com.thoughtworks.gauge.util.GaugeUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class LiveTemplateContext extends TemplateContextType {

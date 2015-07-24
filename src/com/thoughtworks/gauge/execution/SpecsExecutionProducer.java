@@ -62,7 +62,7 @@ public class SpecsExecutionProducer extends RunConfigurationProducer {
                 return true;
             }
         }
-        
+
         ArrayList<String> specsToExecute = new ArrayList<String>();
         for (VirtualFile selectedFile : selectedFiles) {
             if (isSpecFile(selectedFile)) {

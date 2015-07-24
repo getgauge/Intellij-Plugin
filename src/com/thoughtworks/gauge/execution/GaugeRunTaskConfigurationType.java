@@ -25,9 +25,6 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.containers.ContainerUtil;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
 
 public class GaugeRunTaskConfigurationType extends ConfigurationTypeBase {
     public GaugeRunTaskConfigurationType() {

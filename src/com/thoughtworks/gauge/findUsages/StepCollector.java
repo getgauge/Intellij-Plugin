@@ -44,14 +44,14 @@ public class StepCollector {
             PsiElement stepElement = getStepElement(psiFile.findElementAt(offset));
             if (stepElement == null) continue;
             if (stepElement.getClass().equals(SpecStepImpl.class))
-                addElement(stepElement, removeIdentifiers(((SpecStepImpl) stepElement).getStepValue().getStepText()));
+                addElement(stepElement, cleanText(((SpecStepImpl) stepElement).getStepValue().getStepText()));
             else
-                addElement(stepElement, removeIdentifiers(((ConceptStepImpl) stepElement).getStepValue().getStepText()));
+                addElement(stepElement, cleanText(((ConceptStepImpl) stepElement).getStepValue().getStepText()));
         }
     }
 
-    private String removeIdentifiers(String text) {
-        return text.charAt(0) == '*' || text.charAt(0) == '#' ? text.substring(1).trim() : text.trim();
+    private String cleanText(String text) {
+        return text != null ? text.trim() : "";
     }
 
     private void addElement(PsiElement stepElement, String stepText) {
