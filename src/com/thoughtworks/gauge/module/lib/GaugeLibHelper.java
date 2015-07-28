@@ -126,9 +126,12 @@ public class GaugeLibHelper extends AbstractLibHelper {
     }
 
     private void updateLibrary(Library library, ProjectLib newLib) {
+        VirtualFile lib = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(newLib.getDir());
         Library.ModifiableModel model = library.getModifiableModel();
-        model.removeRoot(getClassesRootFrom(model), CLASSES);
-        model.addRoot(newLib.getDir().getAbsolutePath(), CLASSES);
+        if (lib != null) {
+            model.removeRoot(getClassesRootFrom(model), CLASSES);
+            model.addJarDirectory(lib, true, CLASSES);
+        }
         model.commit();
     }
 

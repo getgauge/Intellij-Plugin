@@ -52,7 +52,8 @@ public class SpecPsiImplUtil {
         if (apiConnection == null) {
             return getDefaultStepValue(element);
         }
-        return StepUtil.getStepValue(apiConnection, stepText, hasInlineTable);
+        StepValue value = StepUtil.getStepValue(apiConnection, stepText, hasInlineTable);
+        return value == null ? getDefaultStepValue(element) : value;
     }
 
     private static StepValue getDefaultStepValue(PsiElement element) {
