@@ -35,7 +35,8 @@ public class Gauge {
         if (module == null) {
             return null;
         }
-        return gaugeProjectHandle.get(module);
+        GaugeService service = gaugeProjectHandle.get(module);
+        return service == null ? getGaugeService() : service;
     }
 
     public static ReferenceCache getReferenceCache(Module module) {
@@ -47,7 +48,7 @@ public class Gauge {
         return referenceCache;
     }
 
-    public static GaugeService getGaugeService() {
+    private static GaugeService getGaugeService() {
         Iterator<GaugeService> iterator = gaugeProjectHandle.values().iterator();
         return iterator.hasNext() ? iterator.next() : null;
     }
