@@ -1,5 +1,9 @@
 out
 *.iws
+*.iml
 workspace.xml
 tasks.xml
 misc.xml
+.idea/*
+production/*
+production-test/*

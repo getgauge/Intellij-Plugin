@@ -23,7 +23,6 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.template.TemplateBuilder;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
@@ -40,6 +39,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.thoughtworks.gauge.autocomplete.StepCompletionContributor.getPrefix;
 
@@ -53,10 +54,12 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
         this.isConcept = isConcept;
     }
 
-    public void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet resultSet) {
+    @Override
+    public void addCompletions(@NotNull final CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet resultSet) {
         resultSet.stopHere();
-        String prefix = getPrefix(parameters);
-        resultSet = resultSet.withPrefixMatcher(new PlainPrefixMatcher(prefix));
+        final String prefix = getPrefix(parameters);
+
+        resultSet = resultSet.withPrefixMatcher(new GaugePrefixMatcher(prefix));
         Module moduleForPsiElement = GaugeUtil.moduleForPsiElement(parameters.getPosition());
         if (moduleForPsiElement == null) {
             return;
@@ -67,27 +70,37 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
                 @Override
                 public void handleInsert(InsertionContext context, LookupElement item) {
                     PsiElement stepElement = context.getFile().findElementAt(context.getStartOffset()).getParent();
-                    (isConcept ? addConceptArgs(stepElement) : addSpecArgs(stepElement)).run(context.getEditor(), false);
+                    TemplateBuilder templateBuilder = getTemplateBuilder(stepElement, prefix);
+                    templateBuilder.run(context.getEditor(), false);
                 }
             });
             resultSet.addElement(element);
         }
     }
 
-    private TemplateBuilder addSpecArgs(PsiElement stepElement) {
-        final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(stepElement);
-        List<SpecArg> args = PsiTreeUtil.getChildrenOfTypeAsList(stepElement, SpecArg.class);
-        for (SpecArg arg : args)
-            builder.replaceRange(new TextRange(arg.getStartOffsetInParent(), arg.getStartOffsetInParent() + arg.getTextLength()), arg.getText());
-        return builder;
+    private TemplateBuilder getTemplateBuilder(PsiElement stepElement, String prefix) {
+        final TemplateBuilder templateBuilder = TemplateBuilderFactory.getInstance().createTemplateBuilder(stepElement);
+
+        Class<? extends PsiElement> stepParamsClass = isConcept ? ConceptArg.class : SpecArg.class;
+        List<? extends PsiElement> stepParams = PsiTreeUtil.getChildrenOfTypeAsList(stepElement, stepParamsClass);
+
+        List<String> filledParams = getFilledParams(prefix);
+        for (int i = 0; i < stepParams.size(); i++) {
+            PsiElement stepParam = stepParams.get(i);
+            String replacementText = i + 1 > filledParams.size() ? stepParam.getText() :filledParams.get(i);
+            templateBuilder.replaceElement(stepParam, replacementText);
+        }
+        return templateBuilder;
     }
 
-    private TemplateBuilder addConceptArgs(PsiElement stepElement) {
-        final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(stepElement);
-        List<ConceptArg> args = PsiTreeUtil.getChildrenOfTypeAsList(stepElement, ConceptArg.class);
-        for (ConceptArg arg : args)
-            builder.replaceRange(new TextRange(arg.getStartOffsetInParent(), arg.getStartOffsetInParent() + arg.getTextLength()), arg.getText());
-        return builder;
+    private List<String> getFilledParams(String prefix) {
+        Pattern filledParamPattern = Pattern.compile("\"[\\w ]+\"");
+        Matcher matcher = filledParamPattern.matcher(prefix);
+        List<String> filledParams = new ArrayList<String>();
+        while (matcher.find()) {
+            filledParams.add(matcher.group());
+        }
+        return filledParams;
     }
 
     private class Type {

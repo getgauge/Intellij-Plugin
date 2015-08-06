@@ -18,7 +18,7 @@
 <idea-plugin version="2">
     <id>com.thoughtworks.gauge</id>
     <name>Gauge</name>
-    <version>0.0.11</version>
+    <version>0.0.12</version>
     <vendor email="getgauge@googlegroups.com" url="http://getgauge.io">Gauge</vendor>
 
     <description><![CDATA[
@@ -37,27 +37,33 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      <p>0.0.12</p>
+      <ul>
+           <li> Enhanced auto completion support </li>
+           <li> Bug Fixes and enhancements </li>
+      </ul>
+      <br>
       <p>0.0.11</p>
       <ul>
-           <li> Fixed #75, #77</li>
+           <li> Bug Fixes and enhancements </li>
       </ul>
       <br>
       <p>0.0.10</p>
       <ul>
-           <li> Fixed #72</li>
+           <li> Bug Fixes and enhancements </li>
       </ul>
       <br>
       <p>0.0.9</p>
       <ul>
-           <li> Improving debugger support. Do not need to launch remote config after launching specs in debug mode</li>
-           <li> Fixed #65 #71 #70</li>
+           <li> Improving debugger support. Do not need to launch remote config after launching specs in debug mode </li>
+           <li> Bug Fixes and enhancements </li>
       </ul>
       <br>
       <p>0.0.8</p>
       <ul>
-           <li> Support for using gauge-maven-plugin</li>
-           <li> Added spec and scenario templates</li>
-           <li> Fixed #58</li>
+           <li> Support for using gauge-maven-plugin </li>
+           <li> Added spec and scenario templates </li>
+           <li> Bug Fixes and enhancements </li>
       </ul>
       <br>
 
@@ -69,8 +75,8 @@
       <br>
       <p>0.0.6</p>
       <ul>
-           <li> Bug fixes : #50 </li>
-           <li> Removed find usages feature due to performance issues : #53,#51.</li>
+           <li> Removed find usages feature due to performance issues </li>
+           <li> Bug fixes and enhancements </li>
       </ul>
       <br>
       <p>0.0.5</p>

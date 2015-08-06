@@ -44,22 +44,26 @@ public class GaugeModuleComponent implements ModuleComponent {
         this.module = module;
     }
 
+    @Override
     public void initComponent() {
     }
 
+    @Override
     public void disposeComponent() {
-
     }
 
     @NotNull
+    @Override
     public String getComponentName() {
         return "GaugeModuleComponent";
     }
 
+    @Override
     public void projectOpened() {
         new LibHelperFactory().helperFor(module).checkDeps();
     }
 
+    @Override
     public void projectClosed() {
         GaugeService gaugeService = Gauge.getGaugeService(module, true);
         if (gaugeService != null && gaugeService.getGaugeProcess() != null) {
@@ -67,6 +71,7 @@ public class GaugeModuleComponent implements ModuleComponent {
         }
     }
 
+    @Override
     public void moduleAdded() {
         projectOpened();
     }
