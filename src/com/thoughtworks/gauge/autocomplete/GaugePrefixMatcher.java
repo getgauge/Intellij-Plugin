@@ -10,8 +10,8 @@ public class GaugePrefixMatcher extends PrefixMatcher {
 
     private Pattern regexPattern;
     protected GaugePrefixMatcher(String prefix) {
-        super(toRegex(prefix));
-        regexPattern = Pattern.compile(this.getPrefix());
+        super(prefix);
+        regexPattern = Pattern.compile(toRegex(this.getPrefix()));
     }
 
     @Override
