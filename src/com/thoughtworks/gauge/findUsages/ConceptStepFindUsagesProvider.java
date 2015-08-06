@@ -23,6 +23,7 @@ import com.intellij.lang.findUsages.FindUsagesProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
+import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +36,7 @@ public class ConceptStepFindUsagesProvider implements FindUsagesProvider {
 
     @Override
     public boolean canFindUsagesFor(PsiElement psiElement) {
-        return true;
+        return psiElement instanceof SpecStepImpl || psiElement instanceof ConceptStepImpl;
     }
 
     @Nullable
