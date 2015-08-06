@@ -31,7 +31,7 @@ public abstract class AbstractLibHelper implements LibHelper {
         this.module = module;
         if (isGaugeModule(module)) {
             GaugeModuleComponent.makeGaugeModuleType(module);
-            if (Gauge.getGaugeService(module) == null) {
+            if (Gauge.getGaugeService(module, true) == null) {
                 GaugeModuleComponent.createGaugeService(module);
             }
         }

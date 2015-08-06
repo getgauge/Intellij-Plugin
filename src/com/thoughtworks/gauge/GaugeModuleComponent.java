@@ -61,7 +61,7 @@ public class GaugeModuleComponent implements ModuleComponent {
     }
 
     public void projectClosed() {
-        GaugeService gaugeService = Gauge.getGaugeService(module);
+        GaugeService gaugeService = Gauge.getGaugeService(module, true);
         if (gaugeService != null && gaugeService.getGaugeProcess() != null) {
             gaugeService.getGaugeProcess().destroy();
         }

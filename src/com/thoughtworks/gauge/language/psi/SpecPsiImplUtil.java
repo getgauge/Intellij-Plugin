@@ -47,7 +47,7 @@ public class SpecPsiImplUtil {
 
     public static StepValue getStepValueFor(PsiElement element, String stepText, Boolean hasInlineTable) {
         Module moduleForElement = GaugeUtil.moduleForPsiElement(element);
-        GaugeService gaugeService = Gauge.getGaugeService(moduleForElement);
+        GaugeService gaugeService = Gauge.getGaugeService(moduleForElement, false);
         if (gaugeService == null) {
             return getDefaultStepValue(element);
         }

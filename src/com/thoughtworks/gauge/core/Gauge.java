@@ -31,12 +31,12 @@ public class Gauge {
         gaugeProjectHandle.put(module, gaugeService);
     }
 
-    public static GaugeService getGaugeService(Module module) {
+    public static GaugeService getGaugeService(Module module, boolean moduleDependent) {
         if (module == null) {
             return null;
         }
         GaugeService service = gaugeProjectHandle.get(module);
-        return service == null ? getGaugeService() : service;
+        return (service == null && !moduleDependent) ? getGaugeService() : service;
     }
 
     public static ReferenceCache getReferenceCache(Module module) {

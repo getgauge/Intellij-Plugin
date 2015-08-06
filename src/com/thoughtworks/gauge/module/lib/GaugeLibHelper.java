@@ -174,7 +174,7 @@ public class GaugeLibHelper extends AbstractLibHelper {
     private ProjectLib gaugeLib(Module module) {
         String libRoot;
         try {
-            GaugeService gaugeService = Gauge.getGaugeService(module);
+            GaugeService gaugeService = Gauge.getGaugeService(module, true);
             if (gaugeService == null) {
                 gaugeService = GaugeModuleComponent.createGaugeService(module);
             }

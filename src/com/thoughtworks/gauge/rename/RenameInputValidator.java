@@ -55,7 +55,7 @@ public class RenameInputValidator implements InputValidator {
         FileDocumentManager.getInstance().saveAllDocuments();
         try {
             FileDocumentManager.getInstance().saveDocumentAsIs(editor.getDocument());
-            GaugeService gaugeService = Gauge.getGaugeService(module);
+            GaugeService gaugeService = Gauge.getGaugeService(module, true);
             response = gaugeService.getGaugeConnection().sendPerformRefactoringRequest(text, inputString);
         } catch (Exception e) {
             Messages.showErrorDialog(String.format("Could not execute refactor command: %s", e.toString()), "Rephrase Failed");

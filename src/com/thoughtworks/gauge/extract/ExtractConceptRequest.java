@@ -75,7 +75,7 @@ public class ExtractConceptRequest {
     }
 
     public Api.ExtractConceptResponse makeExtractConceptRequest(PsiElement element) {
-        GaugeService gaugeService = Gauge.getGaugeService(ModuleUtil.findModuleForPsiElement(element));
+        GaugeService gaugeService = Gauge.getGaugeService(ModuleUtil.findModuleForPsiElement(element), true);
         String message = "Cannot connect to gauge service.";
         if (gaugeService != null)
             try {

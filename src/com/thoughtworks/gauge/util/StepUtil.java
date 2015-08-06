@@ -127,7 +127,7 @@ public class StepUtil {
     }
 
     public static boolean isMatch(PsiMethod stepMethod, String stepText, Module module) {
-        GaugeService gaugeService = Gauge.getGaugeService(module);
+        GaugeService gaugeService = Gauge.getGaugeService(module, true);
         if (gaugeService == null) {
             return false;
         }
@@ -226,7 +226,7 @@ public class StepUtil {
     }
 
     private static List<ConceptInfo> fetchAllConcepts(Module module) throws IOException {
-        GaugeService gaugeService = Gauge.getGaugeService(module);
+        GaugeService gaugeService = Gauge.getGaugeService(module, true);
         if (gaugeService != null) {
             return gaugeService.getGaugeConnection().fetchAllConcepts();
         }
