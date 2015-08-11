@@ -168,6 +168,7 @@
         <fileBasedIndex implementation="com.thoughtworks.gauge.stub.FileStub"/>
         <lang.commenter language="Specification" implementationClass="com.thoughtworks.gauge.language.StepCommenter"/>
         <lang.commenter language="Concept" implementationClass="com.thoughtworks.gauge.language.StepCommenter"/>
+        <problemFileHighlightFilter implementation="com.thoughtworks.gauge.highlight.ErrorHighLighter"/>
     </extensions>
 
     <application-components>
