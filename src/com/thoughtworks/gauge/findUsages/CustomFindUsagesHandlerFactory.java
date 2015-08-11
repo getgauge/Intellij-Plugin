@@ -20,6 +20,7 @@ package com.thoughtworks.gauge.findUsages;
 import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesHandlerFactory;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 public class CustomFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
     @Override
     public boolean canFindUsages(PsiElement psiElement) {
-        return psiElement instanceof SpecStepImpl || psiElement instanceof ConceptStepImpl;
+        return psiElement instanceof SpecStepImpl || psiElement instanceof ConceptStepImpl || psiElement instanceof PsiMethod;
     }
 
     @Nullable
