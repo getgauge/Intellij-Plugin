@@ -28,7 +28,7 @@ public class ParamAnnotator implements Annotator {
     private void createWarning(@NotNull PsiMethod psiElement, @NotNull AnnotationHolder holder, String alias, StepValue value) {
         int actual = psiElement.getParameterList().getParametersCount();
         int expected = value.getParameters().size();
-        holder.createWarningAnnotation(psiElement.getParameterList().getTextRange(), getWarning(alias, actual, expected));
+        holder.createErrorAnnotation(psiElement.getParameterList().getTextRange(), getWarning(alias, actual, expected));
     }
 
     private String getWarning(String step, int actual, int expected) {

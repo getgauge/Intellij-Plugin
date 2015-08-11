@@ -42,6 +42,6 @@ public class StepAnnotator implements Annotator {
 
     private void createWarning(PsiElement element, AnnotationHolder holder, SpecStep step) {
         if (!StepUtil.isImplementedStep(step, GaugeUtil.moduleForPsiElement(step)))
-            holder.createWeakWarningAnnotation(element.getTextRange(), "Undefined Step").registerFix(new CreateStepImplFix(step));
+            holder.createErrorAnnotation(element.getTextRange(), "Undefined Step").registerFix(new CreateStepImplFix(step));
     }
 }
