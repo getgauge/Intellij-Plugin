@@ -51,7 +51,8 @@ public class StepCollector {
     }
 
     private String cleanText(String text) {
-        return text != null ? text.trim() : "";
+        if (text == null) return "";
+        return text.charAt(0) == '*' || text.charAt(0) == '#' ? text.substring(1).trim() : text.trim();
     }
 
     private void addElement(PsiElement stepElement, String stepText) {
