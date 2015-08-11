@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 public class GaugePrefixMatcher extends PrefixMatcher {
 
     private Pattern regexPattern;
+
     protected GaugePrefixMatcher(String prefix) {
         super(prefix);
         regexPattern = Pattern.compile(toRegex(this.getPrefix()));

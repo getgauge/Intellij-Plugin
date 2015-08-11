@@ -87,7 +87,7 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
         List<String> filledParams = getFilledParams(prefix);
         for (int i = 0; i < stepParams.size(); i++) {
             PsiElement stepParam = stepParams.get(i);
-            String replacementText = i + 1 > filledParams.size() ? stepParam.getText() :filledParams.get(i);
+            String replacementText = i + 1 > filledParams.size() ? stepParam.getText() : filledParams.get(i);
             templateBuilder.replaceElement(stepParam, replacementText);
         }
         return templateBuilder;

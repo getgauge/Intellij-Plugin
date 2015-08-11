@@ -166,6 +166,8 @@
         <liveTemplateContext implementation="com.thoughtworks.gauge.idea.template.LiveTemplateContext"/>
         <fileEditorProvider implementation="com.thoughtworks.gauge.markdownPreview.MarkdownPreviewEditorProvider"/>
         <fileBasedIndex implementation="com.thoughtworks.gauge.stub.FileStub"/>
+        <lang.commenter language="Specification" implementationClass="com.thoughtworks.gauge.language.StepCommenter"/>
+        <lang.commenter language="Concept" implementationClass="com.thoughtworks.gauge.language.StepCommenter"/>
     </extensions>
 
     <application-components>

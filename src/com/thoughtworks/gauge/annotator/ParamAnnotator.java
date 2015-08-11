@@ -32,6 +32,6 @@ public class ParamAnnotator implements Annotator {
     }
 
     private String getWarning(String step, int actual, int expected) {
-        return String.format("Parameter count mismatch(found [%d] expected [%d]) with step annotation : \"%s\". ",actual, expected, step);
+        return String.format("Parameter count mismatch(found [%d] expected [%d]) with step annotation : \"%s\". ", actual, expected, step);
     }
 }
