@@ -135,6 +135,7 @@
         <colorSettingsPage implementation="com.thoughtworks.gauge.highlight.ConceptColorSettingsPage"/>
         <annotator language="Specification" implementationClass="com.thoughtworks.gauge.annotator.StepAnnotator"/>
         <annotator language="Concept" implementationClass="com.thoughtworks.gauge.annotator.StepAnnotator"/>
+        <annotator language="JAVA" implementationClass="com.thoughtworks.gauge.annotator.ParamAnnotator"/>
         <completion.contributor language="Specification"
                                 implementationClass="com.thoughtworks.gauge.autocomplete.StepCompletionContributor"
                                 order="first,before liveTemplates"/>
