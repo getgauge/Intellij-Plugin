@@ -78,7 +78,7 @@ public class CreateStepImplFix extends BaseIntentionAction {
     }
 
     @Override
-    public void invoke(@NotNull final Project project, Editor editor, final PsiFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
         ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -96,7 +96,7 @@ public class CreateStepImplFix extends BaseIntentionAction {
                         return doFinalStep(new Runnable() {
                             public void run() {
                                 if (selectedValue == NEW_FILE_HOLDER) {
-                                    createFileAndAddImpl();
+                                    createFileAndAddImpl(editor);
                                 } else {
                                     addImpl(project, selectedValue.getVirtualFile());
                                 }
@@ -133,10 +133,9 @@ public class CreateStepImplFix extends BaseIntentionAction {
         });
     }
 
-    private void createFileAndAddImpl() {
-
+    private void createFileAndAddImpl(Editor editor) {
         ActionManager instance = ActionManager.getInstance();
-        DataContext dataContext = DataManager.getInstance().getDataContext();
+        DataContext dataContext = DataManager.getInstance().getDataContext(editor.getComponent());
         GaugeDataContext gaugeDataContext = new GaugeDataContext(dataContext);
         AnActionEvent anActionEvent = new AnActionEvent(null, gaugeDataContext, ActionPlaces.UNKNOWN, new Presentation("Create Class"), instance, 0);
 

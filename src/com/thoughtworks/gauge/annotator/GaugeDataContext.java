@@ -30,6 +30,9 @@ import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GaugeDataContext implements DataContext {
     private final DataContext dataContext;
 
@@ -62,14 +65,15 @@ public class GaugeDataContext implements DataContext {
 
         @Override
         public PsiDirectory[] getDirectories() {
+            List<PsiDirectory> psiDirectories = new ArrayList<>();
             PsiManager psiManager = PsiManager.getInstance(project);
             for (VirtualFile root : ProjectRootManager.getInstance(psiManager.getProject()).getContentSourceRoots()) {
                 PsiDirectory directory = psiManager.findDirectory(root);
                 if (directory != null) {
-                    return new PsiDirectory[]{directory};
+                    psiDirectories.add(directory);
                 }
             }
-            return PsiDirectory.EMPTY_ARRAY;
+            return psiDirectories.toArray(new PsiDirectory[]{});
         }
 
         @Nullable
