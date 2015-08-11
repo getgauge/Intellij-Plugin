@@ -23,6 +23,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.template.TemplateBuilder;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
 import com.intellij.openapi.module.Module;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
@@ -69,6 +70,10 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
             element = element.withInsertHandler(new InsertHandler<LookupElement>() {
                 @Override
                 public void handleInsert(InsertionContext context, LookupElement item) {
+                    if (context.getCompletionChar() == '\t') {
+                        context.getDocument().insertString(context.getEditor().getCaretModel().getOffset(), "\n");
+                        PsiDocumentManager.getInstance(context.getProject()).commitDocument(context.getDocument());
+                    }
                     PsiElement stepElement = context.getFile().findElementAt(context.getStartOffset()).getParent();
                     TemplateBuilder templateBuilder = getTemplateBuilder(stepElement, prefix);
                     templateBuilder.run(context.getEditor(), false);
