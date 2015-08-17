@@ -54,14 +54,16 @@ public abstract class StepsBuilder {
         List<PsiElement> specSteps = new ArrayList<PsiElement>();
         int currentOffset = selectionModel.getSelectionStart();
         while (selectionModel.getSelectionEnd() >= currentOffset) {
-            if (psiFile.getText().charAt(currentOffset++) == '\n') continue;
-            PsiElement step = getStep(psiFile.findElementAt(currentOffset), stepClass);
-            if (step == null) {
-                HintManager.getInstance().showErrorHint(editor, "Cannot extract concept, selected text contains invalid elements");
-                return null;
-            }
-            specSteps.add(step);
-            currentOffset += step.getText().length();
+            try {
+                if (psiFile.getText().charAt(currentOffset++) == '\n') continue;
+                PsiElement step = getStep(psiFile.findElementAt(currentOffset), stepClass);
+                if (step == null) {
+                    HintManager.getInstance().showErrorHint(editor, "Cannot extract concept, selected text contains invalid elements");
+                    return null;
+                }
+                specSteps.add(step);
+                currentOffset += step.getText().length();
+            }catch (Exception ignored) {}
         }
         return specSteps;
     }

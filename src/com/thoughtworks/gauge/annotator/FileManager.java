@@ -71,7 +71,7 @@ public class FileManager {
         File[] files = dir.listFiles();
         List<String> dirs = new ArrayList<String>();
         dirs.add(String.format("%s%s%s", File.separator, Constants.SPECS_DIR, File.separator));
-        getDirectories(files, dirs, project.getBasePath());
+        if (files != null)  getDirectories(files, dirs, project.getBasePath());
         return dirs;
     }
 

@@ -1,6 +1,7 @@
 package com.thoughtworks.gauge.extract;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.ui.TextFieldWithAutoCompletionListProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,13 +12,18 @@ import java.util.List;
 
 public class ExtractConceptDialog extends JDialog {
     private JPanel contentPane;
-    private com.intellij.ui.TextFieldWithAutoCompletion textField1;
-    private JTextArea textArea1;
-    private JComboBox comboBox1;
-    private com.intellij.ui.TextFieldWithAutoCompletion textField2;
+    private com.intellij.ui.TextFieldWithAutoCompletion conceptName;
+    private JTextArea steps;
+    private JComboBox files;
+    private com.intellij.ui.TextFieldWithAutoCompletion newFile;
+    private JButton OKButton;
+    private JButton cancelButton;
+    private JLabel errors;
     private Project project;
     private List<String> args;
     private List<String> dirNames;
+    private boolean cancelled = true;
+    private DialogBuilder builder;
 
     public ExtractConceptDialog(Project project, List<String> args, List<String> dirNames) {
         this.project = project;
@@ -25,61 +31,78 @@ public class ExtractConceptDialog extends JDialog {
         this.dirNames = dirNames;
         setContentPane(contentPane);
         setModal(true);
-
-// call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 onCancel();
             }
         });
-
-// call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onCancel();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        this.textField2.setVisible(false);
-        this.textField1.setPlaceholder("Enter Concept Name");
-        this.textField2.setPlaceholder("Enter File Name");
-        this.comboBox1.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ExtractConceptDialog.this.textField2.setVisible(false);
-                if (ExtractConceptDialog.this.comboBox1.getSelectedItem().toString().equals(ExtractConceptInfoCollector.CREATE_NEW_FILE))
-                    ExtractConceptDialog.this.textField2.setVisible(true);
-            }
-        });
+        setProperties();
     }
 
-    private void onOK() {
-        dispose();
-    }
-
-    private void onCancel() {
-        dispose();
-    }
-
-    public void setData(String data, List<String> files) {
-        this.textArea1.setColumns(50);
-        this.textArea1.setRows(10);
-        this.textArea1.setEditable(false);
-        this.textArea1.setText(data);
-        for (String file : files) {
-            this.comboBox1.addItem(file);
-        }
+    public void setData(String data, List<String> files, DialogBuilder builder) {
+        this.builder = builder;
+        this.steps.setColumns(50);
+        this.steps.setRows(10);
+        this.steps.setEditable(false);
+        this.steps.setText(data);
+        for (String file : files) this.files.addItem(file);
     }
 
     public ExtractConceptInfo getInfo() {
-        String fileName = this.comboBox1.getSelectedItem().toString();
-        if (fileName.equals(ExtractConceptInfoCollector.CREATE_NEW_FILE)) fileName = this.textField2.getText();
-        return new ExtractConceptInfo(this.textField1.getText(), fileName, true);
+        String fileName = this.files.getSelectedItem().toString();
+        if (fileName.equals(ExtractConceptInfoCollector.CREATE_NEW_FILE)) fileName = this.newFile.getText();
+        return new ExtractConceptInfo(this.conceptName.getText(), fileName, cancelled);
+    }
+
+    private void setProperties() {
+        contentPane.registerKeyboardAction(getCancelAction(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        this.newFile.setVisible(false);
+        this.conceptName.setPlaceholder("Enter Concept Name");
+        this.newFile.setPlaceholder("Enter File Name");
+        this.files.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ExtractConceptDialog.this.newFile.setVisible(false);
+                if (ExtractConceptDialog.this.files.getSelectedItem().toString().equals(ExtractConceptInfoCollector.CREATE_NEW_FILE))
+                    ExtractConceptDialog.this.newFile.setVisible(true);
+            }
+        });
+        this.cancelButton.addActionListener(getCancelAction());
+        this.OKButton.addActionListener(getOKAction());
+    }
+
+    @NotNull
+    private ActionListener getCancelAction() {
+        return new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                onCancel();
+            }
+        };
+    }
+
+    @NotNull
+    private ActionListener getOKAction() {
+        return new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (conceptName.getText().trim().equals("") || (newFile.isVisible() && newFile.getText().trim().equals(""))) {
+                    errors.setText("There are some errors in the form.");
+                    return;
+                }
+                cancelled = false;
+                builder.getWindow().setVisible(false);
+            }
+        };
+    }
+
+    private void onCancel() {
+        builder.getWindow().setVisible(false);
+        dispose();
     }
 
     private void createUIComponents() {
-        this.textField1 = new com.intellij.ui.TextFieldWithAutoCompletion<String>(this.project, getAutoCompleteTextField(this.args), true, "");
-        this.textField2 = new com.intellij.ui.TextFieldWithAutoCompletion<String>(this.project, getAutoCompleteTextField(this.dirNames), true, "");
+        this.conceptName = new com.intellij.ui.TextFieldWithAutoCompletion<String>(this.project, getAutoCompleteTextField(this.args), true, "");
+        this.newFile = new com.intellij.ui.TextFieldWithAutoCompletion<String>(this.project, getAutoCompleteTextField(this.dirNames), true, "");
     }
 
     private TextFieldWithAutoCompletionListProvider<String> getAutoCompleteTextField(final List<String> dirNames) {

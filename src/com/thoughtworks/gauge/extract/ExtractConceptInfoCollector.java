@@ -23,7 +23,6 @@ public class ExtractConceptInfoCollector {
     private final Map<String, String> tableMap;
     private final List<PsiElement> steps;
     private Project project;
-    private boolean isCancelled = false;
 
     public ExtractConceptInfoCollector(Editor editor, Map<String, String> tableMap, List<PsiElement> steps, Project project) {
         this.editor = editor;
@@ -33,17 +32,13 @@ public class ExtractConceptInfoCollector {
     }
 
     public ExtractConceptInfo getAllInfo() {
-        this.isCancelled = false;
         String steps = getFormattedSteps();
         List<String> args = getArgs(steps);
         final ExtractConceptDialog form = new ExtractConceptDialog(this.editor.getProject(), args, FileManager.getDirNamesUnderSpecs(project));
         showDialog(steps, form);
-        if (form.getInfo().conceptName.equals("") || form.getInfo().fileName.equals("") || this.isCancelled)
-            return new ExtractConceptInfo("", "", false);
-        String conceptName = form.getInfo().conceptName;
-        String fileName = project.getBasePath() + form.getInfo().fileName;
-        boolean shouldContinue = conceptName != null;
-        return new ExtractConceptInfo(conceptName, fileName, shouldContinue);
+        if (form.getInfo().cancelled)
+            return form.getInfo();
+        return new ExtractConceptInfo(form.getInfo().conceptName, project.getBasePath() + form.getInfo().fileName, form.getInfo().cancelled);
     }
 
     private List<String> getArgs(String steps) {
@@ -55,21 +50,11 @@ public class ExtractConceptInfoCollector {
     }
 
     private void showDialog(String steps, ExtractConceptDialog form) {
-        form.setData(steps, getConceptFileNames());
         final DialogBuilder builder = new DialogBuilder(editor.getProject());
+        form.setData(steps, getConceptFileNames(), builder);
         builder.setCenterPanel(form.getRootPane());
         builder.setTitle("Extract Concept");
         builder.removeAllActions();
-        builder.addCancelAction();
-        builder.addOkAction();
-        final ExtractConceptInfoCollector self = this;
-        builder.setCancelOperation(new Runnable() {
-            @Override
-            public void run() {
-                builder.getWindow().setVisible(false);
-                self.isCancelled = true;
-            }
-        });
         builder.show();
     }
 
