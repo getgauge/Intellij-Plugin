@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.util.HashMap;
@@ -74,7 +75,8 @@ public class UndoHandler {
                 if (virtualFile != null) {
                     Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
                     getInstance().refreshAndFindFileByIoFile(new File(fileName));
-                    if (document != null) document.setText(FileUtils.readFileToString(new File(fileName)));
+                    if (document != null)
+                        document.setText(StringUtils.join(FileUtils.readLines(new File(fileName)).toArray(), "\n"));
                 }
             } catch (Exception ignored) {
             }
