@@ -21,6 +21,7 @@ import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -60,7 +61,7 @@ public class StepCompletionContributor extends CompletionContributor {
                 if (range.contains(offsetInFile - startOffset)) {
                     int endIndex = offsetInFile - startOffset;
                     int startIndex = range.getStartOffset();
-                    return element.getText().substring(startIndex + 2, endIndex);
+                    return StringUtil.trimStart(element.getText().substring(startIndex + 1, endIndex), " ");
                 }
             }
 
