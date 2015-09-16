@@ -53,6 +53,7 @@ import java.util.List;
 
 public class CreateStepImplFix extends BaseIntentionAction {
     private static final PsiFile NEW_FILE_HOLDER = null;
+    public static final String IMPLEMENTATION = "implementation";
     private final SpecStep step;
 
     public CreateStepImplFix(SpecStep step) {
@@ -179,7 +180,7 @@ public class CreateStepImplFix extends BaseIntentionAction {
 
                 StepValue stepValue = step.getStepValue();
                 final StringBuilder text = new StringBuilder(String.format("@Step(\"%s\")\n", stepValue.getStepAnnotationText()));
-                text.append(String.format("public void %s(%s){\n\n", "methodName", getParamList(stepValue.getParameters())));
+                text.append(String.format("public void %s(%s){\n\n", getMethodName(psiClass), getParamList(stepValue.getParameters())));
                 text.append("}\n");
                 final PsiMethod stepMethod = JavaPsiFacade.getElementFactory(project).createMethodFromText(text.toString(), psiClass);
                 PsiMethod addedElement = (PsiMethod) psiClass.add(stepMethod);
@@ -236,6 +237,19 @@ public class CreateStepImplFix extends BaseIntentionAction {
             }
         });
 
+    }
+
+    @NotNull
+    private String getMethodName(PsiClass psiClass) {
+        try {
+            for (Integer i = 1, length = psiClass.getAllMethods().length; i < length; i++) {
+                String methodName = IMPLEMENTATION + i.toString();
+                if (psiClass.findMethodsByName(methodName, true).length == 0)
+                    return methodName;
+            }
+        } catch (Exception ignored) {
+        }
+        return IMPLEMENTATION;
     }
 
 }
