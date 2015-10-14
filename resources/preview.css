@@ -1,185 +1,70 @@
-/* body */
-#markdown-preview {
-    padding: 20px;
+body{
+    background:#f1f1f1;
+    color: #444444;
+    margin:0px;
 }
-
-#markdown-preview body {
-    margin: 20px auto;
-    width: 800px;
-    background-color: #fff;
+#markdown-preview{
+    margin:0px auto;
     color: #000;
-    font: 13px "Myriad Pro", "Lucida Grande", Lucida, Verdana, sans-serif;
+    padding-left: 30px;
+    padding-right:30px;
 }
-
-#markdown-preview a {
-    color: blue;
-    text-decoration: underline;
+#markdown-preview h1 {
+    margin-top: 25px;
+    margin-bottom: 25px;
+    font-weight: bold;
+    font-size: 22px;
 }
-
-/* links */
-#markdown-preview a:link {
-    color: blue;
-    text-decoration: underline;
+#markdown-preview p {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    font-size: 12px;
+    padding-left:10px;
 }
-
-#markdown-preview a:visited {
-    color: #00a;
-    text-decoration: none;
-}
-
-#markdown-preview a:hover {
-    color: #f60;
-    text-decoration: underline;
-}
-
-#markdown-preview a:active {
-    color: #f60;
-    text-decoration: underline;
-}
-
-/* html tags */
-
-/*  Work around IE/Win code size bug - courtesy Jesper, waffle.wootest.net  */
-
-#markdown-preview html code {
-    font-size: 101%;
-}
-
-#markdown-preview html pre {
-    font-size: 101%;
-}
-
-/* code */
-
-#markdown-preview pre, code {
-    font-size: 11px;
-    font-family: monaco, courier, consolas, monospace;
-}
-
 #markdown-preview pre {
-    margin-top: 5px;
-    margin-bottom: 10px;
     border: 1px solid #c7cfd5;
     background: #f1f5f9;
     margin: 20px 0;
     padding: 8px;
     text-align: left;
 }
-
-#markdown-preview hr {
-    color: #919699;
-    width: 100%;
-    noshade: "noshade"
+#markdown-preview ul {
+    list-style: circle;
+    list-style-position: outside;
+    margin: 0px 0px 0px 30px;
+    padding: 0 0 0px 20px;
 }
+#markdown-preview ul li{
+    margin-bottom: 10px;
+    margin-left:10px;
+    font-size:14px;
 
-/* headers */
-
-#markdown-preview h1, h2, h3, h4, h5, h6 {
-    font-family: "Myriad Pro", "Lucida Grande", Lucida, Verdana, sans-serif;
-    font-weight: bold;
 }
-
-#markdown-preview h1 {
-    margin-top: 1em;
-    margin-bottom: 25px;
-    color: #000;
-    font-weight: bold;
-    font-size: 22px;
+#markdown-preview ul li p{
+    margin:0px 0px 10px 0px;
+    padding-left:0px;
+    font-size:14px;
 }
-
+#markdown-preview ul li table{
+    margin-top:14px;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
 #markdown-preview h2 {
     margin-top: 15px;
-    margin-bottom: 12px;
+    margin-bottom: 15px;
+    padding-left:1px;
+    padding-bottom:3px;
     font-size: 18px;
     color: #000;
-    padding-bottom: 2px;
-    border-bottom: 1px solid #919699;
-}
-
-#markdown-preview h3 {
-    margin-top: 2em;
-    margin-bottom: .5em;
-    font-size: 16px;
-    color: #000;
-}
-
-#markdown-preview h4 {
-    margin-top: 2em;
-    margin-bottom: .5em;
-    font-size: 14px;
-    color: #000;
-}
-
-#markdown-preview h5 {
-    margin-top: 20px;
-    margin-bottom: .5em;
-    padding: 0;
-    font-size: 12px;
-    color: #000;
-}
-
-#markdown-preview h6 {
-    margin-top: 20px;
-    margin-bottom: .5em;
-    padding: 0;
-    font-size: 10px;
-    color: #000;
-}
-
-#markdown-preview p {
-    margin-top: 0px;
-    margin-bottom: 10px;
-    font-size: 12px;
-}
-
-/* lists */
-
-#markdown-preview ul {
-    list-style: square outside;
-    margin: 0 0 0 30px;
-    padding: 0 0 12px 6px;
-    font-size: 12px;
-}
-
-#markdown-preview li {
-    margin-top: 7px;
-}
-
-#markdown-preview ol {
-    list-style-type: decimal;
-    list-style-position: outside;
-    margin: 0 0 0 30px;
-    padding: 0 0 12px 6px;
-}
-
-#markdown-preview ol ol {
-    list-style-type: lower-alpha;
-    list-style-position: outside;
-    margin: 7px 0 0 30px;
-    padding: 0 0 0 10px;
-}
-
-#markdown-preview ul ul {
-    margin-left: 40px;
-    padding: 0 0 0 6px;
-}
-
-#markdown-preview li > p {
-    display: inline
-}
-
-#markdown-preview li > p + p {
-    display: block
-}
-
-#markdown-preview li > a + p {
-    display: block
+    border-bottom: 1px solid #cecece;
 }
 
 /* table */
 
 #markdown-preview table {
     background: transparent;
+    border-collapse: collapse;
 }
 
 #markdown-preview table th {
