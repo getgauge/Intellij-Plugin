@@ -23,12 +23,15 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
+import com.thoughtworks.gauge.util.StepUtil;
 import org.jetbrains.annotations.Nullable;
 
 public class CustomFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
     @Override
     public boolean canFindUsages(PsiElement psiElement) {
-        return psiElement instanceof SpecStepImpl || psiElement instanceof ConceptStepImpl || psiElement instanceof PsiMethod;
+        if (psiElement instanceof PsiMethod)
+            return StepUtil.getGaugeStepAnnotationValues((PsiMethod) psiElement).size() > 0;
+        return psiElement instanceof SpecStepImpl || psiElement instanceof ConceptStepImpl;
     }
 
     @Nullable

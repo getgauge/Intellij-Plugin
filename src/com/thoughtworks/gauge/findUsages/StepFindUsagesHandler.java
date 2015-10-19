@@ -20,8 +20,12 @@ package com.thoughtworks.gauge.findUsages;
 import com.intellij.find.findUsages.AbstractFindUsagesDialog;
 import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesOptions;
+import com.intellij.find.findUsages.JavaFindUsagesHandler;
+import com.intellij.ide.util.SuperMethodWarningUtil;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
@@ -60,7 +64,31 @@ public class StepFindUsagesHandler extends FindUsagesHandler {
     }
 
     @Override
-    public boolean processElementUsages(PsiElement psiElement, Processor<UsageInfo> processor, FindUsagesOptions findUsagesOptions) {
+    public boolean processElementUsages(final PsiElement psiElement, final Processor<UsageInfo> processor, final FindUsagesOptions findUsagesOptions) {
+        ApplicationManager.getApplication().invokeLater(new Runnable() {
+            public void run() {
+                runFindUsageReadAction(psiElement, processor, findUsagesOptions);
+            }
+        });
+        return true;
+    }
+
+    private void runFindUsageReadAction(final PsiElement psiElement, final Processor<UsageInfo> processor, final FindUsagesOptions findUsagesOptions) {
+        ApplicationManager.getApplication().runReadAction(new Runnable() {
+            @Override
+            public void run() {
+                if (psiElement instanceof PsiMethod) {
+                    PsiMethod[] psiMethods = SuperMethodWarningUtil.checkSuperMethods((PsiMethod) psiElement, JavaFindUsagesHandler.ACTION_STRING);
+                    if (psiMethods.length < 1) return;
+                    for (PsiElement method : psiMethods)
+                        StepFindUsagesHandler.this.processUsages(method, processor, findUsagesOptions);
+                }
+                StepFindUsagesHandler.this.processUsages(psiElement, processor, findUsagesOptions);
+            }
+        });
+    }
+
+    public boolean processUsages(final PsiElement psiElement, final Processor<UsageInfo> processor, final FindUsagesOptions findUsagesOptions) {
         return super.processElementUsages(psiElement, processor, findUsagesOptions);
     }
 
