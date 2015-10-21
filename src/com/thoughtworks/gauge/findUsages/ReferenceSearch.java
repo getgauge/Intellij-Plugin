@@ -23,7 +23,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.PsiMethodImpl;
-import com.intellij.psi.impl.source.tree.java.PsiAnnotationImpl;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.util.Processor;
 import com.thoughtworks.gauge.language.psi.SpecPsiImplUtil;
@@ -40,9 +39,7 @@ public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesS
     @Override
     public void processQuery(@NotNull final ReferencesSearch.SearchParameters searchParameters, @NotNull final Processor<PsiReference> processor) {
         final Class<? extends PsiElement> elementClass = searchParameters.getElementToSearch().getClass();
-        Boolean shouldFindUsages = elementClass.equals(ConceptStepImpl.class) || elementClass.equals(SpecStepImpl.class) ||
-                elementClass.equals(PsiAnnotationImpl.class) || elementClass.equals(PsiMethodImpl.class);
-        if (searchParameters.getScope().getDisplayName().equals("<unknown scope>") || !shouldFindUsages) return;
+        if (!shouldFindUsages(searchParameters, elementClass)) return;
         ApplicationManager.getApplication().runReadAction(new Runnable() {
             @Override
             public void run() {
@@ -53,6 +50,13 @@ public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesS
                 processElements(elements, processor);
             }
         });
+    }
+
+    private boolean shouldFindUsages(@NotNull ReferencesSearch.SearchParameters searchParameters, Class<? extends PsiElement> elementClass) {
+        Boolean shouldFindUsages = elementClass.equals(ConceptStepImpl.class) || elementClass.equals(SpecStepImpl.class);
+        if (searchParameters.getElementToSearch() instanceof PsiMethod)
+            shouldFindUsages = StepUtil.getGaugeStepAnnotationValues((PsiMethod) searchParameters.getElementToSearch()).size() > 0;
+        return !searchParameters.getScope().getDisplayName().equals("<unknown scope>") || shouldFindUsages;
     }
 
     private void processElements(List<PsiElement> elements, Processor<PsiReference> processor) {
