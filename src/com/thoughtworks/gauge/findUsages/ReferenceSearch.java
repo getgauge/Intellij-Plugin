@@ -56,7 +56,7 @@ public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesS
         Boolean shouldFindUsages = elementClass.equals(ConceptStepImpl.class) || elementClass.equals(SpecStepImpl.class);
         if (searchParameters.getElementToSearch() instanceof PsiMethod)
             shouldFindUsages = StepUtil.getGaugeStepAnnotationValues((PsiMethod) searchParameters.getElementToSearch()).size() > 0;
-        return !searchParameters.getScope().getDisplayName().equals("<unknown scope>") || shouldFindUsages;
+        return !searchParameters.getScope().getDisplayName().equals("<unknown scope>") && shouldFindUsages;
     }
 
     private void processElements(List<PsiElement> elements, Processor<PsiReference> processor) {
