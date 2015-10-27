@@ -3,6 +3,7 @@ package com.thoughtworks.gauge.extract;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogBuilder;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.thoughtworks.gauge.annotator.FileManager;
@@ -43,10 +44,17 @@ public class ExtractConceptInfoCollector {
 
     private List<String> getArgs(String steps) {
         List<String> args = new ArrayList<String>();
-        for (String step : steps.split("\n"))
+        for (String step : steps.split("\n")) {
+            String unescapeStep = StringUtil.unescapeStringCharacters(step);
             for (String p : SpecPsiImplUtil.getStepValueFor(this.steps.get(0), step, false).getParameters())
-                args.add(step.charAt(step.indexOf(p) - 1) + p + step.charAt(step.indexOf(p) + p.length()));
+                args.add(getNameWithParamChar(unescapeStep, p));
+        }
         return args;
+    }
+
+    private String getNameWithParamChar(String step, String p) {
+        String arg = StringUtil.escapeStringCharacters(p);
+        return step.charAt(step.indexOf(p) - 1) + arg + step.charAt(step.indexOf(p) + p.length());
     }
 
     private void showDialog(String steps, ExtractConceptDialog form) {

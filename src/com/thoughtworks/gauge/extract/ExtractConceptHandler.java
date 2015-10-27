@@ -38,7 +38,7 @@ public class ExtractConceptHandler {
 
     private Api.ExtractConceptResponse makeExtractConceptRequest(List<PsiElement> specSteps, String fileName, String concept, boolean refactorOtherUsages, final PsiFile element) {
         PsiElement firstStep = specSteps.get(0);
-        int startLine = StringUtil.offsetToLineNumber(psiFile.getText(), firstStep.getTextOffset());
+        int startLine = StringUtil.offsetToLineNumber(psiFile.getText(), firstStep.getTextOffset()) + 1;
         PsiElement lastStep = specSteps.get(specSteps.size() - 1);
         int endLine = StringUtil.offsetToLineNumber(psiFile.getText(), lastStep.getTextOffset() + lastStep.getTextLength());
         Api.textInfo textInfo = gauge.messages.Api.textInfo.newBuilder().setFileName(psiFile.getVirtualFile().getPath()).setStartingLineNo(startLine).setEndLineNo(endLine).build();
