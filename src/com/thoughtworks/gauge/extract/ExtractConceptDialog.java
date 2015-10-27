@@ -58,7 +58,7 @@ public class ExtractConceptDialog extends JDialog {
     private void setProperties() {
         contentPane.registerKeyboardAction(getCancelAction(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         this.newFile.setVisible(false);
-        this.conceptName.setPlaceholder("Enter Concept Name");
+        this.conceptName.setPlaceholder("Enter Concept Name. Example: my new \"concept\"");
         this.newFile.setPlaceholder("Enter File Name");
         this.files.addActionListener(new ActionListener() {
             @Override
@@ -85,12 +85,14 @@ public class ExtractConceptDialog extends JDialog {
     private ActionListener getOKAction() {
         return new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (conceptName.getText().trim().equals("") || (newFile.isVisible() && newFile.getText().trim().equals(""))) {
-                    errors.setText("There are some errors in the form.");
-                    return;
+                if (conceptName.getText().trim().equals(""))
+                    errors.setText("Please enter concept name.");
+                else if (newFile.isVisible() && newFile.getText().trim().equals(""))
+                    errors.setText("Please select filename from the dropdown or provide the new file name.");
+                else {
+                    cancelled = false;
+                    builder.getWindow().setVisible(false);
                 }
-                cancelled = false;
-                builder.getWindow().setVisible(false);
             }
         };
     }
