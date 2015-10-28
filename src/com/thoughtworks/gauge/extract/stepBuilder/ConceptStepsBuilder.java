@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ConceptStepsBuilder extends StepsBuilder {
@@ -15,7 +16,6 @@ public class ConceptStepsBuilder extends StepsBuilder {
     @Override
     public List<PsiElement> build() {
         List<PsiElement> specSteps = getPsiElements(ConceptStepImpl.class);
-        if (specSteps == null) return null;
         Integer count = 0;
         for (PsiElement element : specSteps) {
             ConceptStepImpl specStep = (ConceptStepImpl) element;

@@ -1,6 +1,5 @@
 package com.thoughtworks.gauge.extract.stepBuilder;
 
-import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.psi.PsiElement;
@@ -57,10 +56,7 @@ public abstract class StepsBuilder {
             try {
                 if (psiFile.getText().charAt(currentOffset++) == '\n') continue;
                 PsiElement step = getStep(psiFile.findElementAt(currentOffset), stepClass);
-                if (step == null) {
-                    HintManager.getInstance().showErrorHint(editor, "Cannot extract concept, selected text contains invalid elements");
-                    return null;
-                }
+                if (step == null) return new ArrayList<PsiElement>();
                 specSteps.add(step);
                 currentOffset += step.getText().length();
             }catch (Exception ignored) {}
