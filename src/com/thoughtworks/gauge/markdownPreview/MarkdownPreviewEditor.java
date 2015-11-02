@@ -105,11 +105,9 @@ public class MarkdownPreviewEditor extends UserDataHolderBase implements FileEdi
     public void selectNotify() {
         if (previewIsObsolete) {
             try {
-                jEditorPane.setText("<div id=\"markdown-preview\">" +
-                        processor.markdownToHtml(document.getText()) +
-                        "</div>");
+                jEditorPane.setText(String.format("<div id=\"markdown-preview\">%s</div>",
+                        processor.markdownToHtml(Formatter.format(document.getText()))));
                 previewIsObsolete = false;
-
             } catch (Exception e) {
                 e.printStackTrace();
             }

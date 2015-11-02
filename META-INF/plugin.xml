@@ -39,7 +39,7 @@
     <change-notes><![CDATA[
       <p>0.0.15</p>
       <ul>
-           <li> Enhanced find usages, auto complete and quick fix functionality </li>
+           <li> Enhanced Find usages, Autocomplete, HTML preview and Quick fix functionality </li>
            <li> Bug Fixes </li>
       </ul>
       <br>
