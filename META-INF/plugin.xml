@@ -18,7 +18,7 @@
 <idea-plugin version="2">
     <id>com.thoughtworks.gauge</id>
     <name>Gauge</name>
-    <version>0.0.14</version>
+    <version>0.0.15</version>
     <vendor email="getgauge@googlegroups.com" url="http://getgauge.io">Gauge</vendor>
 
     <description><![CDATA[
@@ -37,6 +37,12 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      <p>0.0.15</p>
+      <ul>
+           <li> Enhanced find usages functionality </li>
+           <li> Bug Fixes and enhancements </li>
+      </ul>
+      <br>
       <p>0.0.14</p>
       <ul>
            <li> Changes for compatibility with gauge-java version 0.2.2 </li>
