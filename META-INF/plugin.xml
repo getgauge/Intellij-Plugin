@@ -39,8 +39,8 @@
     <change-notes><![CDATA[
       <p>0.0.15</p>
       <ul>
-           <li> Enhanced find usages functionality </li>
-           <li> Bug Fixes and enhancements </li>
+           <li> Enhanced find usages, auto complete and quick fix functionality </li>
+           <li> Bug Fixes </li>
       </ul>
       <br>
       <p>0.0.14</p>
