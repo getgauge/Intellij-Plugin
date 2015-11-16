@@ -59,6 +59,7 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
     public void addCompletions(@NotNull final CompletionParameters parameters, ProcessingContext context, @NotNull CompletionResultSet resultSet) {
         resultSet.stopHere();
         final String prefix = getPrefix(parameters);
+        final String prependSpace = parameters.getPosition().getText().startsWith(" ") ? "" : " ";
 
         resultSet = resultSet.withPrefixMatcher(new GaugePrefixMatcher(prefix));
         Module moduleForPsiElement = GaugeUtil.moduleForPsiElement(parameters.getPosition());
@@ -66,7 +67,7 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
             return;
         }
         for (Type item : getStepsInModule(moduleForPsiElement)) {
-            LookupElementBuilder element = LookupElementBuilder.create(item.getText()).withTypeText(item.getType(), true);
+            LookupElementBuilder element = LookupElementBuilder.create(prependSpace + item.getText()).withTypeText(item.getType(), true);
             element = element.withInsertHandler(new InsertHandler<LookupElement>() {
                 @Override
                 public void handleInsert(InsertionContext context, LookupElement item) {
