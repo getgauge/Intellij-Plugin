@@ -70,6 +70,10 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
             element = element.withInsertHandler(new InsertHandler<LookupElement>() {
                 @Override
                 public void handleInsert(InsertionContext context, LookupElement item) {
+                    if (!parameters.getPosition().getText().startsWith(" ")) {
+                        context.getDocument().insertString(parameters.getOffset() - 1, " ");
+                        PsiDocumentManager.getInstance(context.getProject()).commitDocument(context.getDocument());
+                    }
                     if (context.getCompletionChar() == '\t') {
                         context.getDocument().insertString(context.getEditor().getCaretModel().getOffset(), "\n");
                         PsiDocumentManager.getInstance(context.getProject()).commitDocument(context.getDocument());
