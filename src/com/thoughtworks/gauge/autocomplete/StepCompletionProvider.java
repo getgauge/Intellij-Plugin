@@ -103,7 +103,7 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
     }
 
     private List<String> getFilledParams(String prefix) {
-        Pattern filledParamPattern = Pattern.compile("\"[\\w ]+\"");
+        Pattern filledParamPattern = Pattern.compile("([\"'])(?:(?=(\\\\?))\\2.)*?\\1");
         Matcher matcher = filledParamPattern.matcher(prefix);
         List<String> filledParams = new ArrayList<String>();
         while (matcher.find()) {

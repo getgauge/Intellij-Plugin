@@ -28,6 +28,8 @@ public class GaugePrefixMatcher extends PrefixMatcher {
     }
 
     private static String toRegex(String prefix) {
-        return prefix.replaceAll("\"[\\w ]+\"", "<[\\\\w ]*>");
+        String result = prefix.replaceAll("([^a-zA-Z0-9 ])", "\\\\$1");
+        result = result.replaceAll("(\\\\[\"'])(?:(?=(\\\\{0,2}))\\2.)*?\\1", "<[\\\\w\\\\s]+>");
+        return result;
     }
 }
