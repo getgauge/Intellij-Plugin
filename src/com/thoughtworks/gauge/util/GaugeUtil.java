@@ -74,6 +74,11 @@ public class GaugeUtil {
         return file.getFileType() instanceof SpecFileType || file.getFileType() instanceof ConceptFileType;
     }
 
+    public static boolean isMavenModule(Module module) {
+        String isMavenOption = module.getOptionValue("org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule");
+        return isMavenOption != null && isMavenOption.toLowerCase().equals("true");
+    }
+
     public static boolean isGaugeProjectDir(File dir) {
         return containsManifest(dir) && containsSpecsDir(dir);
     }

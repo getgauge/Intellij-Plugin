@@ -19,6 +19,7 @@ package com.thoughtworks.gauge.module.lib;
 
 
 import com.intellij.openapi.module.Module;
+import com.thoughtworks.gauge.util.GaugeUtil;
 
 import static com.thoughtworks.gauge.GaugeModuleComponent.isGaugeModule;
 
@@ -30,17 +31,12 @@ public class LibHelperFactory {
 
     // Check if it is a maven module first, java deps will be added via maven so project libs dont need to be changed
     public LibHelper helperFor(Module module) {
-        if (isMavenModule(module)) {
+        if (GaugeUtil.isMavenModule(module)) {
             return new GaugeMavenModuleLibHelper(module);
         } else if (isGaugeModule(module)) {
             return new GaugeLibHelper(module);
         }
         return LibHelperFactory.DEFAULT;
-    }
-
-    private boolean isMavenModule(Module module) {
-        String isMavenOption = module.getOptionValue("org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule");
-        return isMavenOption != null && isMavenOption.toLowerCase().equals("true");
     }
 
     private class GaugeMavenModuleLibHelper extends AbstractLibHelper {

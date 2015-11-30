@@ -125,4 +125,8 @@ public class GaugeModuleComponent implements ModuleComponent {
         return GaugeModuleType.MODULE_TYPE_ID.equals(module.getOptionValue(Module.ELEMENT_TYPE)) || isGaugeProjectDir(moduleDir(module));
     }
 
+    public static boolean isGaugeProject(Module module) {
+        return isGaugeProjectDir(moduleDir(module));
+    }
+
 }
