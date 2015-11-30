@@ -28,6 +28,8 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.ReferenceRange;
 import com.thoughtworks.gauge.language.Concept;
 import com.thoughtworks.gauge.language.Specification;
+import com.thoughtworks.gauge.language.psi.SpecStep;
+import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import com.thoughtworks.gauge.language.token.ConceptTokenTypes;
 import com.thoughtworks.gauge.language.token.SpecTokenTypes;
 
@@ -52,8 +54,7 @@ public class StepCompletionContributor extends CompletionContributor {
         int offsetInFile = parameters.getOffset();
 
         PsiReference ref = insertedElement.getContainingFile().findReferenceAt(offsetInFile);
-
-        if (ref != null) {
+        if (isStep(insertedElement) && ref != null){
             List<TextRange> ranges = ReferenceRange.getRanges(ref);
             PsiElement element = ref.getElement();
             int startOffset = element.getTextRange().getStartOffset();
@@ -67,5 +68,9 @@ public class StepCompletionContributor extends CompletionContributor {
 
         }
         return parameters.getPosition().getText().replace("IntellijIdeaRulezzz ", "").trim();
+    }
+
+    private static boolean isStep(PsiElement insertedElement) {
+        return insertedElement.getContext() instanceof SpecStep;
     }
 }
