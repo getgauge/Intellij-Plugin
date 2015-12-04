@@ -205,12 +205,12 @@
                 text="Spec Format" description="Format spec files">
             <keyboard-shortcut first-keystroke="ctrl alt shift l" keymap="$default"/>
         </action>
-        <!--<action id="Gauge.Extract"-->
-        <!--class="com.thoughtworks.gauge.extract.ExtractConceptAction"-->
-        <!--text="Extract to Concept">-->
-        <!--<add-to-group group-id="RefactoringMenu" anchor="last"/>-->
-        <!--<keyboard-shortcut first-keystroke="ctrl alt c" keymap="$default"/>-->
-        <!--</action>-->
+        <action id="Gauge.Extract"
+                class="com.thoughtworks.gauge.extract.ExtractConceptAction"
+                text="Extract to Concept">
+            <add-to-group group-id="RefactoringMenu" anchor="last"/>
+            <keyboard-shortcut first-keystroke="ctrl alt c" keymap="$default"/>
+        </action>
     </actions>
 
 </idea-plugin>
