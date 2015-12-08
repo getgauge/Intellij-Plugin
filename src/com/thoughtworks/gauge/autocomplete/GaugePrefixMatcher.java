@@ -12,7 +12,7 @@ public class GaugePrefixMatcher extends PrefixMatcher {
 
     protected GaugePrefixMatcher(String prefix) {
         super(prefix);
-        regexPattern = Pattern.compile(toRegex(this.getPrefix()));
+        regexPattern = Pattern.compile(toRegex(this.getPrefix()), Pattern.CASE_INSENSITIVE);
     }
 
     @Override

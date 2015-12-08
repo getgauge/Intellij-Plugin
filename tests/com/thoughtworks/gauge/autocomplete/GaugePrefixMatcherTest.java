@@ -16,6 +16,15 @@ public class GaugePrefixMatcherTest {
     }
 
     @Test
+    public void shouldMatchCaseInsensitiveSimpleCompleteStep() {
+        String prefix = "this is a Step";
+        GaugePrefixMatcher gaugePrefixMatcher = new GaugePrefixMatcher(prefix);
+
+        String name = "This is a step";
+        assertTrue(gaugePrefixMatcher.prefixMatches(name));
+    }
+
+    @Test
     public void shouldMatchSimpleIncompleteStep() {
         String prefix = "This is";
         GaugePrefixMatcher gaugePrefixMatcher = new GaugePrefixMatcher(prefix);
