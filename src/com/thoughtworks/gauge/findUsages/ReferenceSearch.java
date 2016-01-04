@@ -19,6 +19,7 @@ package com.thoughtworks.gauge.findUsages;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.QueryExecutorBase;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReference;
@@ -40,16 +41,22 @@ public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesS
     public void processQuery(@NotNull final ReferencesSearch.SearchParameters searchParameters, @NotNull final Processor<PsiReference> processor) {
         final Class<? extends PsiElement> elementClass = searchParameters.getElementToSearch().getClass();
         if (!shouldFindUsages(searchParameters, elementClass)) return;
-        ApplicationManager.getApplication().runReadAction(new Runnable() {
+        StepCollector collector = new StepCollector(searchParameters.getElementToSearch().getProject());
+        collector.collect();
+        List<PsiElement> elements = new ArrayList<PsiElement>();
+        elements = getPsiElements(collector, elements, searchParameters.getElementToSearch());
+        final List<PsiElement> finalElements = elements;
+        ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
             @Override
             public void run() {
-                StepCollector collector = new StepCollector(searchParameters.getElementToSearch().getProject());
-                collector.collect();
-                List<PsiElement> elements = new ArrayList<PsiElement>();
-                elements = getPsiElements(collector, elements, searchParameters.getElementToSearch());
-                processElements(elements, processor);
+                ApplicationManager.getApplication().runReadAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        processElements(finalElements, processor);
+                    }
+                });
             }
-        });
+        }, "Find Usages", true, searchParameters.getElementToSearch().getProject());
     }
 
     private boolean shouldFindUsages(@NotNull ReferencesSearch.SearchParameters searchParameters, Class<? extends PsiElement> elementClass) {

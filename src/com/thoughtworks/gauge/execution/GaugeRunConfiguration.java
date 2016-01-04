@@ -159,7 +159,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         }
         Map<String, String> envs = programParameters.getEnvs();
         if (!envs.isEmpty()) {
-            commandLine.setEnvParams(envs);
+            commandLine.withEnvironment(envs);
         }
         if (!programParameters.getWorkingDirectory().isEmpty()) {
             commandLine.setWorkDirectory(new File(programParameters.getWorkingDirectory()));

@@ -59,7 +59,8 @@ public abstract class StepsBuilder {
                 if (step == null) return new ArrayList<PsiElement>();
                 specSteps.add(step);
                 currentOffset += step.getText().length();
-            }catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
         return specSteps;
     }

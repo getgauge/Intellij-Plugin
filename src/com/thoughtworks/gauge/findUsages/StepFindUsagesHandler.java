@@ -17,10 +17,7 @@
 
 package com.thoughtworks.gauge.findUsages;
 
-import com.intellij.find.findUsages.AbstractFindUsagesDialog;
-import com.intellij.find.findUsages.FindUsagesHandler;
-import com.intellij.find.findUsages.FindUsagesOptions;
-import com.intellij.find.findUsages.JavaFindUsagesHandler;
+import com.intellij.find.findUsages.*;
 import com.intellij.ide.util.SuperMethodWarningUtil;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
@@ -78,7 +75,7 @@ public class StepFindUsagesHandler extends FindUsagesHandler {
             @Override
             public void run() {
                 if (psiElement instanceof PsiMethod) {
-                    PsiMethod[] psiMethods = SuperMethodWarningUtil.checkSuperMethods((PsiMethod) psiElement, JavaFindUsagesHandler.ACTION_STRING);
+                    PsiMethod[] psiMethods = SuperMethodWarningUtil.checkSuperMethods((PsiMethod) psiElement, CustomFUH.getActionString());
                     if (psiMethods.length < 1) return;
                     for (PsiElement method : psiMethods)
                         StepFindUsagesHandler.this.processUsages(method, processor, findUsagesOptions);
@@ -120,5 +117,15 @@ public class StepFindUsagesHandler extends FindUsagesHandler {
     @Override
     public AbstractFindUsagesDialog getFindUsagesDialog(boolean b, boolean b1, boolean b2) {
         return super.getFindUsagesDialog(b, b1, b2);
+    }
+
+    private static class CustomFUH extends JavaFindUsagesHandler {
+        public CustomFUH(@NotNull PsiElement psiElement, @NotNull JavaFindUsagesHandlerFactory javaFindUsagesHandlerFactory) {
+            super(psiElement, javaFindUsagesHandlerFactory);
+        }
+
+        public static String getActionString() {
+            return ACTION_STRING;
+        }
     }
 }

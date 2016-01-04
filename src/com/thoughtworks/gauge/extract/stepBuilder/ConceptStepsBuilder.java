@@ -5,7 +5,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ConceptStepsBuilder extends StepsBuilder {

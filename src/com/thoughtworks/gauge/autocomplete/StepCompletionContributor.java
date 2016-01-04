@@ -29,7 +29,6 @@ import com.intellij.psi.ReferenceRange;
 import com.thoughtworks.gauge.language.Concept;
 import com.thoughtworks.gauge.language.Specification;
 import com.thoughtworks.gauge.language.psi.SpecStep;
-import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import com.thoughtworks.gauge.language.token.ConceptTokenTypes;
 import com.thoughtworks.gauge.language.token.SpecTokenTypes;
 
@@ -54,7 +53,7 @@ public class StepCompletionContributor extends CompletionContributor {
         int offsetInFile = parameters.getOffset();
 
         PsiReference ref = insertedElement.getContainingFile().findReferenceAt(offsetInFile);
-        if (isStep(insertedElement) && ref != null){
+        if (isStep(insertedElement) && ref != null) {
             List<TextRange> ranges = ReferenceRange.getRanges(ref);
             PsiElement element = ref.getElement();
             int startOffset = element.getTextRange().getStartOffset();

@@ -18,7 +18,7 @@
 <idea-plugin version="2">
     <id>com.thoughtworks.gauge</id>
     <name>Gauge</name>
-    <version>0.0.15</version>
+    <version>0.0.16</version>
     <vendor email="getgauge@googlegroups.com" url="http://getgauge.io">Gauge</vendor>
 
     <description><![CDATA[
@@ -126,7 +126,7 @@
     </change-notes>
 
     <!-- please see http:confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
-    <idea-version since-build="131"/>
+    <idea-version since-build="139"/>
 
     <!-- please see http:confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
          on how to target different products -->
