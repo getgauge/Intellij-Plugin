@@ -1,6 +1,8 @@
 # Intellij-Plugin
 Intellij support for [Gauge](https://github.com/getgauge/gauge) project.
 
+ [ ![Download Nightly](https://api.bintray.com/packages/gauge/Gauge-Java-Intellij/Nightly/images/download.svg) ](https://bintray.com/gauge/Gauge-Java-Intellij/Nightly/_latestVersion)
+
 Features
 -------
 The plugin provides the following basic features: 
