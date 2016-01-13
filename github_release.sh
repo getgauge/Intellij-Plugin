@@ -5,6 +5,8 @@ if [ -z "$GITHUB_TOKEN" ]; then
   exit 1
 fi
 
+cd artifacts
+
 version=$(ls Gauge-Java-Intellij-*.zip | sed "s/^Gauge-Java-Intellij-\([^;]*\).zip/\1/")
 repoName="Intellij-Plugin"
 releaseName="Gauge Intellij Plugin $version"
