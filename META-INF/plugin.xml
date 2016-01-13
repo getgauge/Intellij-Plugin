@@ -32,11 +32,18 @@
             <li>Quick Fix for unimplemented steps </li>
             <li>Execution and Debugging specs</li>
             <li>Support for Concepts</li>
+            <li>Refactoring support</li>
         </ul>
         <br>
     ]]></description>
 
     <change-notes><![CDATA[
+      <p>0.1.0</p>
+        <ul>
+             <li> Adding IntelliJ 15 compatibility changes </li>
+             <li> Bug Fixes </li>
+      </ul>
+      <br>
       <p>0.0.15</p>
       <ul>
            <li> Enhanced Find usages, Autocomplete, HTML preview and Quick fix functionality </li>
