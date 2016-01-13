@@ -7,8 +7,8 @@ fi
 
 version=$(ls Gauge-Java-Intellij-*.zip | sed "s/^Gauge-Java-Intellij-\([^;]*\).zip/\1/")
 
-$GOPATH/bin/github-release release -u getgauge -r "Gauge-Java-Intellij" --draft -t "v$version" -d "## New Features: ## Enhancements: ## Bug Fixes:" -n "Gauge-Java-Intellij $version"
+$GOPATH/bin/github-release release -u getgauge -r "Intellij-Plugin" --draft -t "v$version" -d "## New Features: ## Enhancements: ## Bug Fixes:" -n "Gauge-Java-Intellij $version"
 
 for i in `ls *.zip`; do
-    $GOPATH/bin/github-release -v upload -u getgauge -r "Gauge-Java-Intellij" -t "v$version" -n $i -f $i
+    $GOPATH/bin/github-release -v upload -u getgauge -r "Intellij-Plugin" -t "v$version" -n $i -f $i
 done
