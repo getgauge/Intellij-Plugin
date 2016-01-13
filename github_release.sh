@@ -6,9 +6,11 @@ if [ -z "$GITHUB_TOKEN" ]; then
 fi
 
 version=$(ls Gauge-Java-Intellij-*.zip | sed "s/^Gauge-Java-Intellij-\([^;]*\).zip/\1/")
+repoName="Intellij-Plugin"
+releaseName="Gauge Intellij Plugin $version"
+artifact="Gauge-Java-Intellij-$version.zip"
+releaseDescription="## New Features: ## Enhancements: ## Bug Fixes:"
 
-$GOPATH/bin/github-release release -u getgauge -r "Intellij-Plugin" --draft -t "v$version" -d "## New Features: ## Enhancements: ## Bug Fixes:" -n "Gauge-Java-Intellij $version"
+$GOPATH/bin/github-release release -u getgauge -r "$repoName" --draft -t "v$version" -d "$releaseDescription" -n "$releaseName"
 
-cd artifacts
-
-$GOPATH/bin/github-release -v upload -u getgauge -r "Intellij-Plugin" -t "v$version" -n "Gauge Intellij Plugin $version" -f "Gauge-Java-Intellij-$version.zip"
+$GOPATH/bin/github-release -v upload -u getgauge -r "$repoName" -t "v$version" -n "$artifact" -f "$artifact"
