@@ -16,15 +16,6 @@
           <text value="Number of parallel nodes depending on system performance"/>
         </properties>
       </component>
-      <component id="be9ea" class="javax.swing.JRadioButton" binding="inParallel">
-        <constraints>
-          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="In Parallel"/>
-          <toolTipText value="Select to execute specifications in parallel"/>
-        </properties>
-      </component>
       <component id="573b8" class="javax.swing.JTextField" binding="numberOfParallelNodes">
         <constraints>
           <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
@@ -105,6 +96,15 @@
         </constraints>
         <properties>
           <toolTipText value="e.g. 1-5, 5, 3-6"/>
+        </properties>
+      </component>
+      <component id="752f8" class="javax.swing.JCheckBox" binding="inParallel">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="In Parallel"/>
+          <toolTipText value="Select to execute specifications in parallel"/>
         </properties>
       </component>
     </children>

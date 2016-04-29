@@ -12,7 +12,7 @@ public class GaugeExecutionConfigurationSettingsEditor extends SettingsEditor<Ga
     private JTextField environment;
     private JPanel configWindow;
     private JTextField tags;
-    private JRadioButton inParallel;
+    private JCheckBox inParallel;
     private JTextField numberOfParallelNodes;
     private CommonProgramParametersPanel commonProgramParameters;
     private JTextField rowsRange;
