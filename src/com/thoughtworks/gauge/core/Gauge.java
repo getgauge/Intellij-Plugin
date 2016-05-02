@@ -18,17 +18,26 @@
 package com.thoughtworks.gauge.core;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.thoughtworks.gauge.reference.ReferenceCache;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Hashtable;
-import java.util.Iterator;
+import java.util.*;
 
 public class Gauge {
+    private static final String GROUP_ID = "external.system.module.group";
+    private static final String LINKED_ID = "external.linked.project.id";
     private static Hashtable<Module, GaugeService> gaugeProjectHandle = new Hashtable<Module, GaugeService>();
+    private static HashMap<String, HashSet<Module>> linkedModulesMap = new HashMap<String, HashSet<Module>>();
     private static Hashtable<Module, ReferenceCache> moduleReferenceCaches = new Hashtable<Module, ReferenceCache>();
 
     public static void addModule(Module module, GaugeService gaugeService) {
-        gaugeProjectHandle.put(module, gaugeService);
+        String value = getProjectGroupValue(module);
+        String optionValue = module.getOptionValue(LINKED_ID);
+        if (optionValue == null) optionValue = module.getName();
+        if (!optionValue.contains(":"))
+            gaugeProjectHandle.put(module, gaugeService);
+        addToModulesMap(module, value);
     }
 
     public static GaugeService getGaugeService(Module module, boolean moduleDependent) {
@@ -36,7 +45,16 @@ public class Gauge {
             return null;
         }
         GaugeService service = gaugeProjectHandle.get(module);
-        return (service == null && !moduleDependent) ? getGaugeService() : service;
+        if (service != null)    return service;
+        Set<Module> modules = getSubModules(module);
+        for (Module m : modules) {
+            service = gaugeProjectHandle.get(m);
+            if (service != null) {
+                addModule(module, service);
+                return service;
+            }
+        }
+        return moduleDependent ? null : getGaugeService();
     }
 
     public static ReferenceCache getReferenceCache(Module module) {
@@ -46,6 +64,32 @@ public class Gauge {
             moduleReferenceCaches.put(module, referenceCache);
         }
         return referenceCache;
+    }
+
+    public static HashSet<Module> getSubModules(Module module) {
+        String value = getProjectGroupValue(module);
+        HashSet<Module> modules = linkedModulesMap.get(value);
+        if (modules != null)    return modules;
+        modules = new HashSet<Module>();
+        for (Module m : ModuleManager.getInstance(module.getProject()).getModules())
+            if (getProjectGroupValue(m).equals(value)) {
+                modules.add(m);
+                addToModulesMap(m, value);
+            }
+        return modules;
+    }
+
+    private static void addToModulesMap(Module module, String name) {
+        if (!linkedModulesMap.containsKey(name))
+            linkedModulesMap.put(name, new HashSet<Module>());
+        linkedModulesMap.get(name).add(module);
+    }
+
+    @NotNull
+    private static String getProjectGroupValue(Module module) {
+        String value = module.getOptionValue(GROUP_ID);
+        if (value == null)  value = module.getName();
+        return value;
     }
 
     private static GaugeService getGaugeService() {

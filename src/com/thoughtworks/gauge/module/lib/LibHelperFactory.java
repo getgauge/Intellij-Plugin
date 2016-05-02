@@ -31,17 +31,17 @@ public class LibHelperFactory {
 
     // Check if it is a maven module first, java deps will be added via maven so project libs dont need to be changed
     public LibHelper helperFor(Module module) {
-        if (GaugeUtil.isMavenModule(module)) {
-            return new GaugeMavenModuleLibHelper(module);
+        if (GaugeUtil.isMavenModule(module) || GaugeUtil.isGradleModule(module)) {
+            return new GaugeModuleLibHelper(module);
         } else if (isGaugeModule(module)) {
             return new GaugeLibHelper(module);
         }
         return LibHelperFactory.DEFAULT;
     }
 
-    private class GaugeMavenModuleLibHelper extends AbstractLibHelper {
+    private class GaugeModuleLibHelper extends AbstractLibHelper {
 
-        public GaugeMavenModuleLibHelper(Module module) {
+        public GaugeModuleLibHelper(Module module) {
             super(module);
         }
 

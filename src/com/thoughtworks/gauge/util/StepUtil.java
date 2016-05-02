@@ -34,10 +34,7 @@ import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import com.thoughtworks.gauge.reference.ReferenceCache;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static com.thoughtworks.gauge.GaugeConstant.STEP_ANNOTATION_QUALIFIER;
 
@@ -202,8 +199,10 @@ public class StepUtil {
     public static Collection<PsiMethod> getStepMethods(Module module) {
         final PsiClass step = JavaPsiFacade.getInstance(module.getProject()).findClass(STEP_ANNOTATION_QUALIFIER, GlobalSearchScope.allScope(module.getProject()));
         if (step != null) {
-            final Query<PsiMethod> psiMethods = AnnotatedElementsSearch.searchPsiMethods(step, GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, true));
-            return psiMethods.findAll();
+            Collection<PsiMethod> methods = new ArrayList<PsiMethod>();
+            for (Module m : Gauge.getSubModules(module))
+                methods.addAll(AnnotatedElementsSearch.searchPsiMethods(step, GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(m, true)).findAll());
+            return methods;
         }
         return new ArrayList<PsiMethod>();
     }

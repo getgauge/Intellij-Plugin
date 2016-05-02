@@ -31,11 +31,10 @@ public abstract class AbstractLibHelper implements LibHelper {
     public AbstractLibHelper(Module module) {
         this.module = module;
         if (isGaugeProject(module)) {
-            if (!GaugeUtil.isMavenModule(module))
+            if (!GaugeUtil.isMavenModule(module) && !GaugeUtil.isGradleModule(module))
                 GaugeModuleComponent.makeGaugeModuleType(module);
-            if (Gauge.getGaugeService(module, true) == null) {
+            if (Gauge.getGaugeService(module, true) == null)
                 GaugeModuleComponent.createGaugeService(module);
-            }
         }
     }
 

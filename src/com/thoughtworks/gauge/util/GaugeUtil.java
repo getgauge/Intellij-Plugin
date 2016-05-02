@@ -10,6 +10,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.EnvironmentUtil;
 import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.GaugeConstant;
+import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import com.thoughtworks.gauge.language.ConceptFileType;
 import com.thoughtworks.gauge.language.SpecFile;
@@ -102,6 +103,12 @@ public class GaugeUtil {
 
 
     public static String classpathForModule(Module module) {
+        if (GaugeUtil.isGradleModule(module)) {
+            String cp = "";
+            for (Module module1 : Gauge.getSubModules(module))
+                cp += OrderEnumerator.orderEntries(module1).recursively().getPathsList().getPathsString() + ":";
+            return cp;
+        }
         return OrderEnumerator.orderEntries(module).recursively().getPathsList().getPathsString();
     }
 
@@ -124,5 +131,9 @@ public class GaugeUtil {
             return ModuleUtil.findModuleForPsiElement(element);
         }
         return ModuleUtil.findModuleForPsiElement(file);
+    }
+
+    public static boolean isGradleModule(Module module) {
+        return "GRADLE".equalsIgnoreCase(module.getOptionValue("external.system.id"));
     }
 }
