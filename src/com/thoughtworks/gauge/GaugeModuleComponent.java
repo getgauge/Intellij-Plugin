@@ -51,6 +51,7 @@ public class GaugeModuleComponent implements ModuleComponent {
 
     @Override
     public void disposeComponent() {
+        Gauge.disposeComponent(module);
     }
 
     @NotNull

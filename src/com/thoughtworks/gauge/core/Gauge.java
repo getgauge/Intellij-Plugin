@@ -96,4 +96,8 @@ public class Gauge {
         Iterator<GaugeService> iterator = gaugeProjectHandle.values().iterator();
         return iterator.hasNext() ? iterator.next() : null;
     }
+
+    public static void disposeComponent(Module module) {
+        linkedModulesMap.remove(getProjectGroupValue(module));
+    }
 }
