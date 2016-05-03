@@ -41,7 +41,7 @@ public class StepAnnotator implements Annotator {
     }
 
     private void createWarning(PsiElement element, AnnotationHolder holder, SpecStep step) {
-        if (step.getStepValue().getStepText().isEmpty()) {
+        if (step.getStepValue().getStepText().trim().isEmpty()) {
             holder.createErrorAnnotation(element.getTextRange(), "Step should not be blank");
         }
         else if (!StepUtil.isImplementedStep(step, GaugeUtil.moduleForPsiElement(step)))
