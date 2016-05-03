@@ -46,17 +46,15 @@ public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesS
         List<PsiElement> elements = new ArrayList<PsiElement>();
         elements = getPsiElements(collector, elements, searchParameters.getElementToSearch());
         final List<PsiElement> finalElements = elements;
-        ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
-            @Override
-            public void run() {
-                ApplicationManager.getApplication().runReadAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        processElements(finalElements, processor);
-                    }
-                });
-            }
-        }, "Find Usages", true, searchParameters.getElementToSearch().getProject());
+        if (!ProgressManager.getInstance().hasProgressIndicator())
+            ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
+                @Override
+                public void run() {
+                    processElements(finalElements, processor);
+                }
+            }, "Find Usages", true, searchParameters.getElementToSearch().getProject());
+        else
+            processElements(finalElements, processor);
     }
 
     private boolean shouldFindUsages(@NotNull ReferencesSearch.SearchParameters searchParameters, Class<? extends PsiElement> elementClass) {
@@ -66,9 +64,14 @@ public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesS
         return !searchParameters.getScope().getDisplayName().equals("<unknown scope>") && shouldFindUsages;
     }
 
-    private void processElements(List<PsiElement> elements, Processor<PsiReference> processor) {
-        for (PsiElement element : elements)
-            processor.process(element.getReference());
+    private void processElements(final List<PsiElement> elements, final Processor<PsiReference> processor) {
+        ApplicationManager.getApplication().runReadAction(new Runnable() {
+            @Override
+            public void run() {
+                for (PsiElement element : elements)
+                    processor.process(element.getReference());
+            }
+        });
     }
 
     private List<PsiElement> getPsiElements(StepCollector collector, List<PsiElement> elements, PsiElement element) {
