@@ -23,6 +23,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.template.TemplateBuilder;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -70,6 +71,11 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
             element = element.withInsertHandler(new InsertHandler<LookupElement>() {
                 @Override
                 public void handleInsert(InsertionContext context, LookupElement item) {
+                    int lineStartOffset = context.getDocument().getLineStartOffset(context.getEditor().getCaretModel().getLogicalPosition().line);
+                    if (!context.getDocument().getText(new TextRange(lineStartOffset + 1, lineStartOffset + 2)).equals(" ")) {
+                        context.getDocument().insertString(lineStartOffset + 1, " ");
+                        PsiDocumentManager.getInstance(context.getProject()).commitDocument(context.getDocument());
+                    }
                     if (context.getCompletionChar() == '\t') {
                         context.getDocument().insertString(context.getEditor().getCaretModel().getOffset(), "\n");
                         PsiDocumentManager.getInstance(context.getProject()).commitDocument(context.getDocument());
@@ -99,7 +105,7 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
     }
 
     private List<String> getFilledParams(String prefix) {
-        Pattern filledParamPattern = Pattern.compile("\"[\\w ]+\"");
+        Pattern filledParamPattern = Pattern.compile("([\"'])(?:(?=(\\\\?))\\2.)*?\\1");
         Matcher matcher = filledParamPattern.matcher(prefix);
         List<String> filledParams = new ArrayList<String>();
         while (matcher.find()) {
