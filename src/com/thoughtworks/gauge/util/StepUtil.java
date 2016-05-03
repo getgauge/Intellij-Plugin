@@ -192,7 +192,7 @@ public class StepUtil {
     }
 
     private static boolean isGaugeAnnotation(PsiAnnotation annotation) {
-        return annotation.getQualifiedName().equals(Step.class.getCanonicalName());
+        return Step.class.getCanonicalName().equals(annotation.getQualifiedName());
     }
 
 

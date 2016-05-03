@@ -30,6 +30,7 @@ import com.thoughtworks.gauge.language.psi.SpecPsiImplUtil;
 import com.thoughtworks.gauge.language.psi.SpecStep;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
+import com.thoughtworks.gauge.util.GaugeUtil;
 import com.thoughtworks.gauge.util.StepUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,13 +40,10 @@ import java.util.List;
 public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
     @Override
     public void processQuery(@NotNull final ReferencesSearch.SearchParameters searchParameters, @NotNull final Processor<PsiReference> processor) {
-        final Class<? extends PsiElement> elementClass = searchParameters.getElementToSearch().getClass();
-        if (!shouldFindUsages(searchParameters, elementClass)) return;
+        if (!shouldFindUsages(searchParameters, searchParameters.getElementToSearch())) return;
         StepCollector collector = new StepCollector(searchParameters.getElementToSearch().getProject());
         collector.collect();
-        List<PsiElement> elements = new ArrayList<PsiElement>();
-        elements = getPsiElements(collector, elements, searchParameters.getElementToSearch());
-        final List<PsiElement> finalElements = elements;
+        final List<PsiElement> finalElements = getPsiElements(collector, searchParameters.getElementToSearch());
         if (!ProgressManager.getInstance().hasProgressIndicator())
             ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
                 @Override
@@ -57,24 +55,8 @@ public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesS
             processElements(finalElements, processor);
     }
 
-    private boolean shouldFindUsages(@NotNull ReferencesSearch.SearchParameters searchParameters, Class<? extends PsiElement> elementClass) {
-        Boolean shouldFindUsages = elementClass.equals(ConceptStepImpl.class) || elementClass.equals(SpecStepImpl.class);
-        if (searchParameters.getElementToSearch() instanceof PsiMethod)
-            shouldFindUsages = StepUtil.getGaugeStepAnnotationValues((PsiMethod) searchParameters.getElementToSearch()).size() > 0;
-        return !searchParameters.getScope().getDisplayName().equals("<unknown scope>") && shouldFindUsages;
-    }
-
-    private void processElements(final List<PsiElement> elements, final Processor<PsiReference> processor) {
-        ApplicationManager.getApplication().runReadAction(new Runnable() {
-            @Override
-            public void run() {
-                for (PsiElement element : elements)
-                    processor.process(element.getReference());
-            }
-        });
-    }
-
-    private List<PsiElement> getPsiElements(StepCollector collector, List<PsiElement> elements, PsiElement element) {
+    public static List<PsiElement> getPsiElements(StepCollector collector, PsiElement element) {
+        List<PsiElement> elements = new ArrayList<PsiElement>();
         if (element.getClass().equals(ConceptStepImpl.class))
             elements = collector.get(getConceptStepText((ConceptStepImpl) element));
         else if (element.getClass().equals(PsiMethodImpl.class))
@@ -87,16 +69,30 @@ public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesS
         return elements;
     }
 
-    private String getConceptStepText(ConceptStepImpl element) {
+    private boolean shouldFindUsages(@NotNull ReferencesSearch.SearchParameters searchParameters, PsiElement element) {
+        return !searchParameters.getScope().getDisplayName().equals("<unknown scope>") && GaugeUtil.isGaugeElement(element);
+    }
+
+    private void processElements(final List<PsiElement> elements, final Processor<PsiReference> processor) {
+        ApplicationManager.getApplication().runReadAction(new Runnable() {
+            @Override
+            public void run() {
+                for (PsiElement element : elements)
+                    processor.process(element.getReference());
+            }
+        });
+    }
+
+    private static String getConceptStepText(ConceptStepImpl element) {
         String text = element.getStepValue().getStepText().trim();
         return !text.equals("") && text.charAt(0) == '*' || text.charAt(0) == '#' ? text.substring(1).trim() : text;
     }
 
-    private String getStepText(SpecStep elementToSearch) {
+    private static String getStepText(SpecStep elementToSearch) {
         return elementToSearch.getStepValue().getStepText().trim();
     }
 
-    private String getStepText(String text, PsiElement element) {
+    private static String getStepText(String text, PsiElement element) {
         return SpecPsiImplUtil.getStepValueFor(element, text.charAt(0) == '"' ? text.substring(1, text.length() - 1) : text, false).getStepText();
     }
 }

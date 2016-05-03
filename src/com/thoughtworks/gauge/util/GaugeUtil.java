@@ -7,6 +7,7 @@ import com.intellij.openapi.roots.OrderEnumerator;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiMethod;
 import com.intellij.util.EnvironmentUtil;
 import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.GaugeConstant;
@@ -135,5 +136,9 @@ public class GaugeUtil {
 
     public static boolean isGradleModule(Module module) {
         return "GRADLE".equalsIgnoreCase(module.getOptionValue("external.system.id"));
+    }
+
+    public static boolean isGaugeElement(PsiElement element) {
+        return StepUtil.isMethod(element) ? StepUtil.getGaugeStepAnnotationValues((PsiMethod) element).size() > 0 : (StepUtil.isConcept(element) || StepUtil.isStep(element));
     }
 }

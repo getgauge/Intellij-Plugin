@@ -195,6 +195,7 @@
         <lang.commenter language="Specification" implementationClass="com.thoughtworks.gauge.language.StepCommenter"/>
         <lang.commenter language="Concept" implementationClass="com.thoughtworks.gauge.language.StepCommenter"/>
         <problemFileHighlightFilter implementation="com.thoughtworks.gauge.highlight.ErrorHighLighter"/>
+        <implicitUsageProvider implementation="com.thoughtworks.gauge.findUsages.ImplUsageProvider"/>
     </extensions>
 
     <application-components>
