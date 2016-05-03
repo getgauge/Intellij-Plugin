@@ -121,7 +121,10 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
             commandLine.addParameter(TAGS_FLAG);
             commandLine.addParameter(tags);
         }
-        commandLine.setWorkDirectory(GaugeUtil.moduleDir(getModule()));
+        commandLine.setWorkDirectory(env.getProject().getBasePath());
+        Module module = getModule();
+        if (module != null)
+            commandLine.setWorkDirectory(GaugeUtil.moduleDir(module));
         if (!Strings.isBlank(environment)) {
             commandLine.addParameters(ENV_FLAG, environment);
         }
@@ -139,7 +142,9 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
     }
 
     private void addProjectClasspath(GeneralCommandLine commandLine) {
-        commandLine.getEnvironment().put(GAUGE_CUSTOM_CLASSPATH, GaugeUtil.classpathForModule(getModule()));
+        Module module = getModule();
+        if (module != null)
+            commandLine.getEnvironment().put(GAUGE_CUSTOM_CLASSPATH, GaugeUtil.classpathForModule(module));
     }
 
     private void addTableRowsRangeFlags(GeneralCommandLine commandLine) {
@@ -246,9 +251,8 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
     }
 
     public Module getModule() {
-        if (module == null) {
+        if (module == null)
             return ModuleManager.getInstance(getProject()).findModuleByName(this.moduleName);
-        }
         return module;
     }
 
