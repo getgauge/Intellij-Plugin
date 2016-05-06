@@ -17,6 +17,7 @@ import com.thoughtworks.gauge.language.ConceptFileType;
 import com.thoughtworks.gauge.language.SpecFile;
 import com.thoughtworks.gauge.language.SpecFileType;
 import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.serialization.PathMacroUtil;
 
 import java.io.File;
@@ -95,6 +96,8 @@ public class GaugeUtil {
     }
 
     public static File moduleDir(Module module) {
+        if (GaugeUtil.isGradleModule(module))
+            return GaugeUtil.getProjectDirForGradleProject(module);
         return new File(moduleDirPath(module));
     }
 
@@ -141,4 +144,10 @@ public class GaugeUtil {
     public static boolean isGaugeElement(PsiElement element) {
         return StepUtil.isMethod(element) ? StepUtil.getGaugeStepAnnotationValues((PsiMethod) element).size() > 0 : (StepUtil.isConcept(element) || StepUtil.isStep(element));
     }
+
+    @NotNull
+    public static File getProjectDirForGradleProject(Module module) {
+        return new File(module.getModuleFilePath().split(".idea")[0]);
+    }
+
 }

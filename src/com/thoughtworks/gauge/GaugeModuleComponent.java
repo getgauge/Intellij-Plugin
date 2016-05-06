@@ -28,7 +28,6 @@ import com.thoughtworks.gauge.module.lib.LibHelperFactory;
 import com.thoughtworks.gauge.util.SocketUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.IOException;
 
 import static com.thoughtworks.gauge.GaugeConstant.DAEMONIZE_FLAG;
@@ -128,7 +127,6 @@ public class GaugeModuleComponent implements ModuleComponent {
     }
 
     public static boolean isGaugeProject(Module module) {
-        return isGradleModule(module) ? isGaugeProjectDir(new File(module.getModuleFilePath().split(".idea")[0])) : isGaugeProjectDir(moduleDir(module));
+        return isGaugeProjectDir(moduleDir(module));
     }
-
 }
