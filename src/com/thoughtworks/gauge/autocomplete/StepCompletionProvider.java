@@ -134,18 +134,20 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
                 return steps;
             GaugeConnection gaugeConnection = gaugeService.getGaugeConnection();
             if (gaugeConnection != null) {
-                List<StepValue> stepValues = gaugeConnection.fetchAllSteps();
-                for (StepValue stepValue : stepValues) {
-                    steps.add(new Type(stepValue.getStepAnnotationText(), STEP));
-                }
-                for (ConceptInfo conceptInfo : gaugeConnection.fetchAllConcepts()) {
-                    steps.add(new Type(conceptInfo.getStepValue().getStepAnnotationText(), CONCEPT));
-                }
+                for (StepValue stepValue : gaugeConnection.fetchAllSteps())
+                    addStep(steps, stepValue);
+                for (ConceptInfo conceptInfo : gaugeConnection.fetchAllConcepts())
+                    addStep(steps, conceptInfo.getStepValue());
                 return steps;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         return steps;
+    }
+
+    private void addStep(List<Type> steps, StepValue stepValue) {
+        if (stepValue.getStepAnnotationText().trim().isEmpty()) return;
+        steps.add(new Type(stepValue.getStepAnnotationText(), STEP));
     }
 }
