@@ -17,6 +17,9 @@
 
 package com.thoughtworks.gauge.formatter;
 
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
@@ -28,7 +31,10 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeExecPath;
 
@@ -51,19 +57,30 @@ public class SpecFormatter extends AnAction {
         if (doc != null) {
             FileDocumentManager.getInstance().saveDocument(doc);
         }
-
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(getGaugeExecPath(), "--format", fileName);
             processBuilder.directory(new File(projectDir));
             Process process = processBuilder.start();
             int exitCode = process.waitFor();
-            if (exitCode == 0) {
-                VirtualFileManager.getInstance().syncRefresh();
-                selectedFile.refresh(false, false);
+            if (exitCode != 0) {
+                String output = getOutput(process);
+                Notifications.Bus.notify(new Notification("Spec Formatting", "Error: Spec Formatting", output, NotificationType.ERROR));
+                return;
             }
+            VirtualFileManager.getInstance().syncRefresh();
+            selectedFile.refresh(false, false);
         } catch (Exception e) {
             e.printStackTrace();
             Messages.showErrorDialog("Error on formatting spec", "Format Error");
         }
+    }
+
+    private String getOutput(Process process) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        String lastProcessStdout = "";
+        String line;
+        while ((line = br.readLine()) != null)
+            lastProcessStdout = lastProcessStdout.concat(line).concat("\n");
+        return lastProcessStdout;
     }
 }
