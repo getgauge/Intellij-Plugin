@@ -40,19 +40,15 @@ import java.util.List;
 public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
     @Override
     public void processQuery(@NotNull final ReferencesSearch.SearchParameters searchParameters, @NotNull final Processor<PsiReference> processor) {
-        if (!shouldFindUsages(searchParameters, searchParameters.getElementToSearch())) return;
-        StepCollector collector = new StepCollector(searchParameters.getElementToSearch().getProject());
-        collector.collect();
-        final List<PsiElement> finalElements = getPsiElements(collector, searchParameters.getElementToSearch());
         if (!ProgressManager.getInstance().hasProgressIndicator())
             ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
                 @Override
                 public void run() {
-                    processElements(finalElements, processor);
+                    processElements(searchParameters, processor);
                 }
             }, "Find Usages", true, searchParameters.getElementToSearch().getProject());
         else
-            processElements(finalElements, processor);
+            processElements(searchParameters, processor);
     }
 
     public static List<PsiElement> getPsiElements(StepCollector collector, PsiElement element) {
@@ -73,10 +69,14 @@ public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesS
         return !searchParameters.getScope().getDisplayName().equals("<unknown scope>") && GaugeUtil.isGaugeElement(element);
     }
 
-    private void processElements(final List<PsiElement> elements, final Processor<PsiReference> processor) {
+    private void processElements(final ReferencesSearch.SearchParameters searchParameters, final Processor<PsiReference> processor) {
         ApplicationManager.getApplication().runReadAction(new Runnable() {
             @Override
             public void run() {
+                if (!shouldFindUsages(searchParameters, searchParameters.getElementToSearch())) return;
+                StepCollector collector = new StepCollector(searchParameters.getElementToSearch().getProject());
+                collector.collect();
+                final List<PsiElement> elements = getPsiElements(collector, searchParameters.getElementToSearch());
                 for (PsiElement element : elements)
                     processor.process(element.getReference());
             }
