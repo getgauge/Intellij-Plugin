@@ -22,6 +22,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleComponent;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
+import com.thoughtworks.gauge.core.GaugeVersion;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import com.thoughtworks.gauge.module.GaugeModuleType;
 import com.thoughtworks.gauge.module.lib.LibHelperFactory;
@@ -62,6 +63,7 @@ public class GaugeModuleComponent implements ModuleComponent {
     @Override
     public void projectOpened() {
         new LibHelperFactory().helperFor(module).checkDeps();
+        GaugeVersion.updateVersionInfo();
     }
 
     @Override

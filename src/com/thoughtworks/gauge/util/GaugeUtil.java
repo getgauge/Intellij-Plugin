@@ -20,7 +20,10 @@ import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.serialization.PathMacroUtil;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 import static com.thoughtworks.gauge.Constants.SPECS_DIR;
 
@@ -150,4 +153,12 @@ public class GaugeUtil {
         return new File(module.getModuleFilePath().split(".idea")[0]);
     }
 
+    public static String getOutput(Process process) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        String lastProcessStdout = "";
+        String line;
+        while ((line = br.readLine()) != null)
+            lastProcessStdout = lastProcessStdout.concat(line).concat("\n");
+        return lastProcessStdout;
+    }
 }

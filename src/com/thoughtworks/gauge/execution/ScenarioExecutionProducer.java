@@ -23,9 +23,11 @@ import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.thoughtworks.gauge.core.GaugeVersion;
 import com.thoughtworks.gauge.language.SpecFile;
 import com.thoughtworks.gauge.language.psi.impl.SpecScenarioImpl;
 import com.thoughtworks.gauge.util.GaugeUtil;
@@ -35,14 +37,7 @@ import static com.thoughtworks.gauge.util.GaugeUtil.isSpecFile;
 public class ScenarioExecutionProducer extends GaugeExecutionProducer {
     private final int NO_SCENARIOS = -1;
     private final int NON_SCENARIO_CONTEXT = -2;
-
-    public ScenarioExecutionProducer() {
-        super();
-    }
-
-    protected ScenarioExecutionProducer(ConfigurationFactory configurationFactory) {
-        super(configurationFactory);
-    }
+    private static final String VERSION  = "0.4.0";
 
     @Override
     protected boolean setupConfigurationFromContext(RunConfiguration configuration, ConfigurationContext context, Ref sourceElement) {
@@ -62,17 +57,17 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
 
         try {
             String name = context.getPsiLocation().getContainingFile().getVirtualFile().getCanonicalPath();
-            int scenarioIndex = getScenarioIndex(context, context.getPsiLocation().getContainingFile());
-            if (scenarioIndex == NO_SCENARIOS) {
+            int scenarioIdentifier = getScenarioIdentifier(context);
+            if (scenarioIdentifier == NO_SCENARIOS) {
                 configuration.setName("Context step(s)");
                 ((GaugeRunConfiguration) configuration).setSpecsToExecute(name + ":0");
-            } else if (scenarioIndex == NON_SCENARIO_CONTEXT) {
+            } else if (scenarioIdentifier == NON_SCENARIO_CONTEXT) {
                 configuration.setName("Scenario (default)");
                 ((GaugeRunConfiguration) configuration).setSpecsToExecute(name + ":0");
             } else {
                 String scenarioName = getScenarioName(context);
                 configuration.setName(scenarioName);
-                ((GaugeRunConfiguration) configuration).setSpecsToExecute(name + ":" + scenarioIndex);
+                ((GaugeRunConfiguration) configuration).setSpecsToExecute(name + ":" + scenarioIdentifier);
             }
             ((GaugeRunConfiguration) configuration).setModule(module);
             return true;
@@ -82,6 +77,14 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
         return true;
     }
 
+    private int getScenarioIdentifier(ConfigurationContext context) {
+        PsiElement location = context.getPsiLocation();
+        if (location == null) {
+            return -1;
+        }
+        int lineNumber = StringUtil.offsetToLineNumber(location.getContainingFile().getText(), location.getTextOffset()) + 1;
+        return GaugeVersion.isGreaterThan(VERSION) ? lineNumber : getScenarioIndex(context, location.getContainingFile());
+    }
 
     private String getScenarioName(ConfigurationContext context) {
         PsiElement selectedElement = context.getPsiLocation();

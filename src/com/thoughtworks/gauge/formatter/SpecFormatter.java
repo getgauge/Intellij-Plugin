@@ -30,6 +30,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.thoughtworks.gauge.util.GaugeUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -63,7 +64,7 @@ public class SpecFormatter extends AnAction {
             Process process = processBuilder.start();
             int exitCode = process.waitFor();
             if (exitCode != 0) {
-                String output = getOutput(process);
+                String output = GaugeUtil.getOutput(process);
                 Notifications.Bus.notify(new Notification("Spec Formatting", "Error: Spec Formatting", output, NotificationType.ERROR));
                 return;
             }
@@ -73,14 +74,5 @@ public class SpecFormatter extends AnAction {
             e.printStackTrace();
             Messages.showErrorDialog("Error on formatting spec", "Format Error");
         }
-    }
-
-    private String getOutput(Process process) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        String lastProcessStdout = "";
-        String line;
-        while ((line = br.readLine()) != null)
-            lastProcessStdout = lastProcessStdout.concat(line).concat("\n");
-        return lastProcessStdout;
     }
 }
