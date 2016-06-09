@@ -59,6 +59,9 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
     private static final String PARALLEL_NODES_FLAG = "-n";
     private static final String TABLE_ROWS_FLAG = "--table-rows";
     public static final String GAUGE_CUSTOM_CLASSPATH = "gauge_custom_classpath";
+    private static final String SPEC_FILE_DELIMITER = "||";
+    private static final java.lang.String SPEC_FILE_DELIMITER_REGEX = "\\|\\|";
+
     private String specsToExecute;
     private Module module;
     private String environment;
@@ -191,7 +194,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
     }
 
     private void addSpecs(GeneralCommandLine commandLine, String specsToExecute) {
-        String[] specNames = specsToExecute.split(",");
+        String[] specNames = specsToExecute.split(SPEC_FILE_DELIMITER_REGEX);
         for (String specName : specNames) {
             if (!specName.isEmpty()) {
                 commandLine.addParameter(specName.trim());
@@ -277,7 +280,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         for (String specName : specsArrayToExecute) {
             builder.append(specName);
             if (specsArrayToExecute.indexOf(specName) != specsArrayToExecute.size() - 1) {
-                builder.append(",");
+                builder.append(SPEC_FILE_DELIMITER);
             }
         }
         setSpecsToExecute(builder.toString());
