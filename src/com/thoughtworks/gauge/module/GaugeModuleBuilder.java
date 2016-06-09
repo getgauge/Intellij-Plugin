@@ -48,8 +48,8 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
 
 
     public void setupRootModel(ModifiableRootModel modifiableRootModel) throws ConfigurationException {
-        super.setupRootModel(modifiableRootModel);
         checkGaugeIsInstalled();
+        super.setupRootModel(modifiableRootModel);
         gaugeInit(modifiableRootModel);
         new GaugeLibHelper(modifiableRootModel.getModule()).checkDeps();
     }
