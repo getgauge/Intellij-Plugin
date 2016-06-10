@@ -34,13 +34,14 @@ import com.thoughtworks.gauge.util.GaugeUtil;
 import com.thoughtworks.gauge.util.StepUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
     @Override
     public void processQuery(@NotNull final ReferencesSearch.SearchParameters searchParameters, @NotNull final Processor<PsiReference> processor) {
-        if (!ProgressManager.getInstance().hasProgressIndicator())
+        if (EventQueue.isDispatchThread())
             ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
                 @Override
                 public void run() {
