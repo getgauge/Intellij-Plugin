@@ -113,16 +113,7 @@ public class GaugeLibHelper extends AbstractLibHelper {
         LibraryTable libraryTable = model.getModuleLibraryTable();
         Library library = libraryTable.getLibraryByName(GAUGE_LIB);
         ProjectLib latestGaugeLib = gaugeLib(model.getModule());
-        boolean updateLibEntry;
-        try {
-            String libEntry = getClassesRootFrom(library.getModifiableModel());
-            updateLibEntry = !(new URL(libEntry).getFile().equals(latestGaugeLib.getDir().getAbsolutePath()));
-        } catch (MalformedURLException e) {
-            updateLibEntry = true;
-        }
-        if (updateLibEntry) {
-            updateLibrary(library, latestGaugeLib);
-        }
+        updateLibrary(library, latestGaugeLib);
     }
 
     private void updateLibrary(Library library, ProjectLib newLib) {
