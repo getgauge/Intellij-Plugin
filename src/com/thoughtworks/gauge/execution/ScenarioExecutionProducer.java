@@ -18,7 +18,6 @@
 package com.thoughtworks.gauge.execution;
 
 import com.intellij.execution.actions.ConfigurationContext;
-import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.module.Module;
@@ -37,7 +36,7 @@ import static com.thoughtworks.gauge.util.GaugeUtil.isSpecFile;
 public class ScenarioExecutionProducer extends GaugeExecutionProducer {
     private final int NO_SCENARIOS = -1;
     private final int NON_SCENARIO_CONTEXT = -2;
-    private static final String VERSION  = "0.4.0";
+    private static final String VERSION = "0.4.0";
 
     @Override
     protected boolean setupConfigurationFromContext(RunConfiguration configuration, ConfigurationContext context, Ref sourceElement) {
@@ -57,13 +56,9 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
 
         try {
             String name = context.getPsiLocation().getContainingFile().getVirtualFile().getCanonicalPath();
-            int scenarioIdentifier = getScenarioIdentifier(context);
-            if (scenarioIdentifier == NO_SCENARIOS) {
-                configuration.setName("Context step(s)");
-                ((GaugeRunConfiguration) configuration).setSpecsToExecute(name + ":0");
-            } else if (scenarioIdentifier == NON_SCENARIO_CONTEXT) {
-                configuration.setName("Scenario (default)");
-                ((GaugeRunConfiguration) configuration).setSpecsToExecute(name + ":0");
+            int scenarioIdentifier = getScenarioIdentifier(context, context.getPsiLocation().getContainingFile());
+            if (scenarioIdentifier == NO_SCENARIOS || scenarioIdentifier == NON_SCENARIO_CONTEXT) {
+                return false;
             } else {
                 String scenarioName = getScenarioName(context);
                 configuration.setName(scenarioName);
@@ -77,18 +72,9 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
         return true;
     }
 
-    private int getScenarioIdentifier(ConfigurationContext context) {
-        PsiElement location = context.getPsiLocation();
-        if (location == null) {
-            return -1;
-        }
-        int lineNumber = StringUtil.offsetToLineNumber(location.getContainingFile().getText(), location.getTextOffset()) + 1;
-        return GaugeVersion.isGreaterThan(VERSION) ? lineNumber : getScenarioIndex(context, location.getContainingFile());
-    }
-
     private String getScenarioName(ConfigurationContext context) {
         PsiElement selectedElement = context.getPsiLocation();
-        String scenarioName = "";
+        String scenarioName;
 
         if (selectedElement == null) return null;
         if (selectedElement.getClass().equals(SpecScenarioImpl.class)) {
@@ -109,7 +95,7 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
         }
     }
 
-    private int getScenarioIndex(ConfigurationContext context, PsiFile file) {
+    private int getScenarioIdentifier(ConfigurationContext context, PsiFile file) {
         int count = NO_SCENARIOS;
         PsiElement selectedElement = context.getPsiLocation();
         if (selectedElement == null) return NON_SCENARIO_CONTEXT;
@@ -123,14 +109,12 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
         for (PsiElement psiElement : file.getChildren()) {
             if (psiElement.getClass().equals(SpecScenarioImpl.class)) {
                 count++;
-                if (psiElement.getNode().getFirstChildNode().getText().equals(scenarioHeading)) return count;
+                if (psiElement.getNode().getFirstChildNode().getText().equals(scenarioHeading)) {
+                    return GaugeVersion.isGreaterThan(VERSION) ? StringUtil.offsetToLineNumber(psiElement.getContainingFile().getText(), psiElement.getTextOffset()) + 1 : count;
+                }
             }
         }
-        if (count == NO_SCENARIOS) {
-            return NO_SCENARIOS;
-        } else {
-            return NON_SCENARIO_CONTEXT;
-        }
+        return count == NO_SCENARIOS ? NO_SCENARIOS : NON_SCENARIO_CONTEXT;
     }
 
     private int getNumberOfScenarios(PsiFile file) {
