@@ -196,6 +196,8 @@
         <lang.commenter language="Concept" implementationClass="com.thoughtworks.gauge.language.StepCommenter"/>
         <problemFileHighlightFilter implementation="com.thoughtworks.gauge.highlight.ErrorHighLighter"/>
         <implicitUsageProvider implementation="com.thoughtworks.gauge.findUsages.ImplUsageProvider"/>
+        <runLineMarkerContributor language="Specification"
+                                  implementationClass="com.thoughtworks.gauge.execution.TestRunLineMarkerProvider"/>
     </extensions>
 
     <application-components>
@@ -214,10 +216,10 @@
             <keyboard-shortcut first-keystroke="ctrl alt shift l" keymap="$default"/>
         </action>
         <!--<action id="Gauge.Extract"-->
-                <!--class="com.thoughtworks.gauge.extract.ExtractConceptAction"-->
-                <!--text="Extract to Concept">-->
-            <!--<add-to-group group-id="RefactoringMenu" anchor="last"/>-->
-            <!--<keyboard-shortcut first-keystroke="ctrl alt c" keymap="$default"/>-->
+        <!--class="com.thoughtworks.gauge.extract.ExtractConceptAction"-->
+        <!--text="Extract to Concept">-->
+        <!--<add-to-group group-id="RefactoringMenu" anchor="last"/>-->
+        <!--<keyboard-shortcut first-keystroke="ctrl alt c" keymap="$default"/>-->
         <!--</action>-->
     </actions>
 

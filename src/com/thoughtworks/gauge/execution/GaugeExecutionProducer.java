@@ -26,7 +26,10 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.thoughtworks.gauge.language.SpecFile;
+import com.thoughtworks.gauge.language.psi.SpecScenario;
 
 import static com.thoughtworks.gauge.util.GaugeUtil.isSpecFile;
 
@@ -53,7 +56,7 @@ public class GaugeExecutionProducer extends RunConfigurationProducer {
         }
 
         PsiFile file = context.getPsiLocation().getContainingFile();
-        if (!isSpecFile(file)) {
+        if (!isSpecFile(file) || !isInSpecScope(context.getPsiLocation())) {
             return false;
         }
 
@@ -92,5 +95,11 @@ public class GaugeExecutionProducer extends RunConfigurationProducer {
             return false;
         }
         return (specsToExecute.contains(location.getVirtualFile().getName()));
+    }
+
+    private Boolean isInSpecScope(PsiElement element) {
+        if (element instanceof SpecFile) return true;
+        if (element instanceof SpecScenario) return false;
+        return isInSpecScope(element.getParent());
     }
 }
