@@ -141,10 +141,11 @@ public class StepUtil {
     }
 
     public static StepValue getStepValue(final GaugeConnection connection, final String text, Boolean hasInlineTable) {
-        StepValue value = stepValueCache.get(text);
+        String stepText = hasInlineTable ? text + " <table>" : text;
+        StepValue value = stepValueCache.get(stepText);
         if (value == null || value.getStepText().isEmpty()) {
             value = connection.getStepValue(text, hasInlineTable);
-            stepValueCache.put(text, value);
+            stepValueCache.put(stepText, value);
         }
         return value;
     }
