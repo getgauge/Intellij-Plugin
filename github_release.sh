@@ -11,9 +11,8 @@ version=$(ls Gauge-Java-Intellij-*.zip | sed "s/^Gauge-Java-Intellij-\([^;]*\).z
 repoName="Intellij-Plugin"
 releaseName="Gauge Intellij Plugin $version"
 artifact="Gauge-Java-Intellij-$version.zip"
-releaseDescription="## New Features: ## Enhancements: ## Bug Fixes:"
 
-release_description=$(ruby -e "$(curl -sSfL https://github.com/getgauge/gauge/raw/master/build/create_release_text.rb)" $repoName)
+releaseDescription=$(ruby -e "$(curl -sSfL https://github.com/getgauge/gauge/raw/master/build/create_release_text.rb)" $repoName)
 
 $GOPATH/bin/github-release release -u getgauge -r "$repoName" --draft -t "v$version" -d "$releaseDescription" -n "$releaseName"
 
