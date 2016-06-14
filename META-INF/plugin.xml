@@ -18,7 +18,7 @@
 <idea-plugin version="2">
     <id>com.thoughtworks.gauge</id>
     <name>Gauge</name>
-    <version>0.1.1</version>
+    <version>0.2.0</version>
     <vendor email="getgauge@googlegroups.com" url="http://getgauge.io">Gauge</vendor>
 
     <description><![CDATA[
@@ -38,10 +38,17 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      <p>0.2.0</p>
+      <ul>
+             <li> Gradle project support </li>
+             <li> Enhanced spec/scenario execution </li>
+             <li> Bug Fixes and enhancements </li>
+      </ul>
+      <br>
       <p>0.1.0</p>
-        <ul>
-             <li> Adding IntelliJ 15 compatibility changes </li>
-             <li> Bug Fixes </li>
+      <ul>
+           <li> Adding IntelliJ 15 compatibility changes </li>
+           <li> Bug Fixes </li>
       </ul>
       <br>
       <p>0.0.15</p>
