@@ -13,6 +13,8 @@ releaseName="Gauge Intellij Plugin $version"
 artifact="Gauge-Java-Intellij-$version.zip"
 releaseDescription="## New Features: ## Enhancements: ## Bug Fixes:"
 
+release_description=$(ruby -e "$(curl -sSfL https://github.com/getgauge/gauge/raw/master/build/create_release_text.rb)" $repoName)
+
 $GOPATH/bin/github-release release -u getgauge -r "$repoName" --draft -t "v$version" -d "$releaseDescription" -n "$releaseName"
 
 $GOPATH/bin/github-release -v upload -u getgauge -r "$repoName" -t "v$version" -n "$artifact" -f "$artifact"
