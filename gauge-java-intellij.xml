@@ -256,7 +256,7 @@
     <property name="module.jdk.bin.gauge-java-intellij" value="${project.jdk.bin}"/>
     <property name="module.jdk.classpath.gauge-java-intellij" value="${project.jdk.classpath}"/>
 
-    <property name="compiler.args.gauge-java-intellij" value="-encoding UTF-8 -source 1.6 ${compiler.args}"/>
+    <property name="compiler.args.gauge-java-intellij" value="-encoding UTF-8 -source 1.8 ${compiler.args}"/>
 
     <property name="gauge-java-intellij.output.dir" value="${module.gauge-java-intellij.basedir}/production"/>
     <property name="gauge-java-intellij.testoutput.dir" value="${module.gauge-java-intellij.basedir}/production-test"/>
