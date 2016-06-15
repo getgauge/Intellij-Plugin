@@ -32,10 +32,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.thoughtworks.gauge.util.GaugeUtil;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeExecPath;
 
@@ -64,7 +61,7 @@ public class SpecFormatter extends AnAction {
             Process process = processBuilder.start();
             int exitCode = process.waitFor();
             if (exitCode != 0) {
-                String output = GaugeUtil.getOutput(process);
+                String output = String.format("<pre>%s</pre>", GaugeUtil.getOutput(process.getInputStream(), "\n").replace("<", "&lt;").replace(">", "&gt;"));
                 Notifications.Bus.notify(new Notification("Spec Formatting", "Error: Spec Formatting", output, NotificationType.ERROR));
                 return;
             }

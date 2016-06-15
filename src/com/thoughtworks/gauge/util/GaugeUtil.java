@@ -1,3 +1,20 @@
+// Copyright 2015 ThoughtWorks, Inc.
+
+// This file is part of getgauge/Intellij-plugin.
+
+// getgauge/Intellij-plugin is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// getgauge/Intellij-plugin is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with getgauge/Intellij-plugin.  If not, see <http://www.gnu.org/licenses/>.
+
 package com.thoughtworks.gauge.util;
 
 import com.intellij.openapi.diagnostic.Logger;
@@ -20,10 +37,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.serialization.PathMacroUtil;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
 import static com.thoughtworks.gauge.Constants.SPECS_DIR;
 
@@ -153,12 +167,12 @@ public class GaugeUtil {
         return new File(module.getModuleFilePath().split(".idea")[0]);
     }
 
-    public static String getOutput(Process process) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+    public static String getOutput(InputStream stream, String lineSeparator) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(stream));
         String lastProcessStdout = "";
         String line;
         while ((line = br.readLine()) != null)
-            lastProcessStdout = lastProcessStdout.concat(line).concat("\n");
+            lastProcessStdout = lastProcessStdout.concat(line).concat(lineSeparator);
         return lastProcessStdout;
     }
 }

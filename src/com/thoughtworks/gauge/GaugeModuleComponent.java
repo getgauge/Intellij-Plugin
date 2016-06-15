@@ -20,6 +20,7 @@ package com.thoughtworks.gauge;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleComponent;
+import com.thoughtworks.gauge.core.GaugeExceptionHandler;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
 import com.thoughtworks.gauge.core.GaugeVersion;
@@ -109,7 +110,9 @@ public class GaugeModuleComponent implements ModuleComponent {
             gauge.environment().put(GAUGE_API_PORT, String.valueOf(apiPort));
             gauge.environment().put(GAUGE_CUSTOM_CLASSPATH, classpathForModule(module));
             gauge.directory(moduleDir(module));
-            return gauge.start();
+            Process process = gauge.start();
+            new GaugeExceptionHandler(process).start();
+            return process;
         } catch (IOException e) {
             LOG.error("Could not start gauge api:" + e.getMessage(), e);
             System.err.println("could not start gauge api:" + e.getMessage());
