@@ -27,6 +27,7 @@ import com.intellij.util.Query;
 import com.thoughtworks.gauge.*;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
+import com.thoughtworks.gauge.language.psi.SpecPsiImplUtil;
 import com.thoughtworks.gauge.language.psi.SpecStep;
 import com.thoughtworks.gauge.language.psi.impl.ConceptConceptImpl;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
@@ -124,19 +125,10 @@ public class StepUtil {
     }
 
     public static boolean isMatch(PsiMethod stepMethod, String stepText, Module module) {
-        GaugeService gaugeService = Gauge.getGaugeService(module, true);
-        if (gaugeService == null) {
-            return false;
-        }
-
-        GaugeConnection connection = gaugeService.getGaugeConnection();
-
         List<String> annotationValues = getGaugeStepAnnotationValues(stepMethod);
-        for (String value : annotationValues) {
-            if (getStepValue(connection, value, false).getStepText().equals(stepText)) {
+        for (String value : annotationValues)
+            if (SpecPsiImplUtil.getStepValueFor(module, stepMethod, value, false).getStepText().equals(stepText))
                 return true;
-            }
-        }
         return false;
     }
 
