@@ -67,9 +67,12 @@ public class GaugeUtil {
         } else if (!StringUtils.isEmpty(path)) {
             for (String entry : path.split(File.pathSeparator)) {
                 File gaugeExec = new File(entry, gaugeExecutable());
-                if (gaugeExec.exists()) {
-                    LOG.info("executable path: " + gaugeExec.getAbsolutePath());
-                    return gaugeExec.getAbsolutePath();
+                try {
+                    if (gaugeExec.exists() && gaugeExec.isFile() && gaugeExec.canExecute()) {
+                        LOG.info("executable path: " + gaugeExec.getAbsolutePath());
+                        return gaugeExec.getAbsolutePath();
+                    }
+                } catch (SecurityException ignored) {
                 }
             }
         }
