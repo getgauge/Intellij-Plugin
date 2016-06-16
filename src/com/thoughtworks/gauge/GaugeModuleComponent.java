@@ -111,7 +111,7 @@ public class GaugeModuleComponent implements ModuleComponent {
             gauge.environment().put(GAUGE_CUSTOM_CLASSPATH, classpathForModule(module));
             gauge.directory(moduleDir(module));
             Process process = gauge.start();
-            new GaugeExceptionHandler(process).start();
+            new GaugeExceptionHandler(process, module.getProject()).start();
             return process;
         } catch (IOException e) {
             LOG.error("Could not start gauge api:" + e.getMessage(), e);

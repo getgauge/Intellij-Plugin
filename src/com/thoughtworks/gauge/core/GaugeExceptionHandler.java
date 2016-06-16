@@ -22,18 +22,21 @@ import com.intellij.ide.plugins.PluginManager;
 import com.intellij.notification.*;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.extensions.PluginId;
+import com.intellij.openapi.project.Project;
 import com.thoughtworks.gauge.util.GaugeUtil;
 
 public class GaugeExceptionHandler extends Thread {
 
     private static final String LINE_BREAK = "\n";
-    private static final String NOTIFICATION_TEMPLATE = "Please log an issue <a href=\"https://github.com/getgauge/Intellij-Plugin/issues/new\">here</a> with the following details.%s%s";
+    private static final String NOTIFICATION_TEMPLATE = "Please log an issue <a href=\"https://github.com/getgauge/Intellij-Plugin/issues/new\">here</a> with the following details and reload the project.%s%s";
     private static final String NOTIFICATION_TITLE = "Exception occurred in Gauge plugin";
     private static final String ISSUE_TEMPLATE = "<pre>```%s```\n* Idea version: %s\n* API version: %s\n* Plugin version: %s\n* Gauge version: %s</pre>";
     private Process process;
+    private Project project;
 
-    public GaugeExceptionHandler(Process process) {
+    public GaugeExceptionHandler(Process process, Project project) {
         this.process = process;
+        this.project = project;
     }
 
     @Override
@@ -43,7 +46,7 @@ public class GaugeExceptionHandler extends Thread {
             while(process.isAlive())
                 output = String.format("%s%s%s", output, LINE_BREAK, GaugeUtil.getOutput(process.getErrorStream(), LINE_BREAK));
             if (process.exitValue() != 0) {
-                Notifications.Bus.notify(createNotification(output));
+                Notifications.Bus.notify(createNotification(output), project);
             }
         } catch (Exception ignored) {
         }
