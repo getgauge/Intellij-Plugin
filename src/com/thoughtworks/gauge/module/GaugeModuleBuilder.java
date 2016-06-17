@@ -30,6 +30,7 @@ import com.intellij.openapi.projectRoots.SdkTypeId;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import com.thoughtworks.gauge.module.lib.GaugeLibHelper;
 import org.jetbrains.annotations.NonNls;
@@ -91,6 +92,7 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
                     if (exitCode != 0) {
                         throw new RuntimeException(failureMessage);
                     }
+                    VirtualFileManager.getInstance().refreshWithoutFileWatcher(false);
                 } catch (IOException e) {
                     throw new RuntimeException(failureMessage, e);
                 } catch (InterruptedException e) {
