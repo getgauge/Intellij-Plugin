@@ -19,6 +19,8 @@ package com.thoughtworks.gauge.findUsages;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.QueryExecutorBase;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
@@ -41,15 +43,21 @@ import java.util.List;
 public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
     @Override
     public void processQuery(@NotNull final ReferencesSearch.SearchParameters searchParameters, @NotNull final Processor<PsiReference> processor) {
-        if (EventQueue.isDispatchThread())
-            ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
-                @Override
-                public void run() {
+        ApplicationManager.getApplication().runReadAction(new Runnable() {
+            @Override
+            public void run() {
+                if (!shouldFindUsages(searchParameters, searchParameters.getElementToSearch())) return;
+                if (EventQueue.isDispatchThread())
+                    ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
+                        @Override
+                        public void run() {
+                            processElements(searchParameters, processor);
+                        }
+                    }, "Find Usages", true, searchParameters.getElementToSearch().getProject());
+                else
                     processElements(searchParameters, processor);
-                }
-            }, "Find Usages", true, searchParameters.getElementToSearch().getProject());
-        else
-            processElements(searchParameters, processor);
+            }
+        });
     }
 
     public static List<PsiElement> getPsiElements(StepCollector collector, PsiElement element) {
@@ -67,14 +75,16 @@ public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesS
     }
 
     private boolean shouldFindUsages(@NotNull ReferencesSearch.SearchParameters searchParameters, PsiElement element) {
-        return !searchParameters.getScope().getDisplayName().equals("<unknown scope>") && GaugeUtil.isGaugeElement(element);
+        Module module = GaugeUtil.moduleForPsiElement(element);
+        return module != null && GaugeUtil.isGaugeModule(module) &&
+                !searchParameters.getScope().getDisplayName().equals("<unknown scope>") &&
+                GaugeUtil.isGaugeElement(element);
     }
 
     private void processElements(final ReferencesSearch.SearchParameters searchParameters, final Processor<PsiReference> processor) {
         ApplicationManager.getApplication().runReadAction(new Runnable() {
             @Override
             public void run() {
-                if (!shouldFindUsages(searchParameters, searchParameters.getElementToSearch())) return;
                 StepCollector collector = new StepCollector(searchParameters.getElementToSearch().getProject());
                 collector.collect();
                 final List<PsiElement> elements = getPsiElements(collector, searchParameters.getElementToSearch());

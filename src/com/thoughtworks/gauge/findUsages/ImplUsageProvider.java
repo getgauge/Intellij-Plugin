@@ -1,6 +1,7 @@
 package com.thoughtworks.gauge.findUsages;
 
 import com.intellij.codeInsight.daemon.ImplicitUsageProvider;
+import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.impl.source.PsiClassImpl;
@@ -10,6 +11,9 @@ import com.thoughtworks.gauge.util.StepUtil;
 public class ImplUsageProvider implements ImplicitUsageProvider {
 
     public boolean isImplicitUsage(PsiElement element) {
+        Module module = GaugeUtil.moduleForPsiElement(element);
+        if (module == null || !GaugeUtil.isGaugeModule(module))
+            return false;
         if (element instanceof PsiClassImpl) {
             for (PsiMethod psiMethod : ((PsiClassImpl) element).getMethods())
                 if (StepUtil.getGaugeStepAnnotationValues(psiMethod).size() > 0) return true;
