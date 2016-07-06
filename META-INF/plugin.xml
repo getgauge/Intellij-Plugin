@@ -38,6 +38,11 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      <p>0.2.1</p>
+      <ul>
+             <li> Bug Fixes and enhancements </li>
+      </ul>
+      <br>
       <p>0.2.0</p>
       <ul>
              <li> Gradle project support </li>
