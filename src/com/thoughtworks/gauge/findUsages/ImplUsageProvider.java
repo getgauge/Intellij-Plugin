@@ -7,8 +7,10 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.impl.source.PsiClassImpl;
 import com.thoughtworks.gauge.util.GaugeUtil;
 import com.thoughtworks.gauge.util.StepUtil;
+import com.thoughtworks.gauge.findUsages.helper.*;
 
 public class ImplUsageProvider implements ImplicitUsageProvider {
+    private static final ReferenceHelper helper = new ReferenceHelper();
 
     public boolean isImplicitUsage(PsiElement element) {
         Module module = GaugeUtil.moduleForPsiElement(element);
@@ -23,7 +25,7 @@ public class ImplUsageProvider implements ImplicitUsageProvider {
         if (!isGaugeElement) return false;
         StepCollector collector = new StepCollector(element.getProject());
         collector.collect();
-        return ReferenceSearch.getPsiElements(collector, element).size() > 0;
+        return helper.getPsiElements(collector, element).size() > 0;
     }
 
     public boolean isImplicitRead(final PsiElement element) {

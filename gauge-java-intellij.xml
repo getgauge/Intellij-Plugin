@@ -303,9 +303,15 @@
         </dirset>
     </path>
 
+    <path id="gauge-java-intellij.module.testpath">
+        <dirset dir="${module.gauge-java-intellij.basedir}">
+            <include name="tests"/>
+        </dirset>
+    </path>
+
 
     <target name="compile.module.gauge-java-intellij"
-            depends="compile.module.gauge-java-intellij.production,compile.module.gauge-java-intellij.tests"
+            depends="compile.module.gauge-java-intellij.production,run.module.gauge-java-intellij.tests"
             description="Compile module Gauge-Java-Intellij"/>
 
     <target name="compile.module.gauge-java-intellij.production" depends="register.custom.compilers"
@@ -339,7 +345,67 @@
 
     <target name="compile.module.gauge-java-intellij.tests"
             depends="register.custom.compilers,compile.module.gauge-java-intellij.production"
-            description="compile module Gauge-Java-Intellij; test classes" unless="skip.tests"/>
+            description="compile module Gauge-Java-Intellij; test classes" unless="skip.tests">
+        <mkdir dir="${gauge-java-intellij.testoutput.dir}"/>
+        <javac2 destdir="${gauge-java-intellij.testoutput.dir}" debug="${compiler.debug}"
+                nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true"
+                executable="${module.jdk.bin.gauge-java-intellij}/javac">
+            <compilerarg line="${compiler.args.gauge-java-intellij}"/>
+            <bootclasspath refid="gauge-java-intellij.module.bootclasspath"/>
+            <classpath>
+                <pathelement location="${jdk.home.idea_iu-135.1230}/lib/junit-4.12.jar" />
+                <pathelement location="${module.gauge-java-intellij.basedir}/production" />
+            </classpath>
+            <classpath refid="gauge-java-intellij.module.production.classpath"/>
+            <src refid="gauge-java-intellij.module.testpath"/>
+            <patternset refid="excluded.from.compilation.gauge-java-intellij"/>
+        </javac2>
+    </target>
+
+    <target name="run.module.gauge-java-intellij.tests" depends="compile.module.gauge-java-intellij.tests">
+        <junit haltonfailure="true" fork="yes">
+            <classpath refid="gauge-java-intellij.module.production.classpath"/>
+            <classpath>
+                <pathelement location="${jdk.home.idea_iu-135.1230}/plugins/junit/lib/junit-rt.jar" />
+                <pathelement location="${jdk.home.idea_iu-135.1230}/lib/hamcrest-core-1.3.jar" />
+                <pathelement location="${jdk.home.idea_iu-135.1230}/lib/commons-io-2.4.jar" />
+                <pathelement location="${jdk.home.idea_iu-135.1230}/lib/commons-logging-1.2.jar" />
+                <pathelement location="${jdk.home.idea_iu-135.1230}/lib/kotlin-reflect.jar" />
+                <pathelement location="${module.gauge-java-intellij.basedir}/production-test" />
+                <pathelement location="${module.gauge-java-intellij.basedir}/production" />
+                <pathelement location="${jdk.home.idea_iu-135.1230}/lib/guava-17.0.jar" />
+                <pathelement location="${jdk.home.idea_iu-135.1230}/lib/hamcrest-core-1.3.jar" />
+                <pathelement location="${jdk.home.idea_iu-135.1230}/lib/httpclient-4.4.1.jar" />
+                <pathelement location="${jdk.home.idea_iu-135.1230}/lib/httpcore-4.4.1.jar" />
+                <pathelement location="${jdk.home.idea_iu-135.1230}/lib/httpmime-4.4.1.jar" />
+                <pathelement location="${jdk.home.idea_iu-135.1230}/lib/jps-builders.jar" />
+                <pathelement location="${jdk.home.idea_iu-135.1230}/lib/jps-launcher.jar" />
+                <pathelement location="${jdk.home.idea_iu-135.1230}/lib/jps-model.jar" />
+                <pathelement location="${jdk.home.idea_iu-135.1230}/lib/junit-4.12.jar" />
+                <pathelement location="${jdk.home.idea_iu-135.1230}/lib/netty-all-4.1.0.Beta7.jar" />
+                <pathelement location="${jdk.home.idea_iu-135.1230}/lib/proxy-vole_20131209.jar" />
+                <pathelement location="${jdk.home.idea_iu-135.1230}/lib/snappy-in-java-0.3.1.jar" />
+                <pathelement location="${module.gauge-java-intellij.basedir}/lib/asm-4.1.jar" />
+                <pathelement location="${module.gauge-java-intellij.basedir}/lib/asm-tree-4.1.jar" />
+                <pathelement location="${module.gauge-java-intellij.basedir}/lib/asm-util-4.1.jar" />
+                <pathelement location="${module.gauge-java-intellij.basedir}/lib/objenesis-2.4.jar" />
+                <pathelement location="${module.gauge-java-intellij.basedir}/lib/pegdown-1.4.2.jar" />
+                <pathelement location="${module.gauge-java-intellij.basedir}/lib/asm-analysis-4.1.jar" />
+                <pathelement location="${module.gauge-java-intellij.basedir}/lib/byte-buddy-1.4.8.jar" />
+                <pathelement location="${module.gauge-java-intellij.basedir}/lib/parboiled-core-1.1.6.jar" />
+                <pathelement location="${module.gauge-java-intellij.basedir}/lib/parboiled-java-1.1.6.jar" />
+                <pathelement location="${module.gauge-java-intellij.basedir}/lib/mockito-core-2.0.81-beta.jar" />
+                <pathelement location="${gauge.java.home}/Contents/Home/lib/tools.jar"/>
+            </classpath>
+            <jvmarg value="-Didea.load.plugins.id=com.thoughtworks.gauge"/>
+            <batchtest>
+                <fileset dir="${module.gauge-java-intellij.basedir}/production-test">
+                    <include name="**/*Test*" />
+                </fileset>
+            </batchtest>
+            <formatter type="brief" usefile="false"/>
+        </junit>
+    </target>
 
     <target name="clean.module.gauge-java-intellij" description="cleanup module">
         <delete dir="${gauge-java-intellij.output.dir}"/>

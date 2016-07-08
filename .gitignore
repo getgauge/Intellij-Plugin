@@ -6,3 +6,4 @@ misc.xml
 .idea/
 production/*
 production-test/*
+*.zip
