@@ -10,7 +10,7 @@ import com.thoughtworks.gauge.util.StepUtil;
 import com.thoughtworks.gauge.findUsages.helper.*;
 
 public class ImplUsageProvider implements ImplicitUsageProvider {
-    private static final ReferenceHelper helper = new ReferenceHelper();
+    private static final ReferenceSearchHelper helper = new ReferenceSearchHelper();
 
     public boolean isImplicitUsage(PsiElement element) {
         Module module = GaugeUtil.moduleForPsiElement(element);

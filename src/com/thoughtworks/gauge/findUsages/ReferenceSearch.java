@@ -24,27 +24,27 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.util.Processor;
-import com.thoughtworks.gauge.findUsages.helper.ReferenceHelper;
+import com.thoughtworks.gauge.findUsages.helper.ReferenceSearchHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.List;
 
 public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
-    private ReferenceHelper helper;
+    private ReferenceSearchHelper helper;
 
-    public ReferenceSearch(ReferenceHelper helper) {
+    public ReferenceSearch(ReferenceSearchHelper helper) {
         super();
         this.helper = helper;
     }
 
     public ReferenceSearch() {
-        this.helper = new ReferenceHelper();
+        this.helper = new ReferenceSearchHelper();
     }
 
     public ReferenceSearch(boolean requireReadAction) {
         super(requireReadAction);
-        this.helper = new ReferenceHelper();
+        this.helper = new ReferenceSearchHelper();
     }
 
     @Override

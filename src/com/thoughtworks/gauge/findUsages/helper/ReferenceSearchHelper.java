@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReferenceHelper {
+public class ReferenceSearchHelper {
 
     public boolean shouldFindReferences(@NotNull ReferencesSearch.SearchParameters searchParameters, PsiElement element) {
         Module module = GaugeUtil.moduleForPsiElement(element);
