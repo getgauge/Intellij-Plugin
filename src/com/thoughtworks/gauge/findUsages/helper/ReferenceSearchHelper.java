@@ -1,6 +1,5 @@
 package com.thoughtworks.gauge.findUsages.helper;
 
-import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.impl.source.PsiMethodImpl;
@@ -19,10 +18,20 @@ import java.util.List;
 
 public class ReferenceSearchHelper {
 
+    public static final String UNKNOWN_SCOPE = "<unknown scope>";
+    private final ModuleHelper helper;
+
+    public ReferenceSearchHelper() {
+        helper = new ModuleHelper();
+    }
+
+    public ReferenceSearchHelper(ModuleHelper helper) {
+        this.helper = helper;
+    }
+
     public boolean shouldFindReferences(@NotNull ReferencesSearch.SearchParameters searchParameters, PsiElement element) {
-        Module module = GaugeUtil.moduleForPsiElement(element);
-        return module != null && GaugeUtil.isGaugeModule(module) &&
-                !searchParameters.getScope().getDisplayName().equals("<unknown scope>") &&
+        return helper.isGaugeModule(element) &&
+                !searchParameters.getScope().getDisplayName().equals(UNKNOWN_SCOPE) &&
                 GaugeUtil.isGaugeElement(element);
     }
 
