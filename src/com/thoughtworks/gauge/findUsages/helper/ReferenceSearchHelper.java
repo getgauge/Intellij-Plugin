@@ -43,12 +43,12 @@ public class ReferenceSearchHelper {
     @NotNull
     public List<PsiElement> getPsiElements(StepCollector collector, PsiElement element) {
         List<PsiElement> elements = new ArrayList<>();
-        if (element.getClass().equals(ConceptStepImpl.class))
+        if (element instanceof ConceptStepImpl)
             elements = collector.get(getConceptStepText((ConceptStepImpl) element));
-        else if (element.getClass().equals(PsiMethodImpl.class))
+        else if (element instanceof PsiMethodImpl)
             for (String alias : StepUtil.getGaugeStepAnnotationValues((PsiMethod) element))
                 elements.addAll(collector.get(getStepText(alias, element)));
-        else if (element.getClass().equals(SpecStepImpl.class)) {
+        else if (element instanceof SpecStepImpl) {
             elements = collector.get(getStepText((SpecStepImpl) element));
             elements.addAll(collector.get(((SpecStepImpl) element).getName()));
         }

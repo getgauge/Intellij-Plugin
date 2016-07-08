@@ -6,11 +6,15 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.thoughtworks.gauge.StepValue;
+import com.thoughtworks.gauge.findUsages.StepCollector;
+import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import org.junit.Test;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.util.ArrayList;
+
+import static org.mockito.Mockito.*;
 
 
 public class ReferenceSearchHelperTest extends LightCodeInsightFixtureTestCase {
@@ -69,5 +73,37 @@ public class ReferenceSearchHelperTest extends LightCodeInsightFixtureTestCase {
         boolean shouldFindReferences = referenceSearchHelper.shouldFindReferences(searchParameters, searchParameters.getElementToSearch());
 
         assertFalse("Should find reference When scope is not unknown(Expected: true, Actual: false)", shouldFindReferences);
+    }
+
+    @Test
+    public void testGetReferenceElements() throws Exception {
+        SpecStepImpl element = mock(SpecStepImpl.class);
+        SearchScope scope = mock(SearchScope.class);
+        StepValue stepValue = new StepValue("hello", "", new ArrayList<>());
+        StepCollector collector = mock(StepCollector.class);
+        ReferencesSearch.SearchParameters searchParameters = new ReferencesSearch.SearchParameters(element, scope, true);
+
+        when(element.getStepValue()).thenReturn(stepValue);
+
+        ReferenceSearchHelper referenceSearchHelper = new ReferenceSearchHelper();
+        referenceSearchHelper.getPsiElements(collector, searchParameters.getElementToSearch());
+
+        verify(collector, times(1)).get("hello");
+    }
+
+    @Test
+    public void testGetReferenceElementsForConceptStep() throws Exception {
+        ConceptStepImpl element = mock(ConceptStepImpl.class);
+        SearchScope scope = mock(SearchScope.class);
+        StepValue stepValue = new StepValue("# hello", "", new ArrayList<>());
+        StepCollector collector = mock(StepCollector.class);
+        ReferencesSearch.SearchParameters searchParameters = new ReferencesSearch.SearchParameters(element, scope, true);
+
+        when(element.getStepValue()).thenReturn(stepValue);
+
+        ReferenceSearchHelper referenceSearchHelper = new ReferenceSearchHelper();
+        referenceSearchHelper.getPsiElements(collector, searchParameters.getElementToSearch());
+
+        verify(collector, times(1)).get("hello");
     }
 }
