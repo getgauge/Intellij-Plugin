@@ -39,7 +39,7 @@ public class SpecParserDefinition implements ParserDefinition {
     public static final TokenSet WHITE_SPACES = TokenSet.create(TokenType.WHITE_SPACE);
     public static final TokenSet COMMENTS = TokenSet.create(SpecTokenTypes.COMMENT);
 
-    public static final IFileElementType FILE = new IFileElementType(Language.<Specification>findInstance(Specification.class));
+    public static final IFileElementType FILE = new IFileElementType(Language.findInstance(Specification.class));
 
     @NotNull
     @Override

@@ -31,7 +31,7 @@ public class ExtractConceptRequest {
     }
 
     public void convertToSteps(List<PsiElement> specSteps, Map<String, String> tableMap) {
-        this.steps = new ArrayList<Api.step>();
+        this.steps = new ArrayList<>();
         for (PsiElement specStep : specSteps) {
             String text = specStep.getText().trim().substring(2).trim();
             Api.step stepToAdd = Api.step.newBuilder().setName(text).build();

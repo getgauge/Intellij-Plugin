@@ -27,9 +27,9 @@ import java.util.*;
 public class Gauge {
     private static final String GROUP_ID = "external.system.module.group";
     private static final String LINKED_ID = "external.linked.project.id";
-    private static Hashtable<Module, GaugeService> gaugeProjectHandle = new Hashtable<Module, GaugeService>();
-    private static HashMap<String, HashSet<Module>> linkedModulesMap = new HashMap<String, HashSet<Module>>();
-    private static Hashtable<Module, ReferenceCache> moduleReferenceCaches = new Hashtable<Module, ReferenceCache>();
+    private static Hashtable<Module, GaugeService> gaugeProjectHandle = new Hashtable<>();
+    private static HashMap<String, HashSet<Module>> linkedModulesMap = new HashMap<>();
+    private static Hashtable<Module, ReferenceCache> moduleReferenceCaches = new Hashtable<>();
 
     public static void addModule(Module module, GaugeService gaugeService) {
         String value = getProjectGroupValue(module);
@@ -45,7 +45,7 @@ public class Gauge {
             return null;
         }
         GaugeService service = gaugeProjectHandle.get(module);
-        if (service != null)    return service;
+        if (service != null) return service;
         Set<Module> modules = getSubModules(module);
         for (Module m : modules) {
             service = gaugeProjectHandle.get(m);
@@ -69,8 +69,8 @@ public class Gauge {
     public static HashSet<Module> getSubModules(Module module) {
         String value = getProjectGroupValue(module);
         HashSet<Module> modules = linkedModulesMap.get(value);
-        if (modules != null)    return modules;
-        modules = new HashSet<Module>();
+        if (modules != null) return modules;
+        modules = new HashSet<>();
         for (Module m : ModuleManager.getInstance(module.getProject()).getModules())
             if (getProjectGroupValue(m).equals(value)) {
                 modules.add(m);
@@ -81,14 +81,14 @@ public class Gauge {
 
     private static void addToModulesMap(Module module, String name) {
         if (!linkedModulesMap.containsKey(name))
-            linkedModulesMap.put(name, new HashSet<Module>());
+            linkedModulesMap.put(name, new HashSet<>());
         linkedModulesMap.get(name).add(module);
     }
 
     @NotNull
     private static String getProjectGroupValue(Module module) {
         String value = module.getOptionValue(GROUP_ID);
-        if (value == null)  value = module.getName();
+        if (value == null) value = module.getName();
         return value;
     }
 

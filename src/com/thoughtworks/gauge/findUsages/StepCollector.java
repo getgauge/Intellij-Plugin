@@ -21,7 +21,7 @@ public class StepCollector {
 
     public StepCollector(Project project) {
         this.project = project;
-        stepTextToElement = new HashMap<String, List<PsiElement>>();
+        stepTextToElement = new HashMap<>();
     }
 
     public void collect() {
@@ -31,12 +31,12 @@ public class StepCollector {
         for (VirtualFile file : files) {
             List<Set<Integer>> values = FileBasedIndex.getInstance().getValues(FileStub.NAME, file.getPath(), GlobalSearchScope.allScope(project));
             PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-            if (values.size() > 0) getSteps(psiFile, new HashSet<Integer>(values.get(0)));
+            if (values.size() > 0) getSteps(psiFile, new HashSet<>(values.get(0)));
         }
     }
 
     public List<PsiElement> get(String stepText) {
-        return stepTextToElement.get(stepText) == null ? new ArrayList<PsiElement>() : stepTextToElement.get(stepText);
+        return stepTextToElement.get(stepText) == null ? new ArrayList<>() : stepTextToElement.get(stepText);
     }
 
     private void getSteps(PsiFile psiFile, Set<Integer> offsets) {
@@ -58,7 +58,7 @@ public class StepCollector {
     private void addElement(PsiElement stepElement, String stepText) {
         List<PsiElement> elementsList = stepTextToElement.get(stepText);
         if (elementsList == null) {
-            List<PsiElement> elements = new ArrayList<PsiElement>();
+            List<PsiElement> elements = new ArrayList<>();
             elements.add(stepElement);
             stepTextToElement.put(stepText, elements);
             return;

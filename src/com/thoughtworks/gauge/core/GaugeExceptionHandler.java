@@ -19,7 +19,10 @@ package com.thoughtworks.gauge.core;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
-import com.intellij.notification.*;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationListener;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
@@ -43,7 +46,7 @@ public class GaugeExceptionHandler extends Thread {
     public void run() {
         String output = "";
         try {
-            while(process.isAlive())
+            while (process.isAlive())
                 output = String.format("%s%s%s", output, LINE_BREAK, GaugeUtil.getOutput(process.getErrorStream(), LINE_BREAK));
             if (process.exitValue() != 0) {
                 Notifications.Bus.notify(createNotification(output), project);

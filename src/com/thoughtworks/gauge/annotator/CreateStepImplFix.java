@@ -94,13 +94,11 @@ public class CreateStepImplFix extends BaseIntentionAction {
 
                     @Override
                     public PopupStep onChosen(final PsiFile selectedValue, boolean finalChoice) {
-                        return doFinalStep(new Runnable() {
-                            public void run() {
-                                if (selectedValue == NEW_FILE_HOLDER) {
-                                    createFileAndAddImpl(editor);
-                                } else {
-                                    addImpl(project, selectedValue.getVirtualFile());
-                                }
+                        return doFinalStep(() -> {
+                            if (selectedValue == NEW_FILE_HOLDER) {
+                                createFileAndAddImpl(editor);
+                            } else {
+                                addImpl(project, selectedValue.getVirtualFile());
                             }
                         });
                     }

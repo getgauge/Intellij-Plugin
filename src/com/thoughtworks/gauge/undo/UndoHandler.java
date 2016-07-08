@@ -35,7 +35,7 @@ public class UndoHandler {
     }
 
     private void refreshFiles() {
-        final Map<Document, String> documentTextMap = new HashMap<Document, String>();
+        final Map<Document, String> documentTextMap = new HashMap<>();
         for (String fileName : fileNames) {
             VirtualFile fileByIoFile = LocalFileSystem.getInstance().findFileByIoFile(new File(fileName));
             if (fileByIoFile != null) {
@@ -44,27 +44,16 @@ public class UndoHandler {
             }
         }
         VirtualFileManager.getInstance().refreshWithoutFileWatcher(false);
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-                for (Document document : documentTextMap.keySet())
-                    document.setText(documentTextMap.get(document));
-            }
+        ApplicationManager.getApplication().runWriteAction(() -> {
+            for (Document document : documentTextMap.keySet())
+                document.setText(documentTextMap.get(document));
         });
     }
 
 
     private void runWriteAction() {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-                CommandProcessor.getInstance().executeCommand(project, new Runnable() {
-                    @Override
-                    public void run() {
-                        performUndoableAction(fileNames);
-                    }
-                }, name, name);
-            }
+        ApplicationManager.getApplication().runWriteAction(() -> {
+            CommandProcessor.getInstance().executeCommand(project, () -> performUndoableAction(fileNames), name, name);
         });
     }
 

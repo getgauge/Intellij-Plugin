@@ -3,8 +3,6 @@ package com.thoughtworks.gauge.core;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 public class GaugeVersionTest {
     @Test
     public void testVersionIsGreaterThan() throws Exception {

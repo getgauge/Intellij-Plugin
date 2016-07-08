@@ -52,27 +52,19 @@ public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesS
         ApplicationManager.getApplication().runReadAction(() -> {
             if (!helper.shouldFindReferences(searchParameters, searchParameters.getElementToSearch())) return;
             if (EventQueue.isDispatchThread())
-                ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
-                    @Override
-                    public void run() {
-                        processElements(searchParameters, processor);
-                    }
-                }, "Find Usages", true, searchParameters.getElementToSearch().getProject());
+                ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> processElements(searchParameters, processor), "Find Usages", true, searchParameters.getElementToSearch().getProject());
             else
                 processElements(searchParameters, processor);
         });
     }
 
     private void processElements(final ReferencesSearch.SearchParameters searchParameters, final Processor<PsiReference> processor) {
-        ApplicationManager.getApplication().runReadAction(new Runnable() {
-            @Override
-            public void run() {
-                StepCollector collector = helper.getStepCollector(searchParameters.getElementToSearch());
-                collector.collect();
-                final List<PsiElement> elements = helper.getPsiElements(collector, searchParameters.getElementToSearch());
-                for (PsiElement element : elements)
-                    processor.process(element.getReference());
-            }
+        ApplicationManager.getApplication().runReadAction(() -> {
+            StepCollector collector = helper.getStepCollector(searchParameters.getElementToSearch());
+            collector.collect();
+            final List<PsiElement> elements = helper.getPsiElements(collector, searchParameters.getElementToSearch());
+            for (PsiElement element : elements)
+                processor.process(element.getReference());
         });
     }
 }

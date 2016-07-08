@@ -38,26 +38,21 @@ public class FileStub extends FileBasedIndexExtension<String, Set<Integer>> {
     @NotNull
     @Override
     public DataIndexer<String, Set<Integer>, FileContent> getIndexer() {
-        return new DataIndexer<String, Set<Integer>, FileContent>() {
-            @NotNull
-            @Override
-            public Map<String, Set<Integer>> map(@NotNull FileContent fileContent) {
-                Set<Integer> offsets = new HashSet<Integer>();
-                List<PsiElement> steps = new ArrayList<PsiElement>();
-                PsiFile psiFile;
-                try {
-                    psiFile = ((FileContentImpl) fileContent).createFileFromText(FileUtils.readFileToString(new File(fileContent.getFile().getPath())));
-                } catch (IOException e) {
-                    return Collections.emptyMap();
-                }
-                if (fileContent.getFileType() instanceof SpecFileType)
-                    steps = new ArrayList<PsiElement>(PsiTreeUtil.collectElementsOfType(psiFile, SpecStepImpl.class));
-                else if (fileContent.getFileType() instanceof ConceptFileType)
-                    steps = new ArrayList<PsiElement>(PsiTreeUtil.collectElementsOfType(psiFile, ConceptStepImpl.class));
-                for (PsiElement step : steps)
-                    offsets.add(step.getTextOffset());
-                return Collections.singletonMap(fileContent.getFile().getPath(), offsets);
+        return fileContent -> {
+            Set<Integer> offsets = new HashSet<>();
+            List<PsiElement> steps = new ArrayList<>();
+            PsiFile psiFile;
+            try {
+                psiFile = ((FileContentImpl) fileContent).createFileFromText(FileUtils.readFileToString(new File(fileContent.getFile().getPath())));
+            } catch (IOException e) {
+                return Collections.emptyMap();
             }
+            if (fileContent.getFileType() instanceof SpecFileType)
+                steps = new ArrayList<>(PsiTreeUtil.collectElementsOfType(psiFile, SpecStepImpl.class));
+            else if (fileContent.getFileType() instanceof ConceptFileType)
+                steps = new ArrayList<>(PsiTreeUtil.collectElementsOfType(psiFile, ConceptStepImpl.class));
+            steps.forEach((s) -> offsets.add(s.getTextOffset()));
+            return Collections.singletonMap(fileContent.getFile().getPath(), offsets);
         };
     }
 
@@ -102,7 +97,7 @@ public class FileStub extends FileBasedIndexExtension<String, Set<Integer>> {
 
             @Override
             public Set<Integer> read(@NotNull DataInput dataInput) throws IOException {
-                Set<Integer> offsets = new HashSet<Integer>();
+                Set<Integer> offsets = new HashSet<>();
                 String s = IOUtil.readUTF(dataInput);
                 for (String offset : s.split(","))
                     if (!offset.equals(""))

@@ -63,7 +63,7 @@ public class SpecsExecutionProducer extends RunConfigurationProducer {
             }
         }
 
-        ArrayList<String> specsToExecute = new ArrayList<String>();
+        ArrayList<String> specsToExecute = new ArrayList<>();
         for (VirtualFile selectedFile : selectedFiles) {
             if (isSpecFile(selectedFile)) {
                 specsToExecute.add(selectedFile.getPath());

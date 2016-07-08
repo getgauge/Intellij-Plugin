@@ -15,14 +15,17 @@ import com.thoughtworks.gauge.language.ConceptFileType;
 import com.thoughtworks.gauge.language.SpecFileType;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static com.intellij.psi.search.GlobalSearchScope.moduleScope;
 
 public class FileManager {
     public static List<PsiFile> getAllJavaFiles(Module module) {
         Collection<VirtualFile> javaVirtualFiles = FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, JavaFileType.INSTANCE, moduleScope(module));
-        List<PsiFile> javaFiles = new ArrayList<PsiFile>();
+        List<PsiFile> javaFiles = new ArrayList<>();
 
         for (VirtualFile javaVFile : javaVirtualFiles) {
             PsiFile file = PsiManager.getInstance(module.getProject()).findFile(javaVFile);
@@ -30,18 +33,13 @@ public class FileManager {
                 javaFiles.add(file);
             }
         }
-        Collections.sort(javaFiles, new Comparator<PsiFile>() {
-            @Override
-            public int compare(PsiFile o1, PsiFile o2) {
-                return FileManager.getJavaFileName(o1).compareToIgnoreCase(FileManager.getJavaFileName(o2));
-            }
-        });
+        Collections.sort(javaFiles, (o1, o2) -> FileManager.getJavaFileName(o1).compareToIgnoreCase(FileManager.getJavaFileName(o2)));
         return javaFiles;
     }
 
     public static List<PsiFile> getAllConceptFiles(Project project) {
         Collection<VirtualFile> virtualFiles = FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, ConceptFileType.INSTANCE, GlobalSearchScope.projectScope(project));
-        List<PsiFile> files = new ArrayList<PsiFile>();
+        List<PsiFile> files = new ArrayList<>();
 
         for (VirtualFile ConceptVFile : virtualFiles) {
             PsiFile file = PsiManager.getInstance(project).findFile(ConceptVFile);
@@ -49,12 +47,7 @@ public class FileManager {
                 files.add(file);
             }
         }
-        Collections.sort(files, new Comparator<PsiFile>() {
-            @Override
-            public int compare(PsiFile o1, PsiFile o2) {
-                return o1.getName().compareToIgnoreCase(o2.getName());
-            }
-        });
+        Collections.sort(files, (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
         return files;
     }
 
@@ -69,7 +62,7 @@ public class FileManager {
     public static List<String> getDirNamesUnderSpecs(Project project) {
         File dir = new File(project.getBasePath() + File.separator + Constants.SPECS_DIR);
         File[] files = dir.listFiles();
-        List<String> dirs = new ArrayList<String>();
+        List<String> dirs = new ArrayList<>();
         dirs.add(String.format("%s%s%s", File.separator, Constants.SPECS_DIR, File.separator));
         if (files != null) getDirectories(files, dirs, project.getBasePath());
         return dirs;
@@ -85,11 +78,11 @@ public class FileManager {
 
     public static List<VirtualFile> getAllSpecFiles(Project project) {
         Collection<VirtualFile> virtualFiles = FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, SpecFileType.INSTANCE, GlobalSearchScope.projectScope(project));
-        return new ArrayList<VirtualFile>(virtualFiles);
+        return new ArrayList<>(virtualFiles);
     }
 
     public static List<VirtualFile> getConceptFiles(Project project) {
         Collection<VirtualFile> virtualFiles = FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, ConceptFileType.INSTANCE, GlobalSearchScope.projectScope(project));
-        return new ArrayList<VirtualFile>(virtualFiles);
+        return new ArrayList<>(virtualFiles);
     }
 }

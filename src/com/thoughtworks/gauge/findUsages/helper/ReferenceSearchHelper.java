@@ -42,7 +42,7 @@ public class ReferenceSearchHelper {
 
     @NotNull
     public List<PsiElement> getPsiElements(StepCollector collector, PsiElement element) {
-        List<PsiElement> elements = new ArrayList<PsiElement>();
+        List<PsiElement> elements = new ArrayList<>();
         if (element.getClass().equals(ConceptStepImpl.class))
             elements = collector.get(getConceptStepText((ConceptStepImpl) element));
         else if (element.getClass().equals(PsiMethodImpl.class))

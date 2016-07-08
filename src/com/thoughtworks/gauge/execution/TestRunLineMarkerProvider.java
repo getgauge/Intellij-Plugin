@@ -15,12 +15,7 @@ import java.util.List;
 
 
 public class TestRunLineMarkerProvider extends RunLineMarkerContributor {
-    private static final Function<PsiElement, String> TOOLTIP_PROVIDER = new Function<PsiElement, String>() {
-        @Override
-        public String fun(PsiElement psiElement) {
-            return "Run Element";
-        }
-    };
+    private static final Function<PsiElement, String> TOOLTIP_PROVIDER = psiElement -> "Run Element";
 
     @Nullable
     @Override

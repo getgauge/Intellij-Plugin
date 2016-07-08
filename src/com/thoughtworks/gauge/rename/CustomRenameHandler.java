@@ -19,8 +19,6 @@ package com.thoughtworks.gauge.rename;
 
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.compiler.CompileContext;
-import com.intellij.openapi.compiler.CompileStatusNotification;
 import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -113,10 +111,7 @@ public class CustomRenameHandler implements RenameHandler {
     }
 
     private void makeProject(Project project) {
-        CompilerManager.getInstance(project).make(new CompileStatusNotification() {
-            @Override
-            public void finished(boolean b, int i, int i1, CompileContext compileContext) {
-            }
+        CompilerManager.getInstance(project).make((b, i, i1, compileContext) -> {
         });
     }
 }

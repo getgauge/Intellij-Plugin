@@ -23,8 +23,8 @@ import javax.swing.*;
 
 public interface GaugeIcon {
 
-    public final Icon GAUGE_SPEC_FILE_ICON = IconLoader.findIcon("/com/thoughtworks/gauge/idea/icon/logo.png");
-    public final Icon GAUGE_CONCEPT_FILE_ICON = IconLoader.findIcon("/com/thoughtworks/gauge/idea/icon/logo.png");
-    public final Icon GAUGE_LOGO = IconLoader.findIcon("/com/thoughtworks/gauge/idea/icon/Gauge-Logo.png");
+    Icon GAUGE_SPEC_FILE_ICON = IconLoader.findIcon("/com/thoughtworks/gauge/idea/icon/logo.png");
+    Icon GAUGE_CONCEPT_FILE_ICON = IconLoader.findIcon("/com/thoughtworks/gauge/idea/icon/logo.png");
+    Icon GAUGE_LOGO = IconLoader.findIcon("/com/thoughtworks/gauge/idea/icon/Gauge-Logo.png");
 
 }

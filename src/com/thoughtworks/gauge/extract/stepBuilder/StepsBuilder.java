@@ -14,8 +14,8 @@ import java.util.Map;
 public abstract class StepsBuilder {
     protected final Editor editor;
     protected final PsiFile psiFile;
-    protected Map<String, String> tableMap = new HashMap<String, String>();
-    protected Map<String, String> TextToTableMap = new HashMap<String, String>();
+    protected Map<String, String> tableMap = new HashMap<>();
+    protected Map<String, String> TextToTableMap = new HashMap<>();
 
 
     public StepsBuilder(Editor editor, PsiFile psiFile) {
@@ -50,13 +50,13 @@ public abstract class StepsBuilder {
 
     protected List<PsiElement> getPsiElements(Class stepClass) {
         SelectionModel selectionModel = editor.getSelectionModel();
-        List<PsiElement> specSteps = new ArrayList<PsiElement>();
+        List<PsiElement> specSteps = new ArrayList<>();
         int currentOffset = selectionModel.getSelectionStart();
         while (selectionModel.getSelectionEnd() >= currentOffset) {
             try {
                 if (psiFile.getText().charAt(currentOffset++) == '\n') continue;
                 PsiElement step = getStep(psiFile.findElementAt(currentOffset), stepClass);
-                if (step == null) return new ArrayList<PsiElement>();
+                if (step == null) return new ArrayList<>();
                 specSteps.add(step);
                 currentOffset += step.getText().length();
             } catch (Exception ignored) {

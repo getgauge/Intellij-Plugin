@@ -35,8 +35,6 @@ import com.thoughtworks.gauge.core.GaugeService;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import static com.intellij.openapi.roots.OrderRootType.CLASSES;
 import static com.thoughtworks.gauge.util.GaugeUtil.moduleDir;
@@ -62,11 +60,7 @@ public class GaugeLibHelper extends AbstractLibHelper {
         }
         addProjectLibIfNeeded(modifiableModel);
         checkProjectSourceAndOutputDirectory(modifiableModel);
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            public void run() {
-                modifiableModel.commit();
-            }
-        });
+        ApplicationManager.getApplication().runWriteAction(modifiableModel::commit);
 
     }
 

@@ -43,7 +43,7 @@ public class ExtractConceptInfoCollector {
     }
 
     private List<String> getArgs(String steps) {
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
         for (String step : steps.split("\n")) {
             String unescapeStep = StringUtil.unescapeStringCharacters(step);
             for (String p : SpecPsiImplUtil.getStepValueFor(this.steps.get(0), step, false).getParameters())
@@ -68,10 +68,9 @@ public class ExtractConceptInfoCollector {
 
     private List<String> getConceptFileNames() {
         List<PsiFile> files = FileManager.getAllConceptFiles(editor.getProject());
-        List<String> names = new ArrayList<String>();
+        List<String> names = new ArrayList<>();
         names.add(CREATE_NEW_FILE);
-        for (PsiFile file : files)
-            names.add(file.getVirtualFile().getPath().replace(project.getBasePath(), ""));
+        files.forEach((file) -> names.add(file.getVirtualFile().getPath().replace(project.getBasePath(), "")));
         return names;
     }
 

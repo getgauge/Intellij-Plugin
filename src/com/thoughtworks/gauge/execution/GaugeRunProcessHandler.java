@@ -50,33 +50,29 @@ public class GaugeRunProcessHandler extends ColoredProcessHandler {
     }
 
     private static void launchDebugger(final Project project, final GaugeRunConfiguration.DebugInfo debugInfo) {
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                final long startTime = System.currentTimeMillis();
-                GenericDebuggerRunner basicProgramRunner = new GenericDebuggerRunner();
-                ProjectPropertiesComponentImpl propertiesComponent = new ProjectPropertiesComponentImpl();
-                RunManagerImpl manager = new RunManagerImpl(project, propertiesComponent);
-                ConfigurationFactory configFactory = RemoteConfigurationType.getInstance().getConfigurationFactories()[0];
-                RemoteConfiguration remoteConfig = new RemoteConfiguration(project, configFactory);
-                remoteConfig.PORT = debugInfo.getPort();
-                remoteConfig.HOST = debugInfo.getHost();
-                remoteConfig.USE_SOCKET_TRANSPORT = true;
-                remoteConfig.SERVER_MODE = false;
-                RunnerAndConfigurationSettingsImpl configuration = new RunnerAndConfigurationSettingsImpl(manager, remoteConfig, false);
-                ExecutionEnvironment environment = new ExecutionEnvironment(new DefaultDebugExecutor(), basicProgramRunner, configuration, project);
+        Runnable runnable = () -> {
+            final long startTime = System.currentTimeMillis();
+            GenericDebuggerRunner basicProgramRunner = new GenericDebuggerRunner();
+            ProjectPropertiesComponentImpl propertiesComponent = new ProjectPropertiesComponentImpl();
+            RunManagerImpl manager = new RunManagerImpl(project, propertiesComponent);
+            ConfigurationFactory configFactory = RemoteConfigurationType.getInstance().getConfigurationFactories()[0];
+            RemoteConfiguration remoteConfig = new RemoteConfiguration(project, configFactory);
+            remoteConfig.PORT = debugInfo.getPort();
+            remoteConfig.HOST = debugInfo.getHost();
+            remoteConfig.USE_SOCKET_TRANSPORT = true;
+            remoteConfig.SERVER_MODE = false;
+            RunnerAndConfigurationSettingsImpl configuration = new RunnerAndConfigurationSettingsImpl(manager, remoteConfig, false);
+            ExecutionEnvironment environment = new ExecutionEnvironment(new DefaultDebugExecutor(), basicProgramRunner, configuration, project);
 
-                boolean debuggerConnected = false;
-                // Trying to connect to gauge java for 25 secs. The sleep is because it may take a few seconds for gauge to launch the java process and the jvm to load after that
-                while (!debuggerConnected && ((System.currentTimeMillis() - startTime) < 25000)) {
-                    try {
-                        Thread.sleep(5000);
-                        basicProgramRunner.execute(environment);
-                        debuggerConnected = true;
-                    } catch (Exception e) {
-                        System.err.println("Failed to connect debugger. Retrying... : " + e.getMessage());
-                        continue;
-                    }
+            boolean debuggerConnected = false;
+            // Trying to connect to gauge java for 25 secs. The sleep is because it may take a few seconds for gauge to launch the java process and the jvm to load after that
+            while (!debuggerConnected && ((System.currentTimeMillis() - startTime) < 25000)) {
+                try {
+                    Thread.sleep(5000);
+                    basicProgramRunner.execute(environment);
+                    debuggerConnected = true;
+                } catch (Exception e) {
+                    System.err.println("Failed to connect debugger. Retrying... : " + e.getMessage());
                 }
             }
         };

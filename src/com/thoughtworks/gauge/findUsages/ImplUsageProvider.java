@@ -5,9 +5,9 @@ import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.impl.source.PsiClassImpl;
+import com.thoughtworks.gauge.findUsages.helper.ReferenceSearchHelper;
 import com.thoughtworks.gauge.util.GaugeUtil;
 import com.thoughtworks.gauge.util.StepUtil;
-import com.thoughtworks.gauge.findUsages.helper.*;
 
 public class ImplUsageProvider implements ImplicitUsageProvider {
     private static final ReferenceSearchHelper helper = new ReferenceSearchHelper();

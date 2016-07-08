@@ -65,7 +65,7 @@ public class GaugeDataContext implements DataContext {
 
         @Override
         public PsiDirectory[] getDirectories() {
-            List<PsiDirectory> psiDirectories = new ArrayList<PsiDirectory>();
+            List<PsiDirectory> psiDirectories = new ArrayList<>();
             PsiManager psiManager = PsiManager.getInstance(project);
             for (VirtualFile root : ProjectRootManager.getInstance(psiManager.getProject()).getContentSourceRoots()) {
                 PsiDirectory directory = psiManager.findDirectory(root);

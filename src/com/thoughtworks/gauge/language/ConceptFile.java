@@ -22,8 +22,6 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.FileViewProvider;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-
 
 public class ConceptFile extends PsiFileBase {
     public ConceptFile(@NotNull FileViewProvider viewProvider) {
@@ -41,8 +39,4 @@ public class ConceptFile extends PsiFileBase {
         return "Concept File";
     }
 
-    @Override
-    public Icon getIcon(int flags) {
-        return super.getIcon(flags);
-    }
 }

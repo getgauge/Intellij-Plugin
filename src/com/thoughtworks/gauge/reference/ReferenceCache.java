@@ -11,7 +11,7 @@ public class ReferenceCache {
     private final Hashtable<String, PsiStepReferenceCache> stepReferences;
 
     public ReferenceCache() {
-        this.stepReferences = new Hashtable<String, PsiStepReferenceCache>();
+        this.stepReferences = new Hashtable<>();
     }
 
     public PsiElement searchReferenceFor(SpecStep step) {

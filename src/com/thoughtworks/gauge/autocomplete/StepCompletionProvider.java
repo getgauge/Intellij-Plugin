@@ -17,8 +17,9 @@
 
 package com.thoughtworks.gauge.autocomplete;
 
-import com.intellij.codeInsight.completion.*;
-import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.completion.CompletionParameters;
+import com.intellij.codeInsight.completion.CompletionProvider;
+import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.template.TemplateBuilder;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
@@ -67,17 +68,14 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
         }
         for (Type item : getStepsInModule(moduleForPsiElement)) {
             LookupElementBuilder element = LookupElementBuilder.create(item.getText()).withTypeText(item.getType(), true);
-            element = element.withInsertHandler(new InsertHandler<LookupElement>() {
-                @Override
-                public void handleInsert(InsertionContext context, LookupElement item) {
-                    if (context.getCompletionChar() == '\t') {
-                        context.getDocument().insertString(context.getEditor().getCaretModel().getOffset(), "\n");
-                        PsiDocumentManager.getInstance(context.getProject()).commitDocument(context.getDocument());
-                    }
-                    PsiElement stepElement = context.getFile().findElementAt(context.getStartOffset()).getParent();
-                    TemplateBuilder templateBuilder = getTemplateBuilder(stepElement, prefix);
-                    templateBuilder.run(context.getEditor(), false);
+            element = element.withInsertHandler((context1, item1) -> {
+                if (context1.getCompletionChar() == '\t') {
+                    context1.getDocument().insertString(context1.getEditor().getCaretModel().getOffset(), "\n");
+                    PsiDocumentManager.getInstance(context1.getProject()).commitDocument(context1.getDocument());
                 }
+                PsiElement stepElement = context1.getFile().findElementAt(context1.getStartOffset()).getParent();
+                TemplateBuilder templateBuilder = getTemplateBuilder(stepElement, prefix);
+                templateBuilder.run(context1.getEditor(), false);
             });
             resultSet.addElement(element);
         }
@@ -101,7 +99,7 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
     private List<String> getFilledParams(String prefix) {
         Pattern filledParamPattern = Pattern.compile("\"[\\w ]+\"");
         Matcher matcher = filledParamPattern.matcher(prefix);
-        List<String> filledParams = new ArrayList<String>();
+        List<String> filledParams = new ArrayList<>();
         while (matcher.find()) {
             filledParams.add(matcher.group());
         }
@@ -127,7 +125,7 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
     }
 
     private List<Type> getStepsInModule(Module module) {
-        List<Type> steps = new ArrayList<Type>();
+        List<Type> steps = new ArrayList<>();
         try {
             GaugeService gaugeService = Gauge.getGaugeService(module, true);
             if (gaugeService == null)

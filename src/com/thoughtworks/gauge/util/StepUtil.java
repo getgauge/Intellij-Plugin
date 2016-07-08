@@ -23,10 +23,11 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.AnnotatedElementsSearch;
-import com.intellij.util.Query;
-import com.thoughtworks.gauge.*;
+import com.thoughtworks.gauge.Constants;
+import com.thoughtworks.gauge.GaugeConnection;
+import com.thoughtworks.gauge.Step;
+import com.thoughtworks.gauge.StepValue;
 import com.thoughtworks.gauge.core.Gauge;
-import com.thoughtworks.gauge.core.GaugeService;
 import com.thoughtworks.gauge.language.psi.SpecPsiImplUtil;
 import com.thoughtworks.gauge.language.psi.SpecStep;
 import com.thoughtworks.gauge.language.psi.impl.ConceptConceptImpl;
@@ -34,14 +35,16 @@ import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import com.thoughtworks.gauge.reference.ReferenceCache;
 
-import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 
 import static com.thoughtworks.gauge.GaugeConstant.STEP_ANNOTATION_QUALIFIER;
 
 public class StepUtil {
 
-    private static HashMap<String, StepValue> stepValueCache = new HashMap<String, StepValue>();
+    private static HashMap<String, StepValue> stepValueCache = new HashMap<>();
 
     public static PsiElement findStepImpl(SpecStep step, Module module) {
         if (module == null) {
@@ -145,26 +148,15 @@ public class StepUtil {
     public static List<String> getGaugeStepAnnotationValues(PsiMethod stepMethod) {
         final PsiModifierList modifierList = stepMethod.getModifierList();
         final PsiAnnotation[] annotations = modifierList.getAnnotations();
-        List<String> values = new ArrayList<String>();
+        List<String> values = new ArrayList<>();
         for (PsiAnnotation annotation : annotations) {
             values.addAll(getGaugeStepAnnotationValues(annotation));
         }
         return values;
     }
 
-    private static Module findModule(PsiElement annotation) {
-        Module module = GaugeUtil.moduleForPsiElement(annotation);
-        if (module == null) {
-            PsiFile file = annotation.getContainingFile();
-            if (file != null) {
-                return GaugeUtil.moduleForPsiElement(file);
-            }
-        }
-        return module;
-    }
-
     private static List<String> getGaugeStepAnnotationValues(PsiAnnotation annotation) {
-        List<String> values = new ArrayList<String>();
+        List<String> values = new ArrayList<>();
         if (!isGaugeAnnotation(annotation)) {
             return values;
         }
@@ -192,49 +184,18 @@ public class StepUtil {
     public static Collection<PsiMethod> getStepMethods(Module module) {
         final PsiClass step = JavaPsiFacade.getInstance(module.getProject()).findClass(STEP_ANNOTATION_QUALIFIER, GlobalSearchScope.allScope(module.getProject()));
         if (step != null) {
-            Collection<PsiMethod> methods = new ArrayList<PsiMethod>();
+            Collection<PsiMethod> methods = new ArrayList<>();
             for (Module m : Gauge.getSubModules(module))
                 methods.addAll(AnnotatedElementsSearch.searchPsiMethods(step, GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(m, true)).findAll());
             return methods;
         }
-        return new ArrayList<PsiMethod>();
+        return new ArrayList<>();
     }
 
 
     public static boolean isImplementedStep(SpecStep step, Module module) {
         return findStepImpl(step, module) != null;
     }
-
-    //Check if the step is a concept using list of concepts got from gauge API
-    private static boolean isConcept(SpecStep step) {
-        try {
-            Module module = GaugeUtil.moduleForPsiElement(step);
-            List<ConceptInfo> conceptInfos = fetchAllConcepts(module);
-            return conceptExists(conceptInfos, step.getStepValue());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    private static List<ConceptInfo> fetchAllConcepts(Module module) throws IOException {
-        GaugeService gaugeService = Gauge.getGaugeService(module, true);
-        if (gaugeService != null) {
-            return gaugeService.getGaugeConnection().fetchAllConcepts();
-        }
-
-        return new ArrayList<ConceptInfo>();
-    }
-
-    private static boolean conceptExists(List<ConceptInfo> conceptInfos, StepValue stepValue) {
-        for (ConceptInfo conceptInfo : conceptInfos) {
-            if (conceptInfo.getStepValue().getStepText().trim().equals(stepValue.getStepText().trim())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 
     public static boolean isStep(PsiElement element) {
         return element instanceof SpecStepImpl;

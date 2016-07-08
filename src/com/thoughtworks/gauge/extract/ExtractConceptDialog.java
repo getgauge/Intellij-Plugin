@@ -7,7 +7,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.event.*;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
 
 public class ExtractConceptDialog extends JDialog {
@@ -60,13 +63,10 @@ public class ExtractConceptDialog extends JDialog {
         this.newFile.setVisible(false);
         this.conceptName.setPlaceholder("Enter Concept Name. Example: my new \"concept\"");
         this.newFile.setPlaceholder("Enter File Name");
-        this.files.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ExtractConceptDialog.this.newFile.setVisible(false);
-                if (ExtractConceptDialog.this.files.getSelectedItem().toString().equals(ExtractConceptInfoCollector.CREATE_NEW_FILE))
-                    ExtractConceptDialog.this.newFile.setVisible(true);
-            }
+        this.files.addActionListener(e -> {
+            ExtractConceptDialog.this.newFile.setVisible(false);
+            if (ExtractConceptDialog.this.files.getSelectedItem().toString().equals(ExtractConceptInfoCollector.CREATE_NEW_FILE))
+                ExtractConceptDialog.this.newFile.setVisible(true);
         });
         this.cancelButton.addActionListener(getCancelAction());
         this.OKButton.addActionListener(getOKAction());
@@ -74,25 +74,19 @@ public class ExtractConceptDialog extends JDialog {
 
     @NotNull
     private ActionListener getCancelAction() {
-        return new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onCancel();
-            }
-        };
+        return e -> onCancel();
     }
 
     @NotNull
     private ActionListener getOKAction() {
-        return new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (conceptName.getText().trim().equals(""))
-                    errors.setText("Please enter concept name.");
-                else if (newFile.isVisible() && newFile.getText().trim().equals(""))
-                    errors.setText("Please select filename from the dropdown or provide the new file name.");
-                else {
-                    cancelled = false;
-                    builder.getWindow().setVisible(false);
-                }
+        return e -> {
+            if (conceptName.getText().trim().equals(""))
+                errors.setText("Please enter concept name.");
+            else if (newFile.isVisible() && newFile.getText().trim().equals(""))
+                errors.setText("Please select filename from the dropdown or provide the new file name.");
+            else {
+                cancelled = false;
+                builder.getWindow().setVisible(false);
             }
         };
     }
@@ -103,8 +97,8 @@ public class ExtractConceptDialog extends JDialog {
     }
 
     private void createUIComponents() {
-        this.conceptName = new com.intellij.ui.TextFieldWithAutoCompletion<String>(this.project, getAutoCompleteTextField(this.args), true, "");
-        this.newFile = new com.intellij.ui.TextFieldWithAutoCompletion<String>(this.project, getAutoCompleteTextField(this.dirNames), true, "");
+        this.conceptName = new com.intellij.ui.TextFieldWithAutoCompletion<>(this.project, getAutoCompleteTextField(this.args), true, "");
+        this.newFile = new com.intellij.ui.TextFieldWithAutoCompletion<>(this.project, getAutoCompleteTextField(this.dirNames), true, "");
     }
 
     private TextFieldWithAutoCompletionListProvider<String> getAutoCompleteTextField(final List<String> dirNames) {

@@ -63,7 +63,7 @@ public class SpecPsiImplUtil {
     }
 
     private static StepValue getDefaultStepValue(PsiElement element) {
-        return new StepValue(element.getText(), element.getText(), new ArrayList<String>());
+        return new StepValue(element.getText(), element.getText(), new ArrayList<>());
     }
 
     public static ItemPresentation getPresentation(final SpecStepImpl element) {

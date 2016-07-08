@@ -45,7 +45,7 @@ public class StaticArgCompletionProvider extends CompletionProvider<CompletionPa
         resultSet = resultSet.withPrefixMatcher(new PlainPrefixMatcher(prefix));
         PsiFile specFile = parameters.getOriginalFile();
         SpecDetail specDetail = PsiTreeUtil.getChildOfType(specFile, SpecDetail.class);
-        List<SpecStep> stepsInFile = new ArrayList<SpecStep>();
+        List<SpecStep> stepsInFile = new ArrayList<>();
         addContextSteps(specDetail, stepsInFile);
         addStepsInScenarios(specFile, stepsInFile);
 
@@ -71,13 +71,10 @@ public class StaticArgCompletionProvider extends CompletionProvider<CompletionPa
     }
 
     private Set<String> getArgsFromSteps(List<SpecStep> steps) {
-        Set<String> staticArgs = new HashSet<String>();
+        Set<String> staticArgs = new HashSet<>();
         for (SpecStep step : steps) {
             List<SpecStaticArg> args = step.getStaticArgList();
-            for (SpecStaticArg arg : args) {
-                if (arg.getText() != null)
-                    staticArgs.add(arg.getText());
-            }
+            args.stream().filter(arg -> arg.getText() != null).forEach((arg) -> staticArgs.add(arg.getText()));
         }
         return staticArgs;
     }

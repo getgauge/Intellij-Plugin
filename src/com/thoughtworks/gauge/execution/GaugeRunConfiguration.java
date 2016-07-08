@@ -213,7 +213,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         programParameters.setProgramParameters(JDOMExternalizer.readString(element, "programParameters"));
         programParameters.setWorkingDirectory(JDOMExternalizer.readString(element, "workingDirectory"));
         this.moduleName = JDOMExternalizer.readString(element, "moduleName");
-        HashMap<String, String> envMap = new HashMap<String, String>();
+        HashMap<String, String> envMap = new HashMap<>();
         JDOMExternalizer.readMap(element, envMap, "envMap", "envMap");
         programParameters.setEnvs(envMap);
         rowsRange = JDOMExternalizer.readString(element, "rowsRange");

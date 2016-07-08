@@ -91,10 +91,7 @@ public class GaugeExecutionProducer extends RunConfigurationProducer {
         }
 
         final String specsToExecute = ((GaugeRunConfiguration) configuration).getSpecsToExecute();
-        if (specsToExecute == null) {
-            return false;
-        }
-        return (specsToExecute.contains(location.getVirtualFile().getName()));
+        return specsToExecute != null && (specsToExecute.contains(location.getVirtualFile().getName()));
     }
 
     private Boolean isInSpecScope(PsiElement element) {

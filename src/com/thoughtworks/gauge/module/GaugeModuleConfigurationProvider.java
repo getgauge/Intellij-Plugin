@@ -39,7 +39,7 @@ public class GaugeModuleConfigurationProvider implements ModuleConfigurationEdit
         }
 
         final DefaultModuleConfigurationEditorFactory editorFactory = DefaultModuleConfigurationEditorFactory.getInstance();
-        List<ModuleConfigurationEditor> editors = new ArrayList<ModuleConfigurationEditor>();
+        List<ModuleConfigurationEditor> editors = new ArrayList<>();
         editors.add(editorFactory.createModuleContentRootsEditor(state));
         editors.add(editorFactory.createOutputEditor(state));
         editors.add(editorFactory.createClasspathEditor(state));

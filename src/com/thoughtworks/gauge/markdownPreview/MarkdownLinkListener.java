@@ -52,7 +52,6 @@ public class MarkdownLinkListener implements HyperlinkListener {
                 browserLinkListener.hyperlinkUpdate(e);
             } else {
                 VirtualFile virtualTarget = VirtualFileManager.getInstance().getFileSystem(target.getProtocol()).findFileByPath(target.getFile());
-                ;
                 if (virtualTarget == null || !virtualTarget.exists())
                     virtualTarget = FileDocumentManager.getInstance().getFile(document).getParent().findFileByRelativePath(e.getDescription());
                 try {

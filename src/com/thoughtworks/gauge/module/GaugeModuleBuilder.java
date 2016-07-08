@@ -26,9 +26,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
-import com.intellij.openapi.projectRoots.SdkTypeId;
 import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
@@ -66,12 +64,7 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
     @Nullable
     @Override
     public ModuleWizardStep modifySettingsStep(@NotNull SettingsStep settingsStep) {
-        return ProjectWizardStepFactory.getInstance().createJavaSettingsStep(settingsStep, this, new Condition<SdkTypeId>() {
-            @Override
-            public boolean value(SdkTypeId sdkType) {
-                return isSuitableSdkType(sdkType);
-            }
-        });
+        return ProjectWizardStepFactory.getInstance().createJavaSettingsStep(settingsStep, this, this::isSuitableSdkType);
     }
 
     private void gaugeInit(final ModifiableRootModel modifiableRootModel) {
@@ -93,9 +86,7 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
                         throw new RuntimeException(failureMessage);
                     }
                     VirtualFileManager.getInstance().refreshWithoutFileWatcher(false);
-                } catch (IOException e) {
-                    throw new RuntimeException(failureMessage, e);
-                } catch (InterruptedException e) {
+                } catch (IOException | InterruptedException e) {
                     throw new RuntimeException(failureMessage, e);
                 } catch (GaugeNotFoundException e) {
                     throw new RuntimeException(String.format("%s: %s", failureMessage, e.getMessage()), e);
@@ -115,7 +106,7 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
 
     @Override
     public List<Pair<String, String>> getSourcePaths() {
-        final List<Pair<String, String>> paths = new ArrayList<Pair<String, String>>();
+        final List<Pair<String, String>> paths = new ArrayList<>();
         @NonNls final String path = getContentEntryPath() + File.separator + "src" + File.separator + "test" + File.separator + "java";
         paths.add(Pair.create(path, ""));
         return paths;
