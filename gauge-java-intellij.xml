@@ -382,7 +382,7 @@
                 <pathelement location="${jdk.home.idea_iu-135.1230}/lib/jps-launcher.jar" />
                 <pathelement location="${jdk.home.idea_iu-135.1230}/lib/jps-model.jar" />
                 <pathelement location="${jdk.home.idea_iu-135.1230}/lib/junit-4.12.jar" />
-                <pathelement location="${jdk.home.idea_iu-135.1230}/lib/netty-all-4.1.0.Beta7.jar" />
+                <pathelement location="${jdk.home.idea_iu-135.1230}/lib/netty-all-4.1.0.Beta8.jar" />
                 <pathelement location="${jdk.home.idea_iu-135.1230}/lib/proxy-vole_20131209.jar" />
                 <pathelement location="${jdk.home.idea_iu-135.1230}/lib/snappy-in-java-0.3.1.jar" />
                 <pathelement location="${module.gauge-java-intellij.basedir}/lib/asm-4.1.jar" />
