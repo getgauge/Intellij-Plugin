@@ -106,4 +106,36 @@ public class ReferenceSearchHelperTest extends LightCodeInsightFixtureTestCase {
 
         verify(collector, times(1)).get("hello");
     }
+
+    @Test
+    public void testShouldNotFindReferencesIfNotGaugeModule() throws Exception {
+        SpecStepImpl element = mock(SpecStepImpl.class);
+        SearchScope scope = mock(SearchScope.class);
+        ReferencesSearch.SearchParameters searchParameters = new ReferencesSearch.SearchParameters(element, scope, true);
+        ModuleHelper moduleHelper = mock(ModuleHelper.class);
+        when(moduleHelper.isGaugeModule(element)).thenReturn(false);
+
+        ReferenceSearchHelper referenceSearchHelper = new ReferenceSearchHelper(moduleHelper);
+        boolean shouldFindReferences = referenceSearchHelper.shouldFindReferences(searchParameters, searchParameters.getElementToSearch());
+
+        assertFalse("Should find reference for non Gauge Module(Expected: false, Actual: true)", shouldFindReferences);
+
+        verify(scope, never()).getDisplayName();
+    }
+
+    @Test
+    public void testShouldFindReferencesIfGaugeModule() throws Exception {
+        SpecStepImpl element = mock(SpecStepImpl.class);
+        SearchScope scope = mock(SearchScope.class);
+        ReferencesSearch.SearchParameters searchParameters = new ReferencesSearch.SearchParameters(element, scope, true);
+        ModuleHelper moduleHelper = mock(ModuleHelper.class);
+        when(moduleHelper.isGaugeModule(element)).thenReturn(true);
+        when(scope.getDisplayName()).thenReturn("Other Scope");
+
+        ReferenceSearchHelper referenceSearchHelper = new ReferenceSearchHelper(moduleHelper);
+        referenceSearchHelper.shouldFindReferences(searchParameters, searchParameters.getElementToSearch());
+
+        verify(scope, times(1)).getDisplayName();
+    }
+
 }
