@@ -10,6 +10,7 @@ import com.thoughtworks.gauge.StepValue;
 import com.thoughtworks.gauge.findUsages.StepCollector;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
+import com.thoughtworks.gauge.helper.ModuleHelper;
 import org.junit.Test;
 
 import java.util.ArrayList;

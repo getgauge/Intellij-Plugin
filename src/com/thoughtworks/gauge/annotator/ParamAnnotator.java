@@ -5,24 +5,26 @@ import com.intellij.lang.annotation.Annotator;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.thoughtworks.gauge.StepValue;
-import com.thoughtworks.gauge.language.psi.SpecPsiImplUtil;
-import com.thoughtworks.gauge.util.StepUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
 public class ParamAnnotator implements Annotator {
+    private AnnotationHelper helper;
+
+    public ParamAnnotator(AnnotationHelper helper) {
+        this.helper = helper;
+    }
+
+    public ParamAnnotator() {
+        this.helper = new AnnotationHelper();
+    }
+
 
     @Override
     public void annotate(@NotNull PsiElement psiElement, @NotNull AnnotationHolder holder) {
-        if (psiElement instanceof PsiMethod) {
-            List<String> aliases = StepUtil.getGaugeStepAnnotationValues((PsiMethod) psiElement);
-            for (String alias : aliases) {
-                StepValue value = SpecPsiImplUtil.getStepValueFor(psiElement, alias, false);
-                if (value.getParameters().size() != ((PsiMethod) psiElement).getParameterList().getParametersCount())
-                    createWarning((PsiMethod) psiElement, holder, alias, value);
-            }
-        }
+        if (helper.isGaugeModule(psiElement) && psiElement instanceof PsiMethod)
+            helper.getStepValues((PsiMethod) psiElement).stream()
+                    .filter(value -> value.getParameters().size() != ((PsiMethod) psiElement).getParameterList().getParametersCount())
+                    .forEach(value -> createWarning((PsiMethod) psiElement, holder, value.getStepAnnotationText(), value));
     }
 
     private void createWarning(@NotNull PsiMethod psiElement, @NotNull AnnotationHolder holder, String alias, StepValue value) {

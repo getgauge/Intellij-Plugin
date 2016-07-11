@@ -10,6 +10,7 @@ import com.thoughtworks.gauge.language.psi.SpecStep;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import com.thoughtworks.gauge.util.GaugeUtil;
+import com.thoughtworks.gauge.helper.ModuleHelper;
 import com.thoughtworks.gauge.util.StepUtil;
 import org.jetbrains.annotations.NotNull;
 
