@@ -19,7 +19,6 @@ package com.thoughtworks.gauge.rename;
 
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -40,8 +39,17 @@ import static com.thoughtworks.gauge.util.StepUtil.*;
 
 public class CustomRenameHandler implements RenameHandler {
 
+    private CompileAction action;
     private PsiElement psiElement;
     private Editor editor;
+
+    CustomRenameHandler(CompileAction action) {
+        this.action = action;
+    }
+
+    public CustomRenameHandler() {
+        this.action = new CompileAction();
+    }
 
     public boolean isAvailableOnDataContext(DataContext dataContext) {
         PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
@@ -59,7 +67,7 @@ public class CustomRenameHandler implements RenameHandler {
             return psiElement != null && (isConcept(psiElement) || isStep(psiElement));
         }
         boolean isAvailable = CommonDataKeys.PROJECT.getData(dataContext) != null && (isMethod(element) || isConcept(element) || isStep(element));
-        if (isAvailable) makeProject(CommonDataKeys.PROJECT.getData(dataContext));
+        if (isAvailable) action.compile(CommonDataKeys.PROJECT.getData(dataContext));
         return isAvailable;
     }
 
@@ -108,10 +116,5 @@ public class CustomRenameHandler implements RenameHandler {
             return selectedElement;
         if (selectedElement.getParent() == null) return null;
         return getStepElement(selectedElement.getParent());
-    }
-
-    private void makeProject(Project project) {
-        CompilerManager.getInstance(project).make((b, i, i1, compileContext) -> {
-        });
     }
 }
