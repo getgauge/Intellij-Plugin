@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.thoughtworks.gauge.helper.ModuleHelper;
 import com.thoughtworks.gauge.language.SpecFileType;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
@@ -13,13 +14,22 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class MarkdownPreviewEditorProviderTest {
+
+    private Module module;
+    private ModuleHelper helper;
+    private VirtualFile file;
+    private Project project;
+
+    @Before
+    public void setUp() throws Exception {
+        project = mock(Project.class);
+        file = mock(VirtualFile.class);
+        helper = mock(ModuleHelper.class);
+        module = mock(Module.class);
+    }
+
     @Test
     public void shouldAcceptOnlyGaugeFileAndModule() {
-        Project project = mock(Project.class);
-        VirtualFile file = mock(VirtualFile.class);
-        ModuleHelper helper = mock(ModuleHelper.class);
-        Module module = mock(Module.class);
-
         when(helper.getModule(file, project)).thenReturn(module);
         when(helper.isGaugeModule(module)).thenReturn(true);
         when(file.getFileType()).thenReturn(SpecFileType.INSTANCE);
@@ -31,11 +41,6 @@ public class MarkdownPreviewEditorProviderTest {
 
     @Test
     public void shouldNotAcceptNonGaugeFile() {
-        Project project = mock(Project.class);
-        VirtualFile file = mock(VirtualFile.class);
-        ModuleHelper helper = mock(ModuleHelper.class);
-        Module module = mock(Module.class);
-
         when(helper.getModule(file, project)).thenReturn(module);
         when(helper.isGaugeModule(module)).thenReturn(true);
         when(file.getFileType()).thenReturn(JavaFileType.INSTANCE);
@@ -48,11 +53,6 @@ public class MarkdownPreviewEditorProviderTest {
 
     @Test
     public void shouldNotAcceptNonGaugeModule() {
-        Project project = mock(Project.class);
-        VirtualFile file = mock(VirtualFile.class);
-        ModuleHelper helper = mock(ModuleHelper.class);
-        Module module = mock(Module.class);
-
         when(helper.getModule(file, project)).thenReturn(module);
         when(helper.isGaugeModule(module)).thenReturn(false);
 
@@ -63,10 +63,6 @@ public class MarkdownPreviewEditorProviderTest {
 
     @Test
     public void shouldNotAcceptIfModuleIsNull() {
-        Project project = mock(Project.class);
-        VirtualFile file = mock(VirtualFile.class);
-        ModuleHelper helper = mock(ModuleHelper.class);
-
         when(helper.getModule(file, project)).thenReturn(null);
 
         MarkdownPreviewEditorProvider provider = new MarkdownPreviewEditorProvider(helper);

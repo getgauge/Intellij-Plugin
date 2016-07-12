@@ -1,35 +1,44 @@
 package com.thoughtworks.gauge.execution;
 
 import com.intellij.execution.actions.ConfigurationContext;
-import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.ide.highlighter.JavaFileType;
-import com.intellij.ide.impl.dataRules.VirtualFileRule;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.thoughtworks.gauge.language.SpecFile;
-import com.thoughtworks.gauge.language.SpecFileType;
 import com.thoughtworks.gauge.language.psi.SpecScenario;
+import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class GaugeExecutionProducerTest {
+
+    private VirtualFile virtualFile;
+    private SpecFile file;
+    private PsiElement element;
+    private Module module;
+    private DataContext dataContext;
+    private ConfigurationContext context;
+    private GaugeRunConfiguration configuration;
+
+    @Before
+    public void setUp() throws Exception {
+        configuration = mock(GaugeRunConfiguration.class);
+        context = mock(ConfigurationContext.class);
+        dataContext = mock(DataContext.class);
+        module = mock(Module.class);
+        element = mock(SpecFile.class);
+        file = mock(SpecFile.class);
+        virtualFile = mock(VirtualFile.class);
+    }
+
     @Test
     public void shouldSetupConfigurationFromContext() {
-        GaugeRunConfiguration configuration = mock(GaugeRunConfiguration.class);
-        ConfigurationContext context = mock(ConfigurationContext.class);
-        DataContext dataContext = mock(DataContext.class);
-        Module module = mock(Module.class);
-        PsiElement element = mock(SpecFile.class);
-        SpecFile file = mock(SpecFile.class);
-        VirtualFile virtualFile = mock(VirtualFile.class);
-
         when(file.getVirtualFile()).thenReturn(virtualFile);
         when(context.getDataContext()).thenReturn(dataContext);
         when(context.getModule()).thenReturn(module);
@@ -45,27 +54,18 @@ public class GaugeExecutionProducerTest {
 
     @Test
     public void shouldNotSetupConfigurationIfDataContextIsNotPresentInConfigurationContext() {
-        GaugeRunConfiguration configuration = mock(GaugeRunConfiguration.class);
-        ConfigurationContext context = mock(ConfigurationContext.class);
-        DataContext dataContext = mock(DataContext.class);
-
         when(context.getDataContext()).thenReturn(dataContext);
-        when(dataContext.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY.getName())).thenReturn(null);
 
         boolean success = new GaugeExecutionProducer().setupConfigurationFromContext(configuration, context, null);
 
         assertFalse("should setup configuration if data context is not present in configuration context. Expected: false, Actual: true", success);
+        verify(context, never()).getModule();
     }
 
     @Test
     public void shouldNotSetupConfigurationIfElementIsNotPresentInConfigurationContext() {
-        GaugeRunConfiguration configuration = mock(GaugeRunConfiguration.class);
-        ConfigurationContext context = mock(ConfigurationContext.class);
-        DataContext dataContext = mock(DataContext.class);
-
         when(context.getDataContext()).thenReturn(dataContext);
         when(dataContext.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY.getName())).thenReturn(new VirtualFile[]{mock(VirtualFile.class)});
-        when(context.getPsiLocation()).thenReturn(null);
         when(context.getModule()).thenReturn(mock(Module.class));
 
         boolean success = new GaugeExecutionProducer().setupConfigurationFromContext(configuration, context, null);
@@ -75,13 +75,9 @@ public class GaugeExecutionProducerTest {
 
     @Test
     public void shouldNotSetupConfigurationIfModuleIsNotPresentInConfigurationContext() {
-        GaugeRunConfiguration configuration = mock(GaugeRunConfiguration.class);
-        ConfigurationContext context = mock(ConfigurationContext.class);
-        DataContext dataContext = mock(DataContext.class);
-
         when(context.getDataContext()).thenReturn(dataContext);
         when(dataContext.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY.getName())).thenReturn(new VirtualFile[]{mock(VirtualFile.class)});
-        when(context.getModule()).thenReturn(null);
+
         boolean success = new GaugeExecutionProducer().setupConfigurationFromContext(configuration, context, null);
 
         assertFalse("should setup configuration if module is not present in configuration context. Expected: false, Actual: true", success);
@@ -89,9 +85,6 @@ public class GaugeExecutionProducerTest {
 
     @Test
     public void shouldNotSetupConfigurationIfElementDoesntBelongToGaugeSpecFile() {
-        GaugeRunConfiguration configuration = mock(GaugeRunConfiguration.class);
-        ConfigurationContext context = mock(ConfigurationContext.class);
-        DataContext dataContext = mock(DataContext.class);
         PsiElement element = mock(PsiElement.class);
 
         when(context.getDataContext()).thenReturn(dataContext);
@@ -107,9 +100,6 @@ public class GaugeExecutionProducerTest {
 
     @Test
     public void shouldNotSetupConfigurationIfElementIsNotInSpecScope() {
-        GaugeRunConfiguration configuration = mock(GaugeRunConfiguration.class);
-        ConfigurationContext context = mock(ConfigurationContext.class);
-        DataContext dataContext = mock(DataContext.class);
         PsiElement element = mock(SpecScenario.class);
 
         when(context.getDataContext()).thenReturn(dataContext);
@@ -125,9 +115,6 @@ public class GaugeExecutionProducerTest {
 
     @Test
     public void shouldNotSetupConfigurationIfVirtualFileIsNotPresent() {
-        GaugeRunConfiguration configuration = mock(GaugeRunConfiguration.class);
-        ConfigurationContext context = mock(ConfigurationContext.class);
-        DataContext dataContext = mock(DataContext.class);
         PsiElement element = mock(SpecFile.class);
         PsiFile file = mock(SpecFile.class);
 

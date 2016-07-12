@@ -87,7 +87,7 @@ public class GaugePrefixMatcherTest {
         assertFalse(gaugePrefixMatcher.prefixMatches(name));
     }
 
-   @Test
+    @Test
     public void shouldMatchParameterizedCompleteStep() {
         String prefix = "Say \"hello\" to \"world\"";
         GaugePrefixMatcher gaugePrefixMatcher = new GaugePrefixMatcher(prefix);

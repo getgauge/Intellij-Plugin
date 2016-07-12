@@ -13,33 +13,39 @@ import static org.mockito.Mockito.*;
 
 public class ReferenceSearchTest extends LightCodeInsightFixtureTestCase {
 
+    private Project project;
+    private SpecStepImpl element;
+    private ReferenceSearchHelper helper;
+    private StepCollector collector;
+
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        element = mock(SpecStepImpl.class);
+        helper = mock(ReferenceSearchHelper.class);
+        collector = mock(StepCollector.class);
+        project = myFixture.getProject();
+    }
+
     @Test
     public void testShouldNotFindReferencesOfNonGaugeElement() throws Exception {
-        Project project = myFixture.getProject();
-        SpecStepImpl element = mock(SpecStepImpl.class);
         ReferencesSearch.SearchParameters searchParameters = new ReferencesSearch.SearchParameters(element, GlobalSearchScope.allScope(project), true);
-        ReferenceSearchHelper mock = mock(ReferenceSearchHelper.class);
+        when(helper.shouldFindReferences(searchParameters, searchParameters.getElementToSearch())).thenReturn(false);
 
-        when(mock.shouldFindReferences(searchParameters, searchParameters.getElementToSearch())).thenReturn(false);
+        new ReferenceSearch(helper).processQuery(searchParameters, psiReference -> false);
 
-        new ReferenceSearch(mock).processQuery(searchParameters, psiReference -> false);
-
-        verify(mock, never()).getPsiElements(any(StepCollector.class), any(PsiElement.class));
+        verify(helper, never()).getPsiElements(any(StepCollector.class), any(PsiElement.class));
     }
 
     @Test
     public void testShouldFindReferencesOfGaugeElement() throws Exception {
-        Project project = myFixture.getProject();
-        SpecStepImpl element = mock(SpecStepImpl.class);
         ReferencesSearch.SearchParameters searchParameters = new ReferencesSearch.SearchParameters(element, GlobalSearchScope.allScope(project), true);
-        ReferenceSearchHelper mock = mock(ReferenceSearchHelper.class);
-        StepCollector collector = mock(StepCollector.class);
 
-        when(mock.shouldFindReferences(searchParameters, searchParameters.getElementToSearch())).thenReturn(true);
-        when(mock.getStepCollector(element)).thenReturn(collector);
+        when(helper.shouldFindReferences(searchParameters, searchParameters.getElementToSearch())).thenReturn(true);
+        when(helper.getStepCollector(element)).thenReturn(collector);
 
-        new ReferenceSearch(mock).processQuery(searchParameters, psiReference -> false);
+        new ReferenceSearch(helper).processQuery(searchParameters, psiReference -> false);
 
-        verify(mock, times(1)).getPsiElements(collector, element);
+        verify(helper, times(1)).getPsiElements(collector, element);
     }
 }

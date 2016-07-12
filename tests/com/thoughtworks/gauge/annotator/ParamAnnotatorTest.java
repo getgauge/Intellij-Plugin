@@ -3,9 +3,11 @@ package com.thoughtworks.gauge.annotator;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameterList;
 import com.thoughtworks.gauge.StepValue;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -15,12 +17,25 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 public class ParamAnnotatorTest {
+
+    private AnnotationHolder holder;
+    private AnnotationHelper helper;
+    private TextRange textRange;
+    private PsiMethod element;
+    private PsiParameterList parameterList;
+
+    @Before
+    public void setUp() throws Exception {
+        holder = mock(AnnotationHolder.class);
+        helper = mock(AnnotationHelper.class);
+        textRange = mock(TextRange.class);
+        element = mock(PsiMethod.class);
+        parameterList = mock(PsiParameterList.class);
+    }
+
     @Test
     public void testShouldNotAnnotateNonGaugeElement() throws Exception {
-        PsiClass element = mock(PsiClass.class);
-        AnnotationHolder holder = mock(AnnotationHolder.class);
-        AnnotationHelper helper = mock(AnnotationHelper.class);
-
+        PsiElement element = mock(PsiClass.class);
         when(helper.isGaugeModule(element)).thenReturn(true);
 
         new ParamAnnotator(helper).annotate(element, holder);
@@ -30,10 +45,6 @@ public class ParamAnnotatorTest {
 
     @Test
     public void testShouldNotAnnotateInNonGaugeModule() throws Exception {
-        PsiMethod element = mock(PsiMethod.class);
-        AnnotationHolder holder = mock(AnnotationHolder.class);
-        AnnotationHelper helper = mock(AnnotationHelper.class);
-
         when(helper.isGaugeModule(element)).thenReturn(false);
 
         new ParamAnnotator(helper).annotate(element, holder);
@@ -43,12 +54,6 @@ public class ParamAnnotatorTest {
 
     @Test
     public void testShouldAnnotateWhenParamMismatch() throws Exception {
-        PsiMethod element = mock(PsiMethod.class);
-        AnnotationHolder holder = mock(AnnotationHolder.class);
-        TextRange textRange = mock(TextRange.class);
-        AnnotationHelper helper = mock(AnnotationHelper.class);
-        PsiParameterList parameterList = mock(PsiParameterList.class);
-
         when(helper.isGaugeModule(element)).thenReturn(true);
         when(helper.getStepValues(element)).thenReturn(Collections.singletonList(new StepValue("step", "step", Collections.singletonList("a"))));
         when(element.getParameterList()).thenReturn(parameterList);
@@ -63,12 +68,6 @@ public class ParamAnnotatorTest {
 
     @Test
     public void testShouldAnnotateWhenParamMismatchInAlias() throws Exception {
-        PsiMethod element = mock(PsiMethod.class);
-        AnnotationHolder holder = mock(AnnotationHolder.class);
-        TextRange textRange = mock(TextRange.class);
-        AnnotationHelper helper = mock(AnnotationHelper.class);
-        PsiParameterList parameterList = mock(PsiParameterList.class);
-
         when(helper.isGaugeModule(element)).thenReturn(true);
         when(helper.getStepValues(element)).thenReturn(Arrays.asList(new StepValue("step", "step", Arrays.asList("a", "b")), new StepValue("step1", "step1", Collections.singletonList("a"))));
         when(element.getParameterList()).thenReturn(parameterList);
@@ -82,12 +81,6 @@ public class ParamAnnotatorTest {
 
     @Test
     public void testShouldNotAnnotateWhenThereIsNoParamMismatch() throws Exception {
-        PsiMethod element = mock(PsiMethod.class);
-        AnnotationHolder holder = mock(AnnotationHolder.class);
-        TextRange textRange = mock(TextRange.class);
-        AnnotationHelper helper = mock(AnnotationHelper.class);
-        PsiParameterList parameterList = mock(PsiParameterList.class);
-
         when(helper.isGaugeModule(element)).thenReturn(true);
         when(helper.getStepValues(element)).thenReturn(Collections.singletonList(new StepValue("step", "step", Collections.singletonList("a"))));
         when(element.getParameterList()).thenReturn(parameterList);

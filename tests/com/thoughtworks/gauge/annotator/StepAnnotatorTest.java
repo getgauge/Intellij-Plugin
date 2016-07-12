@@ -9,18 +9,28 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiClass;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 public class StepAnnotatorTest {
+
+    private AnnotationHelper helper;
+    private AnnotationHolder holder;
+    private TextRange textRange;
+
+    @Before
+    public void setUp() throws Exception {
+        holder = mock(AnnotationHolder.class);
+        helper = mock(AnnotationHelper.class);
+        textRange = mock(TextRange.class);
+    }
+
     @Test
     public void testShouldNotAnnotateNonGaugeElement() throws Exception {
         PsiClass element = mock(PsiClass.class);
-        AnnotationHolder holder = mock(AnnotationHolder.class);
-        AnnotationHelper helper = mock(AnnotationHelper.class);
-
         when(helper.isGaugeModule(element)).thenReturn(true);
 
         new StepAnnotator(helper).annotate(element, holder);
@@ -31,9 +41,6 @@ public class StepAnnotatorTest {
     @Test
     public void testShouldAnnotateBlankSpecStep() throws Exception {
         SpecStepImpl element = mock(SpecStepImpl.class);
-        AnnotationHolder holder = mock(AnnotationHolder.class);
-        TextRange textRange = mock(TextRange.class);
-        AnnotationHelper helper = mock(AnnotationHelper.class);
 
         when(helper.isGaugeModule(element)).thenReturn(true);
         when(helper.isEmpty(element)).thenReturn(true);
@@ -47,9 +54,6 @@ public class StepAnnotatorTest {
     @Test
     public void testShouldAnnotateBlankConceptStep() throws Exception {
         ConceptStepImpl element = mock(ConceptStepImpl.class);
-        AnnotationHolder holder = mock(AnnotationHolder.class);
-        TextRange textRange = mock(TextRange.class);
-        AnnotationHelper helper = mock(AnnotationHelper.class);
 
         when(helper.isGaugeModule(element)).thenReturn(true);
         when(helper.isEmpty(any(SpecStepImpl.class))).thenReturn(true);
@@ -64,8 +68,6 @@ public class StepAnnotatorTest {
     @Test
     public void testShouldNotAnnotateInNonGaugeModule() throws Exception {
         SpecStepImpl element = mock(SpecStepImpl.class);
-        AnnotationHolder holder = mock(AnnotationHolder.class);
-        AnnotationHelper helper = mock(AnnotationHelper.class);
         when(helper.isGaugeModule(element)).thenReturn(false);
 
         new StepAnnotator(helper).annotate(element, holder);
@@ -76,17 +78,14 @@ public class StepAnnotatorTest {
     @Test
     public void testShouldAnnotateInGaugeModule() throws Exception {
         SpecStepImpl element = mock(SpecStepImpl.class);
-        AnnotationHolder holder = mock(AnnotationHolder.class);
         Module module = mock(Module.class);
-        TextRange textRange = mock(TextRange.class);
-        AnnotationHelper helper = mock(AnnotationHelper.class);
 
         when(helper.isGaugeModule(element)).thenReturn(true);
         when(element.getTextRange()).thenReturn(textRange);
         when(helper.getModule(element)).thenReturn(module);
         when(helper.isEmpty(element)).thenReturn(false);
         when(helper.isImplemented(element, module)).thenReturn(false);
-        when(holder.createErrorAnnotation(textRange, "Undefined Step")).thenReturn(new Annotation(1,1,new HighlightSeverity("dsf", 1), "", ""));
+        when(holder.createErrorAnnotation(textRange, "Undefined Step")).thenReturn(new Annotation(1, 1, new HighlightSeverity("dsf", 1), "", ""));
 
         new StepAnnotator(helper).annotate(element, holder);
 
