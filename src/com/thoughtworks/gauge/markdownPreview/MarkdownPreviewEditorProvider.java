@@ -2,19 +2,29 @@ package com.thoughtworks.gauge.markdownPreview;
 
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.PossiblyDumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.thoughtworks.gauge.helper.ModuleHelper;
 import com.thoughtworks.gauge.util.GaugeUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 public class MarkdownPreviewEditorProvider implements FileEditorProvider, PossiblyDumbAware {
+    private final ModuleHelper helper;
+
+    public MarkdownPreviewEditorProvider() {
+        this.helper = new ModuleHelper();
+    }
+
+    public MarkdownPreviewEditorProvider(ModuleHelper helper) {
+        this.helper = helper;
+    }
+
     @Override
     public boolean accept(Project project, VirtualFile file) {
-        Module module = ModuleUtil.findModuleForFile(file, project);
-        return module != null && GaugeUtil.isGaugeFile(file) && GaugeUtil.isGaugeModule(module);
+        Module module = helper.getModule(file, project);
+        return module != null && GaugeUtil.isGaugeFile(file) && helper.isGaugeModule(module);
     }
 
     @NotNull

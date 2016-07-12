@@ -1,6 +1,9 @@
 package com.thoughtworks.gauge.helper;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.thoughtworks.gauge.language.psi.SpecStep;
 import com.thoughtworks.gauge.util.GaugeUtil;
@@ -11,7 +14,16 @@ public class ModuleHelper {
         return module != null && GaugeUtil.isGaugeModule(module);
     }
 
-    public Module getModule(SpecStep step) {
+    public boolean isGaugeModule(Module module) {
+        return GaugeUtil.isGaugeModule(module);
+    }
+
+    public Module getModule(PsiElement step) {
         return GaugeUtil.moduleForPsiElement(step);
     }
+
+    public Module getModule(VirtualFile file, Project project) {
+        return ModuleUtil.findModuleForFile(file,project);
+    }
+
 }
