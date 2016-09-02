@@ -18,7 +18,7 @@
 <idea-plugin version="2">
     <id>com.thoughtworks.gauge</id>
     <name>Gauge</name>
-    <version>0.2.2</version>
+    <version>0.2.3</version>
     <vendor email="getgauge@googlegroups.com" url="http://getgauge.io">Gauge</vendor>
 
     <description><![CDATA[
@@ -38,7 +38,7 @@
     ]]></description>
 
     <change-notes><![CDATA[
-      <p>0.2.2</p>
+      <p>0.2.3</p>
       <ul>
              <li> Bug Fixes and enhancements </li>
       </ul>
