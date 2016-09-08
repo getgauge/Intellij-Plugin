@@ -5,7 +5,6 @@ import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.thoughtworks.gauge.language.psi.SpecStep;
 import com.thoughtworks.gauge.util.GaugeUtil;
 
 public class ModuleHelper {
@@ -23,7 +22,10 @@ public class ModuleHelper {
     }
 
     public Module getModule(VirtualFile file, Project project) {
-        return ModuleUtil.findModuleForFile(file,project);
+        return ModuleUtil.findModuleForFile(file, project);
     }
 
+    public boolean isGaugeModule(VirtualFile file, Project project) {
+        return isGaugeModule(ModuleUtil.findModuleForFile(file, project));
+    }
 }
