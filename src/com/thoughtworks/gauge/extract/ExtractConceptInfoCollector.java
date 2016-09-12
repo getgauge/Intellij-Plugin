@@ -16,6 +16,7 @@ import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 public class ExtractConceptInfoCollector {
@@ -44,11 +45,11 @@ public class ExtractConceptInfoCollector {
 
     private List<String> getArgs(String steps) {
         List<String> args = new ArrayList<>();
-        for (String step : steps.split("\n")) {
-            String unescapeStep = StringUtil.unescapeStringCharacters(step);
-            for (String p : SpecPsiImplUtil.getStepValueFor(this.steps.get(0), step, false).getParameters())
-                args.add(getNameWithParamChar(unescapeStep, p));
-        }
+        for (String step : steps.split("\n"))
+            args.addAll(SpecPsiImplUtil.getStepValueFor(this.steps.get(0), step, false).getParameters()
+                    .stream()
+                    .map(p -> getNameWithParamChar(StringUtil.unescapeStringCharacters(step), p))
+                    .collect(Collectors.toList()));
         return args;
     }
 

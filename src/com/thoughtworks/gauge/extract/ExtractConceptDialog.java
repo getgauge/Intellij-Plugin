@@ -3,6 +3,8 @@ package com.thoughtworks.gauge.extract;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.ui.TextFieldWithAutoCompletionListProvider;
+import com.thoughtworks.gauge.Constants;
+import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,7 +19,7 @@ public class ExtractConceptDialog extends JDialog {
     private JPanel contentPane;
     private com.intellij.ui.TextFieldWithAutoCompletion conceptName;
     private JTextArea steps;
-    private JComboBox files;
+    private JComboBox<String> files;
     private com.intellij.ui.TextFieldWithAutoCompletion newFile;
     private JButton OKButton;
     private JButton cancelButton;
@@ -84,6 +86,8 @@ public class ExtractConceptDialog extends JDialog {
                 errors.setText("Please enter concept name.");
             else if (newFile.isVisible() && newFile.getText().trim().equals(""))
                 errors.setText("Please select filename from the dropdown or provide the new file name.");
+            else if (!FilenameUtils.getExtension(newFile.getText().trim()).equals(Constants.CONCEPT_EXTENSION))
+                errors.setText("Please enter valid concept file name(.cpt extension).");
             else {
                 cancelled = false;
                 builder.getWindow().setVisible(false);
