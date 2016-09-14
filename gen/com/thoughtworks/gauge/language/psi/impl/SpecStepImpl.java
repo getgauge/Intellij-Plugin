@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.thoughtworks.gauge.StepValue;
+import com.thoughtworks.gauge.helper.ModuleHelper;
 import com.thoughtworks.gauge.language.psi.*;
 import com.thoughtworks.gauge.reference.StepReference;
 import org.jetbrains.annotations.NonNls;
@@ -18,9 +19,16 @@ import java.util.List;
 
 public class SpecStepImpl extends SpecNamedElementImpl implements SpecStep {
     private boolean isConcept = false;
+    private ModuleHelper helper;
 
     public SpecStepImpl(@NotNull ASTNode node) {
         super(node);
+        helper = new ModuleHelper();
+    }
+
+    public SpecStepImpl(@NotNull ASTNode node, ModuleHelper helper) {
+        super(node);
+        this.helper = helper;
     }
 
     public void accept(@NotNull PsiElementVisitor visitor) {
@@ -90,6 +98,6 @@ public class SpecStepImpl extends SpecNamedElementImpl implements SpecStep {
 
     @Override
     public PsiReference getReference() {
-        return new StepReference(this);
+        return helper.isGaugeModule(this) ? new StepReference(this) : null;
     }
 }

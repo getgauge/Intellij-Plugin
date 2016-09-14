@@ -25,6 +25,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.thoughtworks.gauge.StepValue;
+import com.thoughtworks.gauge.helper.ModuleHelper;
 import com.thoughtworks.gauge.language.psi.*;
 import com.thoughtworks.gauge.reference.ConceptReference;
 import org.jetbrains.annotations.NonNls;
@@ -36,15 +37,24 @@ import java.util.List;
 public class ConceptStepImpl extends ConceptNamedElementImpl implements ConceptStep {
 
     private final boolean isConcept;
+    private ModuleHelper helper;
 
     public ConceptStepImpl(ASTNode node) {
         super(node);
         this.isConcept = false;
+        this.helper = new ModuleHelper();
+    }
+
+    public ConceptStepImpl(ASTNode node, ModuleHelper helper) {
+        super(node);
+        this.isConcept = false;
+        this.helper = helper;
     }
 
     public ConceptStepImpl(ASTNode node, boolean isConcept) {
         super(node);
         this.isConcept = isConcept;
+        this.helper = new ModuleHelper();
     }
 
     public void accept(@NotNull PsiElementVisitor visitor) {
@@ -81,7 +91,7 @@ public class ConceptStepImpl extends ConceptNamedElementImpl implements ConceptS
 
     @Override
     public PsiReference getReference() {
-        return new ConceptReference(this);
+        return helper.isGaugeModule(this) ? new ConceptReference(this) : null;
     }
 
     @Override
