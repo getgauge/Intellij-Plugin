@@ -57,7 +57,7 @@ public class ExtractConceptDialog extends JDialog {
     public ExtractConceptInfo getInfo() {
         String fileName = this.files.getSelectedItem().toString();
         if (fileName.equals(ExtractConceptInfoCollector.CREATE_NEW_FILE)) fileName = this.newFile.getText();
-        return new ExtractConceptInfo(this.conceptName.getText(), fileName, cancelled);
+        return new ExtractConceptInfo(this.conceptName.getText(), fileName.trim(), cancelled);
     }
 
     private void setProperties() {
@@ -84,10 +84,10 @@ public class ExtractConceptDialog extends JDialog {
         return e -> {
             if (conceptName.getText().trim().equals(""))
                 errors.setText("Please enter concept name.");
-            else if (newFile.isVisible() && (newFile.getText().trim().equals("")) ||
-                    !FilenameUtils.getExtension(newFile.getText().trim()).equals(Constants.CONCEPT_EXTENSION)) {
+            else if (newFile.isVisible() && (FilenameUtils.removeExtension(newFile.getText().trim()).isEmpty() ||
+                    !FilenameUtils.getExtension(newFile.getText().trim()).equals(Constants.CONCEPT_EXTENSION)))
                 errors.setText("Please select filename from the dropdown or provide a new valid file name with `.cpt` extension.");
-            } else {
+            else {
                 cancelled = false;
                 builder.getWindow().setVisible(false);
             }
