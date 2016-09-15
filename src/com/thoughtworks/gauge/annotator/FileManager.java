@@ -63,8 +63,8 @@ public class FileManager {
         File dir = new File(project.getBasePath() + File.separator + Constants.SPECS_DIR);
         File[] files = dir.listFiles();
         List<String> dirs = new ArrayList<>();
-        dirs.add(String.format("%s%s%s", File.separator, Constants.SPECS_DIR, File.separator));
-        if (files != null) getDirectories(files, dirs, project.getBasePath());
+        dirs.add(String.format("%s%s", Constants.SPECS_DIR, File.separator));
+        if (files != null) getDirectories(files, dirs, project.getBasePath() + File.separator);
         return dirs;
     }
 

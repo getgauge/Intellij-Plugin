@@ -13,6 +13,7 @@ import com.thoughtworks.gauge.language.psi.SpecTable;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
 import com.thoughtworks.gauge.language.psi.impl.SpecStepImpl;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,9 @@ public class ExtractConceptInfoCollector {
         showDialog(steps, form);
         if (form.getInfo().cancelled)
             return form.getInfo();
-        return new ExtractConceptInfo(form.getInfo().conceptName, project.getBasePath() + form.getInfo().fileName, form.getInfo().cancelled);
+        String fileName = form.getInfo().fileName;
+        if (!fileName.startsWith(File.separator)) fileName = File.separator + fileName;
+        return new ExtractConceptInfo(form.getInfo().conceptName, project.getBasePath() + fileName, form.getInfo().cancelled);
     }
 
     private List<String> getArgs(String steps) {
@@ -71,7 +74,7 @@ public class ExtractConceptInfoCollector {
         List<PsiFile> files = FileManager.getAllConceptFiles(editor.getProject());
         List<String> names = new ArrayList<>();
         names.add(CREATE_NEW_FILE);
-        files.forEach((file) -> names.add(file.getVirtualFile().getPath().replace(project.getBasePath(), "")));
+        files.forEach((file) -> names.add(file.getVirtualFile().getPath().replace(project.getBasePath() + File.separator, "")));
         return names;
     }
 
