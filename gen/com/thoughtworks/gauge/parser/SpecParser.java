@@ -2,6 +2,7 @@
 package com.thoughtworks.gauge.parser;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.LightPsiParser;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
 import com.intellij.lang.PsiParser;
@@ -11,7 +12,7 @@ import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
 import static com.thoughtworks.gauge.language.token.SpecTokenTypes.*;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
-public class SpecParser implements PsiParser {
+public class SpecParser implements PsiParser, LightPsiParser {
 
     public ASTNode parse(IElementType t, PsiBuilder b) {
         parseLight(t, b);
@@ -62,10 +63,10 @@ public class SpecParser implements PsiParser {
         if (!recursion_guard_(b, l, "arg")) return false;
         if (!nextTokenIs(b, "<arg>", ARG_START, DYNAMIC_ARG_START)) return false;
         boolean r;
-        Marker m = enter_section_(b, l, _NONE_, "<arg>");
+        Marker m = enter_section_(b, l, _NONE_, ARG, "<arg>");
         r = dynamicArg(b, l + 1);
         if (!r) r = staticArg(b, l + 1);
-        exit_section_(b, l, m, ARG, r, false, null);
+        exit_section_(b, l, m, r, false, null);
         return r;
     }
 
@@ -155,14 +156,14 @@ public class SpecParser implements PsiParser {
         if (!recursion_guard_(b, l, "specDetail")) return false;
         if (!nextTokenIs(b, "<spec detail>", COMMENT, SPEC_HEADING)) return false;
         boolean r;
-        Marker m = enter_section_(b, l, _NONE_, "<spec detail>");
+        Marker m = enter_section_(b, l, _NONE_, SPEC_DETAIL, "<spec detail>");
         r = specDetail_0(b, l + 1);
         r = r && specHeading(b, l + 1);
         r = r && specDetail_2(b, l + 1);
         r = r && specDetail_3(b, l + 1);
         r = r && specDetail_4(b, l + 1);
         r = r && specDetail_5(b, l + 1);
-        exit_section_(b, l, m, SPEC_DETAIL, r, false, null);
+        exit_section_(b, l, m, r, false, null);
         return r;
     }
 
@@ -350,28 +351,28 @@ public class SpecParser implements PsiParser {
     }
 
     /* ********************************************************** */
-    // (TABLE_BORDER (WHITESPACE* tableRowValue? WHITESPACE* TABLE_BORDER)+ NEW_LINE)*
+    // (TABLE_BORDER (WHITESPACE* tableRowValue? WHITESPACE* TABLE_BORDER)+ NEW_LINE?)*
     public static boolean tableBody(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "tableBody")) return false;
-        Marker m = enter_section_(b, l, _NONE_, "<table body>");
+        Marker m = enter_section_(b, l, _NONE_, TABLE_BODY, "<table body>");
         int c = current_position_(b);
         while (true) {
             if (!tableBody_0(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "tableBody", c)) break;
             c = current_position_(b);
         }
-        exit_section_(b, l, m, TABLE_BODY, true, false, null);
+        exit_section_(b, l, m, true, false, null);
         return true;
     }
 
-    // TABLE_BORDER (WHITESPACE* tableRowValue? WHITESPACE* TABLE_BORDER)+ NEW_LINE
+    // TABLE_BORDER (WHITESPACE* tableRowValue? WHITESPACE* TABLE_BORDER)+ NEW_LINE?
     private static boolean tableBody_0(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "tableBody_0")) return false;
         boolean r;
         Marker m = enter_section_(b);
         r = consumeToken(b, TABLE_BORDER);
         r = r && tableBody_0_1(b, l + 1);
-        r = r && consumeToken(b, NEW_LINE);
+        r = r && tableBody_0_2(b, l + 1);
         exit_section_(b, m, null, r);
         return r;
     }
@@ -433,6 +434,13 @@ public class SpecParser implements PsiParser {
             if (!empty_element_parsed_guard_(b, "tableBody_0_1_0_2", c)) break;
             c = current_position_(b);
         }
+        return true;
+    }
+
+    // NEW_LINE?
+    private static boolean tableBody_0_2(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "tableBody_0_2")) return false;
+        consumeToken(b, NEW_LINE);
         return true;
     }
 
@@ -513,10 +521,10 @@ public class SpecParser implements PsiParser {
         if (!recursion_guard_(b, l, "tableRowValue")) return false;
         if (!nextTokenIs(b, "<table row value>", DYNAMIC_ARG_START, TABLE_ROW_VALUE)) return false;
         boolean r;
-        Marker m = enter_section_(b, l, _NONE_, "<table row value>");
+        Marker m = enter_section_(b, l, _NONE_, TABLE_ROW_VALUE, "<table row value>");
         r = tableRowValue_0(b, l + 1);
         if (!r) r = tableRowValue_1(b, l + 1);
-        exit_section_(b, l, m, TABLE_ROW_VALUE, r, false, null);
+        exit_section_(b, l, m, r, false, null);
         return r;
     }
 
