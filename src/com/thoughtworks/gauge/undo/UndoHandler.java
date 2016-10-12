@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.encoding.EncodingManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -65,7 +66,7 @@ public class UndoHandler {
                     Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
                     getInstance().refreshAndFindFileByIoFile(new File(fileName));
                     if (document != null)
-                        document.setText(StringUtils.join(FileUtils.readLines(new File(fileName)).toArray(), "\n"));
+                        document.setText(StringUtils.join(FileUtils.readLines(new File(fileName), EncodingManager.getInstance().getEncoding(virtualFile, true)).toArray(), "\n"));
                 }
             } catch (Exception ignored) {
             }
