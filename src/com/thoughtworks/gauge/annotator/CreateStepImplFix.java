@@ -44,11 +44,14 @@ import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.thoughtworks.gauge.StepValue;
+import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.language.psi.SpecStep;
 import com.thoughtworks.gauge.util.GaugeUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class CreateStepImplFix extends BaseIntentionAction {
@@ -83,7 +86,11 @@ public class CreateStepImplFix extends BaseIntentionAction {
         ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
             public void run() {
-                List<PsiFile> javaFiles = FileManager.getAllJavaFiles(GaugeUtil.moduleForPsiElement(file));
+                HashSet<Module> subModules = Gauge.getSubModules(GaugeUtil.moduleForPsiElement(file));
+                List<PsiFile> javaFiles = new ArrayList<>();
+                for (Module module : subModules) {
+                    javaFiles.addAll(FileManager.getAllJavaFiles(module));
+                }
 
                 javaFiles.add(0, NEW_FILE_HOLDER);
                 ListPopup stepImplChooser = JBPopupFactory.getInstance().createListPopup(new BaseListPopupStep<PsiFile>("Choose implementation class", javaFiles) {
