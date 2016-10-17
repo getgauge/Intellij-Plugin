@@ -50,9 +50,8 @@ import com.thoughtworks.gauge.util.GaugeUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CreateStepImplFix extends BaseIntentionAction {
     private static final PsiFile NEW_FILE_HOLDER = null;
@@ -86,12 +85,10 @@ public class CreateStepImplFix extends BaseIntentionAction {
         ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
             public void run() {
-                HashSet<Module> subModules = Gauge.getSubModules(GaugeUtil.moduleForPsiElement(file));
-                List<PsiFile> javaFiles = new ArrayList<>();
-                for (Module module : subModules) {
-                    javaFiles.addAll(FileManager.getAllJavaFiles(module));
-                }
-
+                List<PsiFile> javaFiles = Gauge.getSubModules(GaugeUtil.moduleForPsiElement(file)).stream()
+                        .map(FileManager::getAllJavaFiles)
+                        .flatMap(List::stream)
+                        .collect(Collectors.toList());
                 javaFiles.add(0, NEW_FILE_HOLDER);
                 ListPopup stepImplChooser = JBPopupFactory.getInstance().createListPopup(new BaseListPopupStep<PsiFile>("Choose implementation class", javaFiles) {
                     @Override
@@ -118,12 +115,7 @@ public class CreateStepImplFix extends BaseIntentionAction {
                     @NotNull
                     @Override
                     public String getTextFor(PsiFile value) {
-                        if (value == null) {
-                            return "Create new file";
-                        } else {
-                            return getJavaFileName(value);
-                        }
-
+                        return value == null ? "Create new file" : getJavaFileName(value);
                     }
                 });
                 stepImplChooser.showCenteredInCurrentWindow(step.getProject());
@@ -151,7 +143,6 @@ public class CreateStepImplFix extends BaseIntentionAction {
         if (createdFile != null) {
             addImpl(LangDataKeys.PROJECT.getData(dataContext), createdFile);
         }
-
     }
 
     private void addImpl(final Project project, final VirtualFile file) {
@@ -165,7 +156,6 @@ public class CreateStepImplFix extends BaseIntentionAction {
                         if (!FileModificationService.getInstance().prepareFileForWrite(psifile)) {
                             return;
                         }
-
                         PsiMethod addedStepImpl = addStepImplMethod(psifile);
                         final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(addedStepImpl);
                         templateMethodName(addedStepImpl, builder);
@@ -173,8 +163,6 @@ public class CreateStepImplFix extends BaseIntentionAction {
                         templateBody(addedStepImpl, builder);
                         userTemplateModify(builder);
                     }
-
-
                 }.execute();
             }
 
@@ -202,7 +190,6 @@ public class CreateStepImplFix extends BaseIntentionAction {
                     if (i != params.size() - 1) {
                         paramlistBuilder.append(", ");
                     }
-
                 }
                 return paramlistBuilder.toString();
             }
