@@ -1,9 +1,11 @@
 package com.thoughtworks.gauge.extract;
 
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.thoughtworks.gauge.extract.stepBuilder.StepsBuilder;
@@ -28,6 +30,8 @@ public class ExtractConceptHandler {
             ExtractConceptInfoCollector collector = new ExtractConceptInfoCollector(editor, builder.getTextToTableMap(), steps, project);
             ExtractConceptInfo info = collector.getAllInfo();
             if (!info.cancelled) {
+                VirtualFileManager.getInstance().refreshWithoutFileWatcher(false);
+                FileDocumentManager.getInstance().saveAllDocuments();
                 Api.ExtractConceptResponse response = makeExtractConceptRequest(steps, info.fileName, info.conceptName, false, psiFile);
                 if (!response.getIsSuccess()) throw new RuntimeException(response.getError());
                 new UndoHandler(response.getFilesChangedList(), project, "Extract Concept").handle();
