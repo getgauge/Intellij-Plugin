@@ -19,10 +19,12 @@ Tell us what happens instead
 2.
 3.
 
-### Information that will help us debug
+### Version information
 
-* IntelliJ version and edition(Community/Ultimate)
-* OS information
-* Gauge IntelliJ plugin version.
+* IntelliJ version and edition(Community/Ultimate): 
+* OS information:
+* Gauge IntelliJ plugin version:
 * Does the project uses any Build tool(Gradle/Maven)?
-* Run gauge -v on your system and paste the results here.
+```
+Run gauge -v on your system and paste the results here
+```
