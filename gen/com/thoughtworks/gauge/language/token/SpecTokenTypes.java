@@ -13,6 +13,7 @@ public interface SpecTokenTypes {
     IElementType STATIC_ARG = new SpecElementType("STATIC_ARG");
     IElementType TABLE = new SpecElementType("TABLE");
     IElementType TABLE_BODY = new SpecElementType("TABLE_BODY");
+    IElementType TEARDOWN = new SpecElementType("TEARDOWN");
 
     IElementType ARG = new SpecTokenType("ARG");
     IElementType ARG_END = new SpecTokenType("ARG_END");
@@ -31,6 +32,7 @@ public interface SpecTokenTypes {
     IElementType TABLE_HEADER = new SpecTokenType("TABLE_HEADER");
     IElementType TABLE_ROW_VALUE = new SpecTokenType("TABLE_ROW_VALUE");
     IElementType TAGS = new SpecTokenType("TAGS");
+    IElementType TEARDOWN_IDENTIFIER = new SpecTokenType("TEARDOWN_IDENTIFIER");
     IElementType WHITESPACE = new SpecTokenType("WHITESPACE");
 
     class Factory {
@@ -60,6 +62,8 @@ public interface SpecTokenTypes {
                 return new SpecTableRowValueImpl(node);
             } else if (type == TAGS) {
                 return new SpecTagsImpl(node);
+            } else if (type == TEARDOWN) {
+                return new SpecTeardownImpl(node);
             }
             throw new AssertionError("Unknown element type: " + type);
         }

@@ -55,6 +55,10 @@ public class SpecVisitor extends PsiElementVisitor {
         visitPsiElement(o);
     }
 
+    public void visitTeardown(@NotNull SpecTeardown o) {
+        visitPsiElement(o);
+    }
+
     public void visitNamedElement(@NotNull SpecNamedElement o) {
         visitPsiElement(o);
     }

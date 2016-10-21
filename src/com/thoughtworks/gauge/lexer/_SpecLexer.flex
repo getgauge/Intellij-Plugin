@@ -22,7 +22,7 @@ import static com.thoughtworks.gauge.language.token.SpecTokenTypes.*;
 %%
 
 %{
-  public _SpecLexer() {
+  public com.thoughtworks.gauge.lexer._SpecLexer() {
     this((java.io.Reader)null);
   }
 %}
@@ -47,6 +47,7 @@ ScenarioHeading = {WhiteSpace}* "##" {InputCharacter}* {LineTerminator}? | {Whit
 SpecHeading = {WhiteSpace}* "#" {InputCharacter}* {LineTerminator}? | {WhiteSpace}* {InputCharacter}* {LineTerminator} [=]+ {LineTerminator}?
 Tags = {WhiteSpace}* tags {WhiteSpace}? ":" {InputCharacter}* {LineTerminator}?
 Keyword = {WhiteSpace}* table {WhiteSpace}? ":" {InputCharacter}* {LineTerminator}?
+TeardownIdentifier = "_" "_" "_"+ {WhiteSpace}* {LineTerminator}
 %%
 <YYINITIAL> {
   {ScenarioHeading}                                 {return SCENARIO_HEADING;}
@@ -56,6 +57,7 @@ Keyword = {WhiteSpace}* table {WhiteSpace}? ":" {InputCharacter}* {LineTerminato
   {StepIdentifier}                                  {yybegin(INSTEP);return STEP_IDENTIFIER;}
   {TableIdentifier}                                 {yybegin(INTABLEHEADER);return TABLE_BORDER;}
   {LineTerminator}? {WhiteSpace}* {NonWhiteSpaceAndIdentifierCharacter}+ {WhiteSpace}* ({StepIdentifier} | [#] | [##] | {TableIdentifier}) {InputCharacter}* {LineTerminator}? {return COMMENT;}
+  {TeardownIdentifier}                              {return TEARDOWN_IDENTIFIER;}
   [^]                                               {return COMMENT;}
 }
 
