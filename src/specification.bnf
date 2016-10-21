@@ -33,13 +33,13 @@
 
 }
 
-specFile ::= specDetail scenario+
-specDetail ::= (comment)*  specHeading tags? keyword? table? (step|comment)*
-scenario ::= scenarioHeading tags? (step | comment)*
+specFile ::= (comment)* specDetail scenario+
+specDetail ::= specHeading (comment | tags | keyword | table)* (step|comment)*
+scenario ::= (comment)* scenarioHeading (comment)* tags? (comment)* (step | comment)*
 private comment ::= COMMENT
 private specHeading ::= SPEC_HEADING
 private scenarioHeading ::= SCENARIO_HEADING
-step ::= STEP_IDENTIFIER (arg|STEP)+ table?    {mixin="com.thoughtworks.gauge.language.psi.impl.SpecStepImpl"
+step ::= STEP_IDENTIFIER (arg|STEP)+ (comment)* table?    {mixin="com.thoughtworks.gauge.language.psi.impl.SpecStepImpl"
                                    implements="com.thoughtworks.gauge.language.psi.SpecNamedElement" methods = [getStepValue]}
 arg ::= dynamicArg | staticArg
 dynamicArg ::= DYNAMIC_ARG_START DYNAMIC_ARG DYNAMIC_ARG_END

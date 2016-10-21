@@ -37,7 +37,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class SpecParserDefinition implements ParserDefinition {
     public static final TokenSet WHITE_SPACES = TokenSet.create(TokenType.WHITE_SPACE);
-    public static final TokenSet COMMENTS = TokenSet.create(SpecTokenTypes.COMMENT);
 
     public static final IFileElementType FILE = new IFileElementType(Language.findInstance(Specification.class));
 
@@ -54,7 +53,7 @@ public class SpecParserDefinition implements ParserDefinition {
 
     @NotNull
     public TokenSet getCommentTokens() {
-        return COMMENTS;
+        return TokenSet.EMPTY;
     }
 
     @NotNull
