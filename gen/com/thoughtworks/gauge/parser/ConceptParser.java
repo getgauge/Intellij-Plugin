@@ -149,6 +149,12 @@ public class ConceptParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
+    // CONCEPT_COMMENT
+    static boolean conceptComment(PsiBuilder b, int l) {
+        return consumeToken(b, CONCEPT_COMMENT);
+    }
+
+    /* ********************************************************** */
     // (comment)* concept+
     static boolean conceptFile(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "conceptFile")) return false;

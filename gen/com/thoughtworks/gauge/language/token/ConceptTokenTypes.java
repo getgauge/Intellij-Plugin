@@ -34,6 +34,7 @@ public interface ConceptTokenTypes {
     IElementType ARG_END = new ConceptTokenType("ARG_END");
     IElementType ARG_START = new ConceptTokenType("ARG_START");
     IElementType COMMENT = new ConceptTokenType("COMMENT");
+    IElementType CONCEPT_COMMENT = new ConceptTokenType("CONCEPT_COMMENT");
     IElementType CONCEPT_HEADING = new ConceptTokenType("CONCEPT_HEADING");
     IElementType CONCEPT_HEADING_IDENTIFIER = new ConceptTokenType("CONCEPT_HEADING_IDENTIFIER");
     IElementType DYNAMIC_ARG = new ConceptTokenType("DYNAMIC_ARG");

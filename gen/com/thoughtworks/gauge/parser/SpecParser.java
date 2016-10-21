@@ -222,6 +222,12 @@ public class SpecParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
+    // SPEC_COMMENT
+    static boolean specComment(PsiBuilder b, int l) {
+        return consumeToken(b, SPEC_COMMENT);
+    }
+
+    /* ********************************************************** */
     // specHeading (comment | tags | keyword | table)* (step|comment)*
     public static boolean specDetail(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "specDetail")) return false;

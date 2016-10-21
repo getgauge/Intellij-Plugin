@@ -25,6 +25,7 @@ public interface SpecTokenTypes {
     IElementType KEYWORD = new SpecTokenType("KEYWORD");
     IElementType NEW_LINE = new SpecTokenType("NEW_LINE");
     IElementType SCENARIO_HEADING = new SpecTokenType("SCENARIO_HEADING");
+    IElementType SPEC_COMMENT = new SpecTokenType("SPEC_COMMENT");
     IElementType SPEC_HEADING = new SpecTokenType("SPEC_HEADING");
     IElementType STEP = new SpecTokenType("STEP");
     IElementType STEP_IDENTIFIER = new SpecTokenType("STEP_IDENTIFIER");
