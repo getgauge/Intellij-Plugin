@@ -16,7 +16,14 @@ public class ConceptFoldingBuilder extends GaugeFoldingBuilder {
     public FoldingDescriptor[] buildFoldRegions(@NotNull ASTNode astNode, @NotNull Document document) {
         List<FoldingDescriptor> descriptors = new ArrayList<>();
         for (ASTNode node : astNode.getChildren(TokenSet.create(ConceptTokenTypes.CONCEPT)))
-            addNode(descriptors, node, node.findChildByType(ConceptTokenTypes.CONCEPT_HEADING));
+            if (astNode.getChildren(TokenSet.create(ConceptTokenTypes.STEP, ConceptTokenTypes.COMMENT)).length > 0)
+                addNode(descriptors, node, node.findChildByType(ConceptTokenTypes.CONCEPT_HEADING));
         return descriptors.toArray(new FoldingDescriptor[0]);
+    }
+
+    @Override
+    protected int getStart(ASTNode n, ASTNode h) {
+        int start = n.getStartOffset() + h.getTextLength();
+        return !h.getText().endsWith("\n") ? ++start : start;
     }
 }
