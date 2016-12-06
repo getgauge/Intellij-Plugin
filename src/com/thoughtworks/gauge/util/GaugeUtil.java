@@ -116,6 +116,7 @@ public class GaugeUtil {
     }
 
     public static File moduleDir(Module module) {
+        if (module == null) return null;
         if (GaugeUtil.isGradleModule(module)) return GaugeUtil.getProjectDirForGradleProject(module);
         String pathname = moduleDirPath(module);
         if (pathname != null) return new File(pathname);

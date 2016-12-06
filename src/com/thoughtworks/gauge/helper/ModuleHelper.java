@@ -26,6 +26,7 @@ public class ModuleHelper {
     }
 
     public boolean isGaugeModule(VirtualFile file, Project project) {
-        return isGaugeModule(ModuleUtil.findModuleForFile(file, project));
+        Module module = ModuleUtil.findModuleForFile(file, project);
+        return module != null && isGaugeModule(module);
     }
 }
