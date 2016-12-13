@@ -38,6 +38,10 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      <p>0.2.5</p>
+      <ul>
+           <li> Bug Fixes </li>
+      </ul>
       <p>0.2.4</p>
       <ul>
            <li> Adding Extract to concept feature</li>
