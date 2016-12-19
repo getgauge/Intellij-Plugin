@@ -205,7 +205,7 @@ public class ConceptParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
-    // (CONCEPT_HEADING_IDENTIFIER (CONCEPT_HEADING|dynamicArg)*) | (CONCEPT_HEADING)
+    // (CONCEPT_HEADING_IDENTIFIER (CONCEPT_HEADING|dynamicArg)* NEW_LINE) | (CONCEPT_HEADING)
     public static boolean conceptHeading(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "conceptHeading")) return false;
         if (!nextTokenIs(b, "<concept heading>", CONCEPT_HEADING, CONCEPT_HEADING_IDENTIFIER)) return false;
@@ -217,13 +217,14 @@ public class ConceptParser implements PsiParser, LightPsiParser {
         return r;
     }
 
-    // CONCEPT_HEADING_IDENTIFIER (CONCEPT_HEADING|dynamicArg)*
+    // CONCEPT_HEADING_IDENTIFIER (CONCEPT_HEADING|dynamicArg)* NEW_LINE
     private static boolean conceptHeading_0(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "conceptHeading_0")) return false;
         boolean r;
         Marker m = enter_section_(b);
         r = consumeToken(b, CONCEPT_HEADING_IDENTIFIER);
         r = r && conceptHeading_0_1(b, l + 1);
+        r = r && consumeToken(b, NEW_LINE);
         exit_section_(b, m, null, r);
         return r;
     }
