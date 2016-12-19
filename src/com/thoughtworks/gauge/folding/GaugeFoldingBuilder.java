@@ -21,8 +21,8 @@ abstract class GaugeFoldingBuilder implements FoldingBuilder {
         String text = node.getText().endsWith("\n") ? node.getText() : node.getText() + "\n";
         int startOffset = node.getStartOffset() + getNewLineIndex(heading);
         int endOffset = node.getStartOffset() + text.lastIndexOf("\n");
+        if (endOffset <= startOffset) return;
         TextRange textRange = new TextRange(startOffset, endOffset);
-        if (textRange.getLength() < 1) return;
         descriptors.add(new FoldingDescriptor(node, textRange));
     }
 

@@ -750,7 +750,7 @@ public class SpecParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
-    // TEARDOWN_IDENTIFIER (comment)* (step | comment)*
+    // TEARDOWN_IDENTIFIER (comment)* (step | comment | TEARDOWN_IDENTIFIER)*
     public static boolean teardown(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "teardown")) return false;
         if (!nextTokenIs(b, TEARDOWN_IDENTIFIER)) return false;
@@ -785,7 +785,7 @@ public class SpecParser implements PsiParser, LightPsiParser {
         return r;
     }
 
-    // (step | comment)*
+    // (step | comment | TEARDOWN_IDENTIFIER)*
     private static boolean teardown_2(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "teardown_2")) return false;
         int c = current_position_(b);
@@ -797,13 +797,14 @@ public class SpecParser implements PsiParser, LightPsiParser {
         return true;
     }
 
-    // step | comment
+    // step | comment | TEARDOWN_IDENTIFIER
     private static boolean teardown_2_0(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "teardown_2_0")) return false;
         boolean r;
         Marker m = enter_section_(b);
         r = step(b, l + 1);
         if (!r) r = comment(b, l + 1);
+        if (!r) r = consumeToken(b, TEARDOWN_IDENTIFIER);
         exit_section_(b, m, null, r);
         return r;
     }

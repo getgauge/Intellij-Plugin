@@ -36,7 +36,7 @@
 specFile ::= (comment)* specDetail scenario+ teardown?
 specDetail ::= specHeading (comment | tags | keyword | table)* (step|comment)*
 scenario ::= (comment)* scenarioHeading (comment)* tags? (comment)* (step | comment)*
-teardown ::=  TEARDOWN_IDENTIFIER (comment)* (step | comment)*
+teardown ::=  TEARDOWN_IDENTIFIER (comment)* (step | comment | TEARDOWN_IDENTIFIER)*
 private comment ::= COMMENT
 private specComment ::= SPEC_COMMENT
 private specHeading ::= SPEC_HEADING
