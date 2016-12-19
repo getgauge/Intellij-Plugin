@@ -11,18 +11,20 @@ import java.util.List;
 
 abstract class GaugeFoldingBuilder implements FoldingBuilder {
 
-    protected void addNode(List<FoldingDescriptor> d, ASTNode n, ASTNode h) {
-        if (h == null) return;
-        int start = getStart(n, h);
-        int end = n.getStartOffset() + n.getText().lastIndexOf("\n");
-        if (!n.getText().endsWith("\n")) end = n.getStartOffset() + n.getTextLength();
-        TextRange t = new TextRange(start, end);
-        if (t.getLength() < 1) return;
-        d.add(new FoldingDescriptor(n, t));
+    @NotNull
+    protected Integer getNewLineIndex(ASTNode heading) {
+        Integer newLineIndex = heading.getText().indexOf('\n');
+        return newLineIndex == -1 ? heading.getTextLength() : newLineIndex;
     }
 
-    protected int getStart(ASTNode n, ASTNode h) {
-        return n.getStartOffset() + h.getTextLength();
+    protected void addNode(List<FoldingDescriptor> descriptors, ASTNode node, ASTNode heading) {
+        if (heading == null) return;
+        String text = node.getText().endsWith("\n") ? node.getText() : node.getText() + "\n";
+        int startOffset = node.getStartOffset() + getNewLineIndex(heading);
+        int endOffset = node.getStartOffset() + text.lastIndexOf("\n");
+        TextRange textRange = new TextRange(startOffset, endOffset);
+        if (textRange.getLength() < 1) return;
+        descriptors.add(new FoldingDescriptor(node, textRange));
     }
 
     @Nullable
