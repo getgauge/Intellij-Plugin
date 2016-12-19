@@ -12,9 +12,8 @@ import java.util.List;
 abstract class GaugeFoldingBuilder implements FoldingBuilder {
 
     @NotNull
-    protected Integer getNewLineIndex(ASTNode heading) {
-        Integer newLineIndex = heading.getText().indexOf('\n');
-        return newLineIndex == -1 ? heading.getTextLength() : newLineIndex;
+    private Integer getNewLineIndex(ASTNode heading) {
+        return heading.getText().length();
     }
 
     protected void addNode(List<FoldingDescriptor> descriptors, ASTNode node, ASTNode heading) {

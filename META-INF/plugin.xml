@@ -223,10 +223,10 @@
         <implicitUsageProvider implementation="com.thoughtworks.gauge.findUsages.ImplUsageProvider"/>
         <runLineMarkerContributor language="Specification"
                                   implementationClass="com.thoughtworks.gauge.execution.TestRunLineMarkerProvider"/>
-        <!--<lang.foldingBuilder language="Specification"-->
-                             <!--implementationClass="com.thoughtworks.gauge.folding.SpecFoldingBuilder"/>-->
-        <!--<lang.foldingBuilder language="Concept"-->
-                             <!--implementationClass="com.thoughtworks.gauge.folding.ConceptFoldingBuilder"/>-->
+        <lang.foldingBuilder language="Specification"
+                             implementationClass="com.thoughtworks.gauge.folding.SpecFoldingBuilder"/>
+        <lang.foldingBuilder language="Concept"
+                             implementationClass="com.thoughtworks.gauge.folding.ConceptFoldingBuilder"/>
     </extensions>
 
     <application-components>
