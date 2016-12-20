@@ -11,15 +11,10 @@ import java.util.List;
 
 abstract class GaugeFoldingBuilder implements FoldingBuilder {
 
-    @NotNull
-    private Integer getNewLineIndex(ASTNode heading) {
-        return heading.getText().length();
-    }
-
     protected void addNode(List<FoldingDescriptor> descriptors, ASTNode node, ASTNode heading) {
         if (heading == null) return;
         String text = node.getText().endsWith("\n") ? node.getText() : node.getText() + "\n";
-        int startOffset = node.getStartOffset() + getNewLineIndex(heading);
+        int startOffset = node.getStartOffset() + getLength(heading);
         int endOffset = node.getStartOffset() + text.lastIndexOf("\n");
         if (endOffset <= startOffset) return;
         TextRange textRange = new TextRange(startOffset, endOffset);
@@ -35,5 +30,10 @@ abstract class GaugeFoldingBuilder implements FoldingBuilder {
     @Override
     public boolean isCollapsedByDefault(@NotNull ASTNode astNode) {
         return false;
+    }
+
+    @NotNull
+    private Integer getLength(ASTNode heading) {
+        return heading.getText().length();
     }
 }
