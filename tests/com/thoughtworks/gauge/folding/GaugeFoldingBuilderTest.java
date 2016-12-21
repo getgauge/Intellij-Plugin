@@ -42,6 +42,18 @@ public class GaugeFoldingBuilderTest {
     }
 
     @Test
+    public void testShouldAddNodeWithMultipleNewLinesAtTheEnd() throws Exception {
+        when(node.getText()).thenReturn("## heading\n* text\n* text1\n\n\n");
+
+        new SpecFoldingBuilder().addNode(descriptors, node, heading);
+
+        assertEquals(descriptors.size(), 1);
+        TextRange range = descriptors.get(0).getRange();
+        String message = String.format("Expected: %s, Actual: %s", range.toString(), "(11,26)");
+        assertTrue(message, range.equalsToRange(11, 26));
+    }
+
+    @Test
     public void testShouldAddNodeEndingWithNewLine() throws Exception {
         when(node.getText()).thenReturn("## heading\n* step 1\n* step 2\n");
 
