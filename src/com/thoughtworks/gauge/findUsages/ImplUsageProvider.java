@@ -21,6 +21,8 @@ public class ImplUsageProvider implements ImplicitUsageProvider {
     }
 
     public ImplUsageProvider() {
+        this.searchHelper = new ReferenceSearchHelper();
+        this.moduleHelper = new ModuleHelper();
     }
 
     public boolean isImplicitUsage(PsiElement element) {
