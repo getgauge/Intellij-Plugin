@@ -1,22 +1,30 @@
 package com.thoughtworks.gauge.findUsages;
 
 import com.intellij.codeInsight.daemon.ImplicitUsageProvider;
-import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.impl.source.PsiClassImpl;
 import com.intellij.psi.impl.source.PsiParameterImpl;
 import com.thoughtworks.gauge.findUsages.helper.ReferenceSearchHelper;
+import com.thoughtworks.gauge.helper.ModuleHelper;
 import com.thoughtworks.gauge.util.GaugeUtil;
 import com.thoughtworks.gauge.util.HookUtil;
 import com.thoughtworks.gauge.util.StepUtil;
 
 public class ImplUsageProvider implements ImplicitUsageProvider {
-    private static final ReferenceSearchHelper helper = new ReferenceSearchHelper();
+    private ReferenceSearchHelper searchHelper;
+    private ModuleHelper moduleHelper;
+
+    public ImplUsageProvider(ReferenceSearchHelper searchHelper, ModuleHelper moduleHelper) {
+        this.searchHelper = searchHelper;
+        this.moduleHelper = moduleHelper;
+    }
+
+    public ImplUsageProvider() {
+    }
 
     public boolean isImplicitUsage(PsiElement element) {
-        Module module = GaugeUtil.moduleForPsiElement(element);
-        if (module == null || !GaugeUtil.isGaugeModule(module)) return false;
+        if (!moduleHelper.isGaugeModule(element)) return false;
         if (element instanceof PsiClassImpl) return isClassUsed((PsiClassImpl) element);
         if (element instanceof PsiParameterImpl) return isParameterUsed((PsiParameterImpl) element);
         return isElementUsed(element);
@@ -38,7 +46,7 @@ public class ImplUsageProvider implements ImplicitUsageProvider {
         if (!isGaugeElement) return false;
         StepCollector collector = new StepCollector(element.getProject());
         collector.collect();
-        return helper.getPsiElements(collector, element).size() > 0;
+        return searchHelper.getPsiElements(collector, element).size() > 0;
     }
 
     public boolean isImplicitRead(final PsiElement element) {
