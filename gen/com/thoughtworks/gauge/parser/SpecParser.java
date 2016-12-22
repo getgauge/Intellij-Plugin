@@ -1,15 +1,17 @@
 // This is a generated file. Not intended for manual editing.
 package com.thoughtworks.gauge.parser;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.LightPsiParser;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
-import com.intellij.lang.PsiParser;
-import com.intellij.psi.tree.IElementType;
 
-import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
 import static com.thoughtworks.gauge.language.token.SpecTokenTypes.*;
+import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
+
+import com.intellij.psi.tree.IElementType;
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.tree.TokenSet;
+import com.intellij.lang.PsiParser;
+import com.intellij.lang.LightPsiParser;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class SpecParser implements PsiParser, LightPsiParser {
@@ -290,7 +292,7 @@ public class SpecParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
-    // (comment)* specDetail scenario+ teardown?
+    // (comment)* specDetail scenario* teardown?
     static boolean specFile(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "specFile")) return false;
         if (!nextTokenIs(b, "", COMMENT, SPEC_HEADING)) return false;
@@ -326,20 +328,16 @@ public class SpecParser implements PsiParser, LightPsiParser {
         return r;
     }
 
-    // scenario+
+    // scenario*
     private static boolean specFile_2(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "specFile_2")) return false;
-        boolean r;
-        Marker m = enter_section_(b);
-        r = scenario(b, l + 1);
         int c = current_position_(b);
-        while (r) {
+        while (true) {
             if (!scenario(b, l + 1)) break;
             if (!empty_element_parsed_guard_(b, "specFile_2", c)) break;
             c = current_position_(b);
         }
-        exit_section_(b, m, null, r);
-        return r;
+        return true;
     }
 
     // teardown?
