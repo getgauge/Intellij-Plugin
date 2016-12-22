@@ -19,6 +19,15 @@ public class ImplUsageProviderTest {
     public void TestIsImplicitUsageWithNoModule() throws Exception {
         ModuleHelper helper = mock(ModuleHelper.class);
 
+        boolean isUsed = new ImplUsageProvider(null, helper).isImplicitUsage(mock(PsiElement.class));
+
+        assertFalse(isUsed);
+    }
+
+    @Test
+    public void TestIsImplicitUsageWithNoElement() throws Exception {
+        ModuleHelper helper = mock(ModuleHelper.class);
+
         boolean isUsed = new ImplUsageProvider(null, helper).isImplicitUsage(null);
 
         assertFalse(isUsed);

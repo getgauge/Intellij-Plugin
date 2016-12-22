@@ -26,7 +26,7 @@ public class ImplUsageProvider implements ImplicitUsageProvider {
     }
 
     public boolean isImplicitUsage(PsiElement element) {
-        if (!moduleHelper.isGaugeModule(element)) return false;
+        if (element == null || !moduleHelper.isGaugeModule(element)) return false;
         if (element instanceof PsiClassImpl) return isClassUsed((PsiClassImpl) element);
         if (element instanceof PsiParameterImpl) return isParameterUsed((PsiParameterImpl) element);
         return isElementUsed(element);
