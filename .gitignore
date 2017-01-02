@@ -7,3 +7,5 @@ misc.xml
 production/*
 production-test/*
 *.zip
+.gradle
+build

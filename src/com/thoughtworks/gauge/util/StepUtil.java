@@ -24,7 +24,7 @@ import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.AnnotatedElementsSearch;
 import com.thoughtworks.gauge.Constants;
-import com.thoughtworks.gauge.GaugeConnection;
+import com.thoughtworks.gauge.connection.GaugeConnection;
 import com.thoughtworks.gauge.Step;
 import com.thoughtworks.gauge.StepValue;
 import com.thoughtworks.gauge.core.Gauge;

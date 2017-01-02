@@ -1,0 +1,64 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+        maven {
+            url 'http://dl.bintray.com/jetbrains/intellij-plugin-service'
+        }
+    }
+    dependencies {
+        classpath "org.jetbrains.intellij.plugins:gradle-intellij-plugin:0.2.0-SNAPSHOT"
+    }
+}
+
+apply plugin: 'idea'
+apply plugin: 'org.jetbrains.intellij'
+apply plugin: 'java'
+
+intellij {
+    version ideaVersion
+    pluginName 'Gauge-Java-Intellij'
+    sameSinceUntilBuild false
+    publish {
+        username publishUsername
+        password publishPassword
+        channel publishChannel
+    }
+    patchPluginXml {
+        if (customSinceBuild) {
+            sinceBuild customSinceBuild
+        }
+        untilBuild ''
+    }
+}
+
+allprojects {
+    sourceSets {
+        main {
+            java.srcDirs 'src', 'gen'
+            resources.srcDirs 'resources'
+        }
+
+        test {
+            java.srcDir 'tests'
+        }
+    }
+    repositories {
+        mavenCentral()
+    }
+}
+
+dependencies {
+    compile(
+            'com.thoughtworks.gauge:gauge-java:+',
+            'org.pegdown:pegdown:1.6.0',
+    )
+    testCompile(
+            'org.mockito:mockito-all:1.10.19',
+    )
+}
+
+group 'org.jetbrains'
+version version

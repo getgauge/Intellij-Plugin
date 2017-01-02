@@ -6,7 +6,6 @@ import org.junit.Test;
 public class GaugeVersionTest {
     @Test
     public void testVersionIsGreaterThan() throws Exception {
-        GaugeVersion.isGreaterThan("");
         Assert.assertTrue(new GaugeVersionInfo("0.4.2").isGreaterThan(new GaugeVersionInfo("0.4.0")));
         Assert.assertTrue(new GaugeVersionInfo("0.4.1.nightly-2016-05-12").isGreaterThan(new GaugeVersionInfo("0.4.0")));
         Assert.assertTrue(new GaugeVersionInfo("0.4.2").isGreaterThan(new GaugeVersionInfo("0.4.0")));

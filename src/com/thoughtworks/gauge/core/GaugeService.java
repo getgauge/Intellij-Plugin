@@ -17,7 +17,7 @@
 
 package com.thoughtworks.gauge.core;
 
-import com.thoughtworks.gauge.GaugeConnection;
+import com.thoughtworks.gauge.connection.GaugeConnection;
 
 public class GaugeService {
     private final Process gaugeProcess;

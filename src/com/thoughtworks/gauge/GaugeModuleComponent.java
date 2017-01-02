@@ -20,6 +20,7 @@ package com.thoughtworks.gauge;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleComponent;
+import com.thoughtworks.gauge.connection.GaugeConnection;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeExceptionHandler;
 import com.thoughtworks.gauge.core.GaugeService;
