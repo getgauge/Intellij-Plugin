@@ -69,15 +69,13 @@ public class GaugeExecutionProducer extends RunConfigurationProducer {
 
     @Override
     public boolean isConfigurationFromContext(RunConfiguration configuration, ConfigurationContext context) {
-        if (configuration.getType() != getConfigurationType())
-            return false;
-        final Location location = context.getLocation();
-        if (location == null || location.getVirtualFile() == null) {
-            return false;
-        }
-
-        final String specsToExecute = ((GaugeRunConfiguration) configuration).getSpecsToExecute();
-        return specsToExecute != null && (specsToExecute.contains(location.getVirtualFile().getName()));
+        if (!(configuration.getType() instanceof GaugeRunTaskConfigurationType)) return false;
+        Location location = context.getLocation();
+        PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(context.getDataContext());
+        if (location == null || location.getVirtualFile() == null || element == null) return false;
+        if (!isInSpecScope(context.getPsiLocation())) return false;
+        String specsToExecute = ((GaugeRunConfiguration) configuration).getSpecsToExecute();
+        return specsToExecute != null && (specsToExecute.equals(location.getVirtualFile().getPath()));
     }
 
     private Boolean isInSpecScope(PsiElement element) {

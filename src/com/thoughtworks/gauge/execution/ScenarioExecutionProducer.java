@@ -17,7 +17,10 @@
 
 package com.thoughtworks.gauge.execution;
 
+import com.intellij.execution.Location;
 import com.intellij.execution.actions.ConfigurationContext;
+import com.intellij.execution.actions.RunConfigurationProducer;
+import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.module.Module;
@@ -33,10 +36,19 @@ import com.thoughtworks.gauge.util.GaugeUtil;
 
 import static com.thoughtworks.gauge.util.GaugeUtil.isSpecFile;
 
-public class ScenarioExecutionProducer extends GaugeExecutionProducer {
+public class ScenarioExecutionProducer extends RunConfigurationProducer {
+    public static final String COLON = ":";
     private final int NO_SCENARIOS = -1;
     private final int NON_SCENARIO_CONTEXT = -2;
     private static final String VERSION = "0.4.0";
+
+    public ScenarioExecutionProducer() {
+        super(new GaugeRunTaskConfigurationType());
+    }
+
+    protected ScenarioExecutionProducer(ConfigurationFactory configurationFactory) {
+        super(configurationFactory);
+    }
 
     @Override
     protected boolean setupConfigurationFromContext(RunConfiguration configuration, ConfigurationContext context, Ref sourceElement) {
@@ -44,16 +56,13 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
         if (selectedFiles == null || selectedFiles.length > 1) {
             return false;
         }
-
         Module module = GaugeUtil.moduleForPsiElement(context.getPsiLocation());
         if (module == null) {
             return false;
         }
-
         if (context.getPsiLocation() == null || !(isSpecFile(context.getPsiLocation().getContainingFile())) || context.getPsiLocation().getContainingFile().getVirtualFile() == null) {
             return false;
         }
-
         try {
             String name = context.getPsiLocation().getContainingFile().getVirtualFile().getCanonicalPath();
             int scenarioIdentifier = getScenarioIdentifier(context, context.getPsiLocation().getContainingFile());
@@ -62,7 +71,7 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
             } else {
                 String scenarioName = getScenarioName(context);
                 configuration.setName(scenarioName);
-                ((GaugeRunConfiguration) configuration).setSpecsToExecute(name + ":" + scenarioIdentifier);
+                ((GaugeRunConfiguration) configuration).setSpecsToExecute(name + COLON + scenarioIdentifier);
             }
             ((GaugeRunConfiguration) configuration).setModule(module);
             return true;
@@ -70,6 +79,16 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
             ex.printStackTrace();
         }
         return true;
+    }
+
+    @Override
+    public boolean isConfigurationFromContext(RunConfiguration configuration, ConfigurationContext context) {
+        if (!(configuration.getType() instanceof GaugeRunTaskConfigurationType)) return false;
+        Location location = context.getLocation();
+        if (location == null || location.getVirtualFile() == null || context.getPsiLocation() == null) return false;
+        String specsToExecute = ((GaugeRunConfiguration) configuration).getSpecsToExecute();
+        int identifier = getScenarioIdentifier(context, context.getPsiLocation().getContainingFile());
+        return specsToExecute != null && specsToExecute.equals(location.getVirtualFile().getPath() + COLON + identifier);
     }
 
     private String getScenarioName(ConfigurationContext context) {
@@ -88,11 +107,7 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
         if (scenarioName.startsWith("##"))
             scenarioName = scenarioName.replaceFirst("##", "");
         scenarioName = scenarioName.trim();
-        if (scenarioName.contains("\n")) {
-            return scenarioName.substring(0, scenarioName.indexOf("\n"));
-        } else {
-            return scenarioName;
-        }
+        return scenarioName.contains("\n") ? scenarioName.substring(0, scenarioName.indexOf("\n")) : scenarioName;
     }
 
     private int getScenarioIdentifier(ConfigurationContext context, PsiFile file) {
@@ -100,12 +115,8 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
         PsiElement selectedElement = context.getPsiLocation();
         if (selectedElement == null) return NON_SCENARIO_CONTEXT;
         String scenarioHeading = (!selectedElement.getClass().equals(SpecScenarioImpl.class)) ? getScenarioHeading(selectedElement) : selectedElement.getText();
-        if (scenarioHeading.equals("")) {
-            if (getNumberOfScenarios(file) == 0) {
-                return NO_SCENARIOS;
-            }
-            return NON_SCENARIO_CONTEXT;
-        }
+        if (scenarioHeading.equals(""))
+            return getNumberOfScenarios(file) == 0 ? NO_SCENARIOS : NON_SCENARIO_CONTEXT;
         for (PsiElement psiElement : file.getChildren()) {
             if (psiElement.getClass().equals(SpecScenarioImpl.class)) {
                 count++;
@@ -119,21 +130,17 @@ public class ScenarioExecutionProducer extends GaugeExecutionProducer {
 
     private int getNumberOfScenarios(PsiFile file) {
         int count = 0;
-        for (PsiElement psiElement : file.getChildren()) {
-            if (psiElement.getClass().equals(SpecScenarioImpl.class)) {
+        for (PsiElement psiElement : file.getChildren())
+            if (psiElement.getClass().equals(SpecScenarioImpl.class))
                 count++;
-            }
-        }
         return count;
     }
 
     private String getScenarioHeading(PsiElement selectedElement) {
-        if (selectedElement.getClass().equals(SpecScenarioImpl.class)) {
+        if (selectedElement.getClass().equals(SpecScenarioImpl.class))
             return selectedElement.getNode().getFirstChildNode().getText();
-        }
-        if (selectedElement.getClass().equals(SpecFile.class)) {
+        if (selectedElement.getClass().equals(SpecFile.class))
             return "";
-        }
         return getScenarioHeading(selectedElement.getParent());
     }
 }

@@ -44,8 +44,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.thoughtworks.gauge.GaugeConstant.ENV_FLAG;
@@ -59,7 +59,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
     private static final String PARALLEL_NODES_FLAG = "-n";
     private static final String TABLE_ROWS_FLAG = "--table-rows";
     public static final String GAUGE_CUSTOM_CLASSPATH = "gauge_custom_classpath";
-    private static final String SPEC_FILE_DELIMITER = "||";
+    public static final String SPEC_FILE_DELIMITER = "||";
     private static final java.lang.String SPEC_FILE_DELIMITER_REGEX = "\\|\\|";
 
     private String specsToExecute;
@@ -275,7 +275,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         this.tags = tags;
     }
 
-    public void setSpecsArrayToExecute(ArrayList<String> specsArrayToExecute) {
+    public void setSpecsArrayToExecute(List<String> specsArrayToExecute) {
         StringBuilder builder = new StringBuilder("");
         for (String specName : specsArrayToExecute) {
             builder.append(specName);
