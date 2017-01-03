@@ -17,6 +17,10 @@ public class SpecParsingTestCase extends ParsingTestCase {
         doTest(true);
     }
 
+    public void testSpecWithEmptyTableHeaders() {
+        doTest(true);
+    }
+
     @Override
     protected String getTestDataPath() {
         return new File("testdata", "specParser").getAbsolutePath();

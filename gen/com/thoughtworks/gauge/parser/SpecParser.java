@@ -1,17 +1,15 @@
 // This is a generated file. Not intended for manual editing.
 package com.thoughtworks.gauge.parser;
 
+import com.intellij.lang.ASTNode;
+import com.intellij.lang.LightPsiParser;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
-
-import static com.thoughtworks.gauge.language.token.SpecTokenTypes.*;
-import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
-
-import com.intellij.psi.tree.IElementType;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.tree.TokenSet;
 import com.intellij.lang.PsiParser;
-import com.intellij.lang.LightPsiParser;
+import com.intellij.psi.tree.IElementType;
+
+import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
+import static com.thoughtworks.gauge.language.token.SpecTokenTypes.*;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class SpecParser implements PsiParser, LightPsiParser {
@@ -553,7 +551,7 @@ public class SpecParser implements PsiParser, LightPsiParser {
     }
 
     /* ********************************************************** */
-    // TABLE_BORDER (TABLE_HEADER TABLE_BORDER)+ NEW_LINE ((TABLE_BORDER)* NEW_LINE)?
+    // TABLE_BORDER (TABLE_HEADER* TABLE_BORDER)+ NEW_LINE ((TABLE_BORDER)* NEW_LINE)?
     public static boolean tableHeader(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "tableHeader")) return false;
         if (!nextTokenIs(b, TABLE_BORDER)) return false;
@@ -567,7 +565,7 @@ public class SpecParser implements PsiParser, LightPsiParser {
         return r;
     }
 
-    // (TABLE_HEADER TABLE_BORDER)+
+    // (TABLE_HEADER* TABLE_BORDER)+
     private static boolean tableHeader_1(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "tableHeader_1")) return false;
         boolean r;
@@ -583,14 +581,27 @@ public class SpecParser implements PsiParser, LightPsiParser {
         return r;
     }
 
-    // TABLE_HEADER TABLE_BORDER
+    // TABLE_HEADER* TABLE_BORDER
     private static boolean tableHeader_1_0(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "tableHeader_1_0")) return false;
         boolean r;
         Marker m = enter_section_(b);
-        r = consumeTokens(b, 0, TABLE_HEADER, TABLE_BORDER);
+        r = tableHeader_1_0_0(b, l + 1);
+        r = r && consumeToken(b, TABLE_BORDER);
         exit_section_(b, m, null, r);
         return r;
+    }
+
+    // TABLE_HEADER*
+    private static boolean tableHeader_1_0_0(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "tableHeader_1_0_0")) return false;
+        int c = current_position_(b);
+        while (true) {
+            if (!consumeToken(b, TABLE_HEADER)) break;
+            if (!empty_element_parsed_guard_(b, "tableHeader_1_0_0", c)) break;
+            c = current_position_(b);
+        }
+        return true;
     }
 
     // ((TABLE_BORDER)* NEW_LINE)?
