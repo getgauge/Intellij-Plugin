@@ -14,6 +14,13 @@ The plugin provides the following basic features:
 * Support for Refactoring
 
 See the [documentation](http://getgauge.io/documentation/user/current/ide_support/intellij_idea.html) for more details.
+
+Installation
+------------
+
+* [Stable](http://getgauge.io/documentation/user/current/ide_support/intellij_idea.html#installation)
+* [Nightly](http://getgauge.io/documentation/user/current/ide_support/intellij_idea.html#installing-nightly)
+
 License
 -------
 
