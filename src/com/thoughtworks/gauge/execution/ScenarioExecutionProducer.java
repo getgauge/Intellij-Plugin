@@ -137,6 +137,7 @@ public class ScenarioExecutionProducer extends RunConfigurationProducer {
     }
 
     private String getScenarioHeading(PsiElement selectedElement) {
+        if (selectedElement == null) return "";
         if (selectedElement.getClass().equals(SpecScenarioImpl.class))
             return selectedElement.getNode().getFirstChildNode().getText();
         if (selectedElement.getClass().equals(SpecFile.class))
