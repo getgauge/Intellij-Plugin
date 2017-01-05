@@ -227,6 +227,12 @@
                              implementationClass="com.thoughtworks.gauge.folding.SpecFoldingBuilder"/>
         <lang.foldingBuilder language="Concept"
                              implementationClass="com.thoughtworks.gauge.folding.ConceptFoldingBuilder"/>
+        <localInspection language="Specification"
+                         implementationClass="com.thoughtworks.gauge.inspection.SpecInspectionProvider"
+                         displayName="Specification" groupName="Gauge" enabledByDefault="true"/>
+        <localInspection language="Concept"
+                         implementationClass="com.thoughtworks.gauge.inspection.ConceptInspectionProvider"
+                         displayName="Concept" groupName="Gauge" enabledByDefault="true"/>
     </extensions>
 
     <application-components>
