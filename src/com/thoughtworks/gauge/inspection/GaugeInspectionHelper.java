@@ -16,9 +16,9 @@ import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeExecPath;
 
 class GaugeInspectionHelper {
     @NotNull
-    static List<GaugeError> getErrors(String name, File directory) {
+    static List<GaugeError> getErrors(File directory) {
         try {
-            ProcessBuilder processBuilder = new ProcessBuilder(getGaugeExecPath(), "--validate", name);
+            ProcessBuilder processBuilder = new ProcessBuilder(getGaugeExecPath(), "--validate");
             processBuilder.directory(directory);
             Process process = processBuilder.start();
             process.waitFor();
