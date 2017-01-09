@@ -9,3 +9,4 @@ production-test/*
 *.zip
 .gradle
 build
+logs
