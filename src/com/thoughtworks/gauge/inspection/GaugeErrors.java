@@ -1,5 +1,6 @@
 package com.thoughtworks.gauge.inspection;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,6 @@ class GaugeErrors {
     }
 
     static List<GaugeError> get(String key) {
-        return e.get(key);
+        return e.get(key) == null ? new ArrayList<>() : e.get(key);
     }
 }

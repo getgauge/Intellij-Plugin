@@ -229,13 +229,13 @@
                              implementationClass="com.thoughtworks.gauge.folding.ConceptFoldingBuilder"/>
         <localInspection language="Specification"
                          implementationClass="com.thoughtworks.gauge.inspection.SpecInspectionProvider"
-                         displayName="Specification" groupName="Gauge" enabledByDefault="true"/>
+                         displayName="Specification" groupName="Gauge" enabledByDefault="true" level="ERROR"/>
         <localInspection language="Concept"
                          implementationClass="com.thoughtworks.gauge.inspection.ConceptInspectionProvider"
-                         displayName="Concept" groupName="Gauge" enabledByDefault="true"/>
+                         displayName="Concept" groupName="Gauge" enabledByDefault="true" level="ERROR"/>
         <globalInspection language="Specification"
-                         implementationClass="com.thoughtworks.gauge.inspection.GlobalInspectionProvider"
-                         displayName="Global" groupName="Gauge" enabledByDefault="true"/>
+                          implementationClass="com.thoughtworks.gauge.inspection.GlobalInspectionProvider"
+                          displayName="Global" groupName="Gauge" enabledByDefault="true" isInternal="true"/>
     </extensions>
 
     <application-components>

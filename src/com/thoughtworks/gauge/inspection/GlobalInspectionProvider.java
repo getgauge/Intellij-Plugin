@@ -21,6 +21,5 @@ public class GlobalInspectionProvider extends GlobalInspectionTool {
             File dir = GaugeUtil.moduleDir(module);
             GaugeErrors.add(dir.getAbsolutePath(), GaugeInspectionHelper.getErrors(dir));
         }
-        super.runInspection(scope, manager, globalContext, processor);
     }
 }
