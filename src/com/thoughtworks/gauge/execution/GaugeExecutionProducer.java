@@ -66,7 +66,6 @@ public class GaugeExecutionProducer extends RunConfigurationProducer {
         return true;
     }
 
-
     @Override
     public boolean isConfigurationFromContext(RunConfiguration configuration, ConfigurationContext context) {
         if (!(configuration.getType() instanceof GaugeRunTaskConfigurationType)) return false;
@@ -79,6 +78,7 @@ public class GaugeExecutionProducer extends RunConfigurationProducer {
     }
 
     private Boolean isInSpecScope(PsiElement element) {
+        if (element == null) return false;
         if (element instanceof SpecFile) return true;
         if (element instanceof SpecScenario) return false;
         return isInSpecScope(element.getParent());
