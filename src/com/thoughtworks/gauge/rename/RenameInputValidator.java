@@ -17,13 +17,17 @@
 
 package com.thoughtworks.gauge.rename;
 
-import com.intellij.codeInsight.hint.HintManager;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
+import com.intellij.openapi.application.TransactionGuard;
+import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.psi.PsiElement;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
 import com.thoughtworks.gauge.undo.UndoHandler;
@@ -33,13 +37,13 @@ public class RenameInputValidator implements InputValidator {
     private final Module module;
     private Editor editor;
     private String text;
-    private PsiElement psiElement;
+    private Project project;
 
-    public RenameInputValidator(final Module module, Editor editor, String text, PsiElement psiElement) {
+    RenameInputValidator(Module module, Editor editor, String text, Project project) {
         this.module = module;
         this.editor = editor;
         this.text = text;
-        this.psiElement = psiElement;
+        this.project = project;
     }
 
     public boolean checkInput(String inputString) {
@@ -47,30 +51,40 @@ public class RenameInputValidator implements InputValidator {
     }
 
     public boolean canClose(final String inputString) {
-        return doRename(inputString, editor, psiElement);
+        return doRename(inputString, editor);
     }
 
-    private boolean doRename(final String inputString, final Editor editor, final PsiElement psiElement) {
-        Api.PerformRefactoringResponse response = null;
-        FileDocumentManager.getInstance().saveAllDocuments();
-        try {
-            FileDocumentManager.getInstance().saveDocumentAsIs(editor.getDocument());
-            GaugeService gaugeService = Gauge.getGaugeService(module, true);
-            response = gaugeService.getGaugeConnection().sendPerformRefactoringRequest(text, inputString);
-        } catch (Exception e) {
-            Messages.showErrorDialog(String.format("Could not execute refactor command: %s", e.toString()), "Rephrase Failed");
-            return true;
-        }
-        new UndoHandler(response.getFilesChangedList(), module.getProject(), "Refactoring").handle();
-        showMessage(response);
+    private boolean doRename(final String inputString, final Editor editor) {
+        CompilerManager.getInstance(project).make((aborted, errors, warnings, context) -> {
+            if (errors > 0) {
+                Messages.showErrorDialog(editor.getProject(), "Please fix all compilation errors before refactoring steps.", "Refactoring Failed");
+                return;
+            }
+            TransactionGuard.submitTransaction(() -> {
+            }, () -> {
+                Api.PerformRefactoringResponse response;
+                FileDocumentManager.getInstance().saveAllDocuments();
+                try {
+                    FileDocumentManager.getInstance().saveDocumentAsIs(editor.getDocument());
+                    GaugeService gaugeService = Gauge.getGaugeService(module, true);
+                    response = gaugeService.getGaugeConnection().sendPerformRefactoringRequest(text, inputString);
+                } catch (Exception e) {
+                    Messages.showErrorDialog(String.format("Could not execute refactor command: %s", e.toString()), "Refactoring Failed");
+                    return;
+                }
+                new UndoHandler(response.getFilesChangedList(), module.getProject(), "Refactoring").handle();
+                showMessage(response);
+            });
+        });
         return true;
     }
 
     private void showMessage(Api.PerformRefactoringResponse response) {
+        Notification notification = new Notification("Gauge Refactoring", "Gauge", "Refactoring completed successfully", NotificationType.INFORMATION);
         if (!response.getSuccess()) {
-            String message = "";
-            for (String error : response.getErrorsList()) message += error + "\n";
-            HintManager.getInstance().showErrorHint(this.editor, message.replace("<", "\"").replace(">", "\""));
+            String message = String.join("\n", response.getErrorsList()).replace("<", "\"").replace(">", "\"");
+            notification = new Notification("Gauge Refactoring", "Error: Gauge refactoring failed", message, NotificationType.ERROR);
         }
+        Notifications.Bus.notify(notification, project);
     }
 }

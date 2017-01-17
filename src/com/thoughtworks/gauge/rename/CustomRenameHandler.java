@@ -39,17 +39,8 @@ import static com.thoughtworks.gauge.util.StepUtil.*;
 
 public class CustomRenameHandler implements RenameHandler {
 
-    private CompileAction action;
     private PsiElement psiElement;
     private Editor editor;
-
-    CustomRenameHandler(CompileAction action) {
-        this.action = action;
-    }
-
-    public CustomRenameHandler() {
-        this.action = new CompileAction();
-    }
 
     public boolean isAvailableOnDataContext(DataContext dataContext) {
         PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
@@ -66,9 +57,7 @@ public class CustomRenameHandler implements RenameHandler {
             psiElement = getStepElement(data.findElementAt(offset));
             return psiElement != null && (isConcept(psiElement) || isStep(psiElement));
         }
-        boolean isAvailable = CommonDataKeys.PROJECT.getData(dataContext) != null && (isMethod(element) || isConcept(element) || isStep(element));
-        if (isAvailable) action.compile(CommonDataKeys.PROJECT.getData(dataContext));
-        return isAvailable;
+        return CommonDataKeys.PROJECT.getData(dataContext) != null && (isMethod(element) || isConcept(element) || isStep(element));
     }
 
     public boolean isRenaming(DataContext dataContext) {
@@ -98,7 +87,7 @@ public class CustomRenameHandler implements RenameHandler {
             text = removeIdentifiers(((ConceptStepImpl) element).getStepValue().getStepAnnotationText());
         }
         Messages.showInputDialog(project, String.format("Refactoring \"%s\" to : ", text), "Refactor", Messages.getInformationIcon(), text,
-                new RenameInputValidator(GaugeUtil.moduleForPsiElement(file), this.editor, text, this.psiElement));
+                new RenameInputValidator(GaugeUtil.moduleForPsiElement(file), this.editor, text, project));
 
     }
 

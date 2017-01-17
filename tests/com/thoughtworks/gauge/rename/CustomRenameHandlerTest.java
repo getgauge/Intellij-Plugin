@@ -27,7 +27,6 @@ public class CustomRenameHandlerTest {
     private Editor editor;
     private VirtualFile virtualFile;
     private DataContext dataContext;
-    private CompileAction compileAction;
 
     @Before
     public void setUp() throws Exception {
@@ -35,7 +34,6 @@ public class CustomRenameHandlerTest {
         virtualFile = mock(VirtualFile.class);
         editor = mock(Editor.class);
         project = mock(Project.class);
-        compileAction = mock(CompileAction.class);
     }
 
     @Test
@@ -48,7 +46,7 @@ public class CustomRenameHandlerTest {
         when(dataContext.getData(CommonDataKeys.EDITOR.getName())).thenReturn(editor);
         when(dataContext.getData(CommonDataKeys.PROJECT.getName())).thenReturn(project);
 
-        assertTrue("Should rename the spec step. Expected: true, Actual: false", new CustomRenameHandler(compileAction).isAvailableOnDataContext(dataContext));
+        assertTrue("Should rename the spec step. Expected: true, Actual: false", new CustomRenameHandler().isAvailableOnDataContext(dataContext));
     }
 
     @Test
@@ -61,7 +59,7 @@ public class CustomRenameHandlerTest {
         when(dataContext.getData(CommonDataKeys.EDITOR.getName())).thenReturn(editor);
         when(dataContext.getData(CommonDataKeys.PROJECT.getName())).thenReturn(project);
 
-        assertTrue("Should rename the concept step. Expected: true, Actual: false", new CustomRenameHandler(compileAction).isAvailableOnDataContext(dataContext));
+        assertTrue("Should rename the concept step. Expected: true, Actual: false", new CustomRenameHandler().isAvailableOnDataContext(dataContext));
     }
 
     @Test
@@ -74,7 +72,7 @@ public class CustomRenameHandlerTest {
         when(dataContext.getData(CommonDataKeys.EDITOR.getName())).thenReturn(editor);
         when(dataContext.getData(CommonDataKeys.PROJECT.getName())).thenReturn(project);
 
-        assertTrue("Should rename the implemented method. Expected: true, Actual: false", new CustomRenameHandler(compileAction).isAvailableOnDataContext(dataContext));
+        assertTrue("Should rename the implemented method. Expected: true, Actual: false", new CustomRenameHandler().isAvailableOnDataContext(dataContext));
     }
 
     @Test
@@ -87,7 +85,7 @@ public class CustomRenameHandlerTest {
         when(dataContext.getData(CommonDataKeys.EDITOR.getName())).thenReturn(editor);
         when(dataContext.getData(CommonDataKeys.PROJECT.getName())).thenReturn(project);
 
-        assertFalse("Should rename a non gauge element. Expected: false, Actual: true", new CustomRenameHandler(compileAction).isAvailableOnDataContext(dataContext));
+        assertFalse("Should rename a non gauge element. Expected: false, Actual: true", new CustomRenameHandler().isAvailableOnDataContext(dataContext));
     }
 
     @Test
@@ -100,7 +98,7 @@ public class CustomRenameHandlerTest {
         when(dataContext.getData(CommonDataKeys.EDITOR.getName())).thenReturn(editor);
         when(dataContext.getData(CommonDataKeys.PROJECT.getName())).thenReturn(project);
 
-        assertFalse("Should rename in non gauge file. Expected: false, Actual: true", new CustomRenameHandler(compileAction).isAvailableOnDataContext(dataContext));
+        assertFalse("Should rename in non gauge file. Expected: false, Actual: true", new CustomRenameHandler().isAvailableOnDataContext(dataContext));
     }
 
     @Test
@@ -115,11 +113,11 @@ public class CustomRenameHandlerTest {
         when(dataContext.getData(CommonDataKeys.PSI_FILE.getName())).thenReturn(file);
         when(file.findElementAt(0)).thenReturn(mock(SpecStepImpl.class));
 
-        boolean isAvailable = new CustomRenameHandler(compileAction).isAvailableOnDataContext(dataContext);
+        boolean isAvailable = new CustomRenameHandler().isAvailableOnDataContext(dataContext);
         assertTrue("Should rename when element is not present in DataContext. Expected: true, Actual: false", isAvailable);
 
         when(file.findElementAt(0)).thenReturn(mock(ConceptStepImpl.class));
-        isAvailable = new CustomRenameHandler(compileAction).isAvailableOnDataContext(dataContext);
+        isAvailable = new CustomRenameHandler().isAvailableOnDataContext(dataContext);
         assertTrue("Should rename when element is not present in DataContext. Expected: true, Actual: false", isAvailable);
     }
 
@@ -128,7 +126,7 @@ public class CustomRenameHandlerTest {
         when(dataContext.getData(CommonDataKeys.PSI_ELEMENT.getName())).thenReturn(null);
         when(dataContext.getData(CommonDataKeys.EDITOR.getName())).thenReturn(null);
 
-        boolean isAvailable = new CustomRenameHandler(compileAction).isAvailableOnDataContext(dataContext);
+        boolean isAvailable = new CustomRenameHandler().isAvailableOnDataContext(dataContext);
         assertFalse("Should rename when editor is not present. Expected: false, Actual: true", isAvailable);
     }
 
@@ -142,7 +140,7 @@ public class CustomRenameHandlerTest {
         when(caretModel.getOffset()).thenReturn(0);
         when(dataContext.getData(CommonDataKeys.PSI_FILE.getName())).thenReturn(null);
 
-        boolean isAvailable = new CustomRenameHandler(compileAction).isAvailableOnDataContext(dataContext);
+        boolean isAvailable = new CustomRenameHandler().isAvailableOnDataContext(dataContext);
         assertFalse("Should rename when psi file is not present. Expected: false, Actual: true", isAvailable);
     }
 }
