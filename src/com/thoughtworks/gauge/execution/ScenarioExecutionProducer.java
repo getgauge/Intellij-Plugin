@@ -29,7 +29,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.thoughtworks.gauge.core.GaugeVersion;
 import com.thoughtworks.gauge.language.SpecFile;
 import com.thoughtworks.gauge.language.psi.impl.SpecScenarioImpl;
 import com.thoughtworks.gauge.util.GaugeUtil;
@@ -40,7 +39,6 @@ public class ScenarioExecutionProducer extends RunConfigurationProducer {
     public static final String COLON = ":";
     private final int NO_SCENARIOS = -1;
     private final int NON_SCENARIO_CONTEXT = -2;
-    private static final String VERSION = "0.4.0";
 
     public ScenarioExecutionProducer() {
         super(new GaugeRunTaskConfigurationType());
@@ -121,7 +119,7 @@ public class ScenarioExecutionProducer extends RunConfigurationProducer {
             if (psiElement.getClass().equals(SpecScenarioImpl.class)) {
                 count++;
                 if (psiElement.getNode().getFirstChildNode().getText().equals(scenarioHeading)) {
-                    return GaugeVersion.isGreaterThan(VERSION) ? StringUtil.offsetToLineNumber(psiElement.getContainingFile().getText(), psiElement.getTextOffset()) + 1 : count;
+                    return StringUtil.offsetToLineNumber(psiElement.getContainingFile().getText(), psiElement.getTextOffset()) + 1;
                 }
             }
         }
