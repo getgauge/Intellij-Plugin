@@ -28,6 +28,9 @@ import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
 import com.thoughtworks.gauge.util.GaugeUtil;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 public class GaugeExceptionHandler extends Thread {
 
     private static final String LINE_BREAK = "\n";
@@ -46,12 +49,19 @@ public class GaugeExceptionHandler extends Thread {
     public void run() {
         String output = "";
         try {
-            while (process.isAlive())
-                output = String.format("%s%s%s", output, LINE_BREAK, GaugeUtil.getOutput(process.getErrorStream(), LINE_BREAK));
+            do {
+                output = getOutput(output, process.getErrorStream());
+                output = getOutput(output, process.getInputStream());
+            } while (process.isAlive());
             if (process.exitValue() != 0 && !output.trim().equals(""))
                 Notifications.Bus.notify(createNotification(output), project);
         } catch (Exception ignored) {
         }
+    }
+
+    private String getOutput(String output, InputStream stream) throws IOException {
+        String lines = GaugeUtil.getOutput(stream, LINE_BREAK);
+        return lines.trim().isEmpty() ? "" : String.format("%s%s%s", output, LINE_BREAK, lines);
     }
 
     private Notification createNotification(String stacktrace) {

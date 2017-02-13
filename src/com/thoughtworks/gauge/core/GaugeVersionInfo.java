@@ -10,7 +10,11 @@ class GaugeVersionInfo {
     GaugeVersionInfo() {
     }
 
-    boolean isGreaterThan(GaugeVersionInfo versionInfo) {
+    Boolean isGreaterThan(GaugeVersionInfo versionInfo) {
         return this.version.compareTo(versionInfo.version) > 0;
+    }
+
+    Boolean isLessThan(GaugeVersionInfo versionInfo) {
+        return this.version.compareTo(versionInfo.version) < 0;
     }
 }

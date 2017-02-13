@@ -17,6 +17,10 @@
 
 package com.thoughtworks.gauge;
 
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationListener;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleComponent;
@@ -28,6 +32,7 @@ import com.thoughtworks.gauge.core.GaugeVersion;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import com.thoughtworks.gauge.module.GaugeModuleType;
 import com.thoughtworks.gauge.module.lib.LibHelperFactory;
+import com.thoughtworks.gauge.util.GaugeUtil;
 import com.thoughtworks.gauge.util.SocketUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,6 +45,7 @@ import static com.thoughtworks.gauge.util.GaugeUtil.*;
 
 
 public class GaugeModuleComponent implements ModuleComponent {
+    public static final String GAUGE_SUPPORTED_VERSION = "0.8.0";
     private final Module module;
     private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.GaugeModuleComponent");
 
@@ -64,8 +70,13 @@ public class GaugeModuleComponent implements ModuleComponent {
 
     @Override
     public void projectOpened() {
+        if (GaugeUtil.isGaugeModule(module) && GaugeVersion.isLessThan(GAUGE_SUPPORTED_VERSION)) {
+            String message = "This plugin version supports Gauge " + GAUGE_SUPPORTED_VERSION + " or above. Please refer <a href=\"https://docs.getgauge.io/installing.html\">this doc</a> to update Gauge.";
+            Notification notification = new Notification("Gauge", "Version Incompatible", message, NotificationType.ERROR, NotificationListener.URL_OPENING_LISTENER);
+            Notifications.Bus.notify(notification, module.getProject());
+            return;
+        }
         new LibHelperFactory().helperFor(module).checkDeps();
-        GaugeVersion.updateVersionInfo();
     }
 
     @Override
@@ -78,6 +89,8 @@ public class GaugeModuleComponent implements ModuleComponent {
 
     @Override
     public void moduleAdded() {
+        GaugeVersion.updateVersionInfo();
+        if (GaugeVersion.isLessThan(GAUGE_SUPPORTED_VERSION)) return;
         projectOpened();
     }
 
