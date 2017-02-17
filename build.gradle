@@ -40,13 +40,12 @@ allprojects {
     }
     repositories {
         mavenCentral()
-        maven { url 'https://dl.bintray.com/gauge/maven-gauge-java' }
     }
 }
 
 dependencies {
     compile(
-            'com.thoughtworks.gauge:gauge-java:0.5.2.nightly-2017-01-12',
+            'com.thoughtworks.gauge:gauge-java:+',
             'org.pegdown:pegdown:1.6.0',
     )
     testCompile(
