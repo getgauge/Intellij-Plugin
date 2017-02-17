@@ -47,10 +47,6 @@ public class GaugeVersion {
         return gaugeVersionInfo;
     }
 
-    public static Boolean isGreaterThan(String v1) {
-        return versionInfo.isGreaterThan(new GaugeVersionInfo(v1));
-    }
-
     public static Boolean isLessThan(String v1) {
         return versionInfo.isLessThan(new GaugeVersionInfo(v1));
     }

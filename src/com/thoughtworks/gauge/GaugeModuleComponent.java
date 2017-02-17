@@ -90,7 +90,7 @@ public class GaugeModuleComponent implements ModuleComponent {
     @Override
     public void moduleAdded() {
         GaugeVersion.updateVersionInfo();
-        if (GaugeVersion.isLessThan(GAUGE_SUPPORTED_VERSION)) return;
+        if (GaugeUtil.isGaugeModule(module) && GaugeVersion.isLessThan(GAUGE_SUPPORTED_VERSION)) return;
         projectOpened();
     }
 
