@@ -122,7 +122,9 @@ public class GaugeModuleComponent implements ModuleComponent {
             String path = getGaugeExecPath();
             ProcessBuilder gauge = new ProcessBuilder(path, DAEMONIZE_FLAG);
             gauge.environment().put(GAUGE_API_PORT, String.valueOf(apiPort));
-            gauge.environment().put(GAUGE_CUSTOM_CLASSPATH, classpathForModule(module));
+            String cp = classpathForModule(module);
+            LOG.info(String.format("Setting `%s` to `%s`", GAUGE_CUSTOM_CLASSPATH, cp));
+            gauge.environment().put(GAUGE_CUSTOM_CLASSPATH, cp);
             gauge.directory(moduleDir(module));
             Process process = gauge.start();
             new GaugeExceptionHandler(process, module.getProject()).start();

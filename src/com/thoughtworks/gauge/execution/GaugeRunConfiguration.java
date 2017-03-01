@@ -27,6 +27,7 @@ import com.intellij.execution.configurations.*;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.SettingsEditor;
@@ -61,6 +62,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
     public static final String GAUGE_CUSTOM_CLASSPATH = "gauge_custom_classpath";
     public static final String SPEC_FILE_DELIMITER = "||";
     private static final java.lang.String SPEC_FILE_DELIMITER_REGEX = "\\|\\|";
+    private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.execution.GaugeRunConfiguration");
 
     private String specsToExecute;
     private Module module;
@@ -146,8 +148,11 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
 
     private void addProjectClasspath(GeneralCommandLine commandLine) {
         Module module = getModule();
-        if (module != null)
-            commandLine.getEnvironment().put(GAUGE_CUSTOM_CLASSPATH, GaugeUtil.classpathForModule(module));
+        if (module != null) {
+            String cp = GaugeUtil.classpathForModule(module);
+            LOG.info(String.format("Setting `%s` to `%s`", GAUGE_CUSTOM_CLASSPATH, cp));
+            commandLine.getEnvironment().put(GAUGE_CUSTOM_CLASSPATH, cp);
+        }
     }
 
     private void addTableRowsRangeFlags(GeneralCommandLine commandLine) {
