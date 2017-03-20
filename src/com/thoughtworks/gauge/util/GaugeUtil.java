@@ -35,6 +35,7 @@ import com.thoughtworks.gauge.language.SpecFile;
 import com.thoughtworks.gauge.language.SpecFileType;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.serialization.PathMacroUtil;
 
 import java.io.*;
@@ -53,40 +54,45 @@ public class GaugeUtil {
     }
 
     private static String getPath() throws GaugeNotFoundException {
+        String binaryPath = getBinaryPathFrom("GAUGE_HOME");
+        if (binaryPath != null) return binaryPath;
         String path = EnvironmentUtil.getValue("PATH");
         LOG.info("PATH => " + path);
-        String gaugeHome = EnvironmentUtil.getValue("GAUGE_ROOT");
-        LOG.info("GAUGE_ROOT => " + gaugeHome);
-        if (!StringUtils.isEmpty(gaugeHome)) {
-            File bin = new File(gaugeHome, "bin");
-            File gaugeExec = new File(bin, gaugeExecutable());
-            if (gaugeExec.exists()) {
-                LOG.info("executable path: " + gaugeExec.getAbsolutePath());
-                return gaugeExec.getAbsolutePath();
-            }
-        } else if (!StringUtils.isEmpty(path)) {
+        if (!StringUtils.isEmpty(path)) {
             for (String entry : path.split(File.pathSeparator)) {
                 File gaugeExec = new File(entry, gaugeExecutable());
                 try {
                     if (gaugeExec.exists() && gaugeExec.isFile() && gaugeExec.canExecute()) {
-                        LOG.info("executable path: " + gaugeExec.getAbsolutePath());
+                        LOG.info("executable path from `PATH`: " + gaugeExec.getAbsolutePath());
                         return gaugeExec.getAbsolutePath();
                     }
                 } catch (SecurityException ignored) {
                 }
             }
         }
-        LOG.warn("Could not find executable in PATH or GAUGE_ROOT");
-        throw new GaugeNotFoundException("Could not find executable in PATH or GAUGE_ROOT. Gauge is not installed.");
+        binaryPath = getBinaryPathFrom("GAUGE_ROOT");
+        if (binaryPath != null) return binaryPath;
+        LOG.error("Could not find executable in `GAUGE_HOME`, `PATH` or `GAUGE_ROOT`");
+        throw new GaugeNotFoundException("Could not find executable in `GAUGE_HOME`, `PATH` or `GAUGE_ROOT`. Gauge is not installed.");
+    }
+
+    @Nullable
+    private static String getBinaryPathFrom(String name) {
+        String value = EnvironmentUtil.getValue(name);
+        LOG.info(String.format("%s => %s", name, value));
+        if (!StringUtils.isEmpty(value)) {
+            File bin = new File(value, "bin");
+            File gaugeExec = new File(bin, gaugeExecutable());
+            if (gaugeExec.exists()) {
+                LOG.info(String.format("executable path from `%s` : %s", name, gaugeExec.getAbsolutePath()));
+                return gaugeExec.getAbsolutePath();
+            }
+        }
+        return null;
     }
 
     private static String gaugeExecutable() {
-        if (isWindows()) {
-            return GaugeConstant.GAUGE + ".exe";
-        } else {
-            return GaugeConstant.GAUGE;
-        }
-
+        return isWindows() ? GaugeConstant.GAUGE + ".exe" : GaugeConstant.GAUGE;
     }
 
     private static boolean isWindows() {
