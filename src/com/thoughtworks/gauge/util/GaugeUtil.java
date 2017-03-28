@@ -50,18 +50,17 @@ public class GaugeUtil {
     private static GaugeSettingsModel gaugeSettings = null;
 
     public static GaugeSettingsModel getGaugeSettings() throws GaugeNotFoundException {
-        if (gaugeSettings == null)
-            gaugeSettings = getGaugeSettingsModel();
+        GaugeSettingsModel settings = GaugeSettingsService.getSettings();
+        LOG.info(settings.toString());
+        if (settings.isGaugePathSet()) {
+            LOG.info("Using Gauge plugin settings to get Gauge executable path.");
+            return settings;
+        }
+        if (gaugeSettings == null) gaugeSettings = getSettingsFromPATH(settings);
         return gaugeSettings;
     }
 
-    private static GaugeSettingsModel getGaugeSettingsModel() throws GaugeNotFoundException {
-        GaugeSettingsModel model = GaugeSettingsService.getSettings();
-        LOG.info(model.toString());
-        if (model.isGaugePathSet()) {
-            LOG.info("Using Gauge plugin settings to get Gauge executable path.");
-            return model;
-        }
+    private static GaugeSettingsModel getSettingsFromPATH(GaugeSettingsModel model) throws GaugeNotFoundException {
         String path = EnvironmentUtil.getValue("PATH");
         LOG.info("PATH => " + path);
         if (!StringUtils.isEmpty(path)) {
