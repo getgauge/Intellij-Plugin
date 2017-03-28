@@ -76,7 +76,6 @@ public class GaugeUtil {
         if (binaryPath != null) return new GaugeSettingsModel(binaryPath, model.getHomePath(), model.getRootPath());
         String msg = "Could not find executable in `PATH`. Please make sure Gauge is installed." +
                 "\nIf Gauge is installed then set the Gauge executable path in settings -> tools -> gauge.";
-        LOG.error(msg);
         throw new GaugeNotFoundException(msg);
     }
 

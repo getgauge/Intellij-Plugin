@@ -91,8 +91,10 @@ public class GaugeModuleComponent implements ModuleComponent {
 
     @Override
     public void moduleAdded() {
-        GaugeVersion.updateVersionInfo();
-        if (GaugeUtil.isGaugeModule(module) && GaugeVersion.isLessThan(GAUGE_SUPPORTED_VERSION)) return;
+        if (GaugeUtil.isGaugeModule(module)) {
+            GaugeVersion.updateVersionInfo();
+            if (GaugeVersion.isLessThan(GAUGE_SUPPORTED_VERSION)) return;
+        }
         projectOpened();
     }
 
@@ -134,12 +136,8 @@ public class GaugeModuleComponent implements ModuleComponent {
             Process process = gauge.start();
             new GaugeExceptionHandler(process, module.getProject()).start();
             return process;
-        } catch (IOException e) {
-            LOG.error("Could not start gauge api:" + e.getMessage(), e);
-            System.err.println("could not start gauge api:" + e.getMessage());
-        } catch (GaugeNotFoundException e) {
-            LOG.error("Could not start gauge api: " + e.getMessage(), e);
-            System.err.println("Could not start gauge api:" + e.getMessage());
+        } catch (IOException | GaugeNotFoundException e) {
+            LOG.error("An error occurred while starting gauge api. \n" + e);
         }
         return null;
     }
