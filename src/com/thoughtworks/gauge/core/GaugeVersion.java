@@ -19,9 +19,10 @@ package com.thoughtworks.gauge.core;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.thoughtworks.gauge.settings.GaugeSettingsModel;
 import com.thoughtworks.gauge.util.GaugeUtil;
 
-import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeExecPath;
+import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeSettings;
 
 public class GaugeVersion {
     static GaugeVersionInfo versionInfo = getVersion();
@@ -33,7 +34,9 @@ public class GaugeVersion {
     private static GaugeVersionInfo getVersion() {
         GaugeVersionInfo gaugeVersionInfo = new GaugeVersionInfo();
         try {
-            ProcessBuilder processBuilder = new ProcessBuilder(getGaugeExecPath(), "--version", "--machine-readable");
+            GaugeSettingsModel settings = getGaugeSettings();
+            ProcessBuilder processBuilder = new ProcessBuilder(settings.getGaugePath(), "--version", "--machine-readable");
+            GaugeUtil.setGaugeEnvironmentsTo(processBuilder, settings);
             Process process = processBuilder.start();
             int exitCode = process.waitFor();
             if (exitCode == 0) {

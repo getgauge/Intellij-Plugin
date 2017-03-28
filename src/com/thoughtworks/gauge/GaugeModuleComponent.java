@@ -32,6 +32,7 @@ import com.thoughtworks.gauge.core.GaugeVersion;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import com.thoughtworks.gauge.module.GaugeModuleType;
 import com.thoughtworks.gauge.module.lib.LibHelperFactory;
+import com.thoughtworks.gauge.settings.GaugeSettingsModel;
 import com.thoughtworks.gauge.util.GaugeUtil;
 import com.thoughtworks.gauge.util.SocketUtils;
 import org.jetbrains.annotations.NotNull;
@@ -120,9 +121,10 @@ public class GaugeModuleComponent implements ModuleComponent {
 
     private static Process initializeGaugeProcess(int apiPort, Module module) {
         try {
-            String path = getGaugeExecPath();
+            GaugeSettingsModel settings = getGaugeSettings();
             String port = String.valueOf(apiPort);
-            ProcessBuilder gauge = new ProcessBuilder(path, DAEMONIZE_FLAG, API_PORT_FLAG, port);
+            ProcessBuilder gauge = new ProcessBuilder(settings.getGaugePath(), DAEMONIZE_FLAG, API_PORT_FLAG, port);
+            GaugeUtil.setGaugeEnvironmentsTo(gauge, settings);
             String cp = classpathForModule(module);
             LOG.info(String.format("Setting `%s` to `%s`", GAUGE_CUSTOM_CLASSPATH, cp));
             gauge.environment().put(GAUGE_CUSTOM_CLASSPATH, cp);

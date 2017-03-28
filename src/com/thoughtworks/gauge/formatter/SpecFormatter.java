@@ -30,11 +30,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.thoughtworks.gauge.settings.GaugeSettingsModel;
 import com.thoughtworks.gauge.util.GaugeUtil;
 
 import java.io.File;
 
-import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeExecPath;
+import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeSettings;
 
 public class SpecFormatter extends AnAction {
     @Override
@@ -56,7 +57,9 @@ public class SpecFormatter extends AnAction {
             FileDocumentManager.getInstance().saveDocument(doc);
         }
         try {
-            ProcessBuilder processBuilder = new ProcessBuilder(getGaugeExecPath(), "--format", fileName);
+            GaugeSettingsModel settings = getGaugeSettings();
+            ProcessBuilder processBuilder = new ProcessBuilder(settings.getGaugePath(), "--format", fileName);
+            GaugeUtil.setGaugeEnvironmentsTo(processBuilder, settings);
             processBuilder.directory(new File(projectDir));
             Process process = processBuilder.start();
             int exitCode = process.waitFor();

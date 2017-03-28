@@ -36,8 +36,10 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizer;
 import com.intellij.openapi.util.WriteExternalException;
 import com.jgoodies.common.base.Strings;
+import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.GaugeConstant;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
+import com.thoughtworks.gauge.settings.GaugeSettingsModel;
 import com.thoughtworks.gauge.util.GaugeUtil;
 import com.thoughtworks.gauge.util.SocketUtils;
 import org.jdom.Element;
@@ -95,7 +97,11 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
             protected ProcessHandler startProcess() throws ExecutionException {
                 GeneralCommandLine commandLine = new GeneralCommandLine();
                 try {
-                    commandLine.setExePath(GaugeUtil.getGaugeExecPath());
+                    GaugeSettingsModel settings = GaugeUtil.getGaugeSettings();
+                    commandLine.setExePath(settings.getGaugePath());
+                    Map<String, String> environment = commandLine.getEnvironment();
+                    environment.put(Constants.GAUGE_ROOT, settings.getRootPath());
+                    environment.put(Constants.GAUGE_HOME, settings.getHomePath());
                 } catch (GaugeNotFoundException e) {
                     commandLine.setExePath(GaugeConstant.GAUGE);
                 } finally {

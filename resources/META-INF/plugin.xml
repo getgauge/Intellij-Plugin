@@ -236,9 +236,14 @@
         <globalInspection language="Specification"
                           implementationClass="com.thoughtworks.gauge.inspection.GlobalInspectionProvider"
                           displayName="Global" groupName="Gauge" enabledByDefault="true" isInternal="true"/>
+        <applicationConfigurable groupId="tools" id="com.thoughtworks.gauge" displayName="Gauge"
+                                 instance="com.thoughtworks.gauge.settings.GaugeSettings"/>
     </extensions>
 
     <application-components>
+        <component>
+            <implementation-class>com.thoughtworks.gauge.settings.GaugeSettingsService</implementation-class>
+        </component>
         <!-- Add your application components here -->
     </application-components>
 

@@ -26,4 +26,6 @@ public class Constants {
     public static final String SPECS_DIR = "specs";
     public static final String FILE_ENCODING = "utf-8";
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");
+    public static final String GAUGE_ROOT = "GAUGE_ROOT";
+    public static final String GAUGE_HOME = "GAUGE_HOME";
 }

@@ -31,6 +31,8 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import com.thoughtworks.gauge.module.lib.GaugeLibHelper;
+import com.thoughtworks.gauge.settings.GaugeSettingsModel;
+import com.thoughtworks.gauge.util.GaugeUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,7 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.thoughtworks.gauge.GaugeConstant.INIT_FLAG;
-import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeExecPath;
+import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeSettings;
 
 public class GaugeModuleBuilder extends JavaModuleBuilder {
 
@@ -55,7 +57,7 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
 
     private void checkGaugeIsInstalled() {
         try {
-            getGaugeExecPath();
+            getGaugeSettings();
         } catch (GaugeNotFoundException e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -74,12 +76,14 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
                 progressIndicator.setText("Installing gauge-" + getLanguage() + " plugin if not installed");
                 String failureMessage = "Project initialization unsuccessful";
                 try {
+                    GaugeSettingsModel settings = getGaugeSettings();
                     final String[] init = {
-                            getGaugeExecPath(),
+                            settings.getGaugePath(),
                             INIT_FLAG, getLanguage()
                     };
                     ProcessBuilder processBuilder = new ProcessBuilder(init);
                     processBuilder.directory(new File(getModuleFileDirectory()));
+                    GaugeUtil.setGaugeEnvironmentsTo(processBuilder, settings);
                     Process process = processBuilder.start();
                     final int exitCode = process.waitFor();
                     if (exitCode != 0) {

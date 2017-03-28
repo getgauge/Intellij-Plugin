@@ -33,52 +33,60 @@ import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import com.thoughtworks.gauge.language.ConceptFileType;
 import com.thoughtworks.gauge.language.SpecFile;
 import com.thoughtworks.gauge.language.SpecFileType;
+import com.thoughtworks.gauge.settings.GaugeSettingsModel;
+import com.thoughtworks.gauge.settings.GaugeSettingsService;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.serialization.PathMacroUtil;
 
 import java.io.*;
+import java.util.Map;
 
 import static com.thoughtworks.gauge.Constants.SPECS_DIR;
 
 public class GaugeUtil {
     private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.GaugeUtil");
-    private static String gaugePath = null;
+    private static GaugeSettingsModel gaugeSettings = null;
 
-    public static String getGaugeExecPath() throws GaugeNotFoundException {
-        if (gaugePath == null) {
-            gaugePath = getPath();
-        }
-        return gaugePath;
+    public static GaugeSettingsModel getGaugeSettings() throws GaugeNotFoundException {
+        if (gaugeSettings == null)
+            gaugeSettings = getGaugeSettingsModel();
+        return gaugeSettings;
     }
 
-    private static String getPath() throws GaugeNotFoundException {
-        String binaryPath = getBinaryPathFrom("GAUGE_HOME");
-        if (binaryPath != null) return binaryPath;
+    private static GaugeSettingsModel getGaugeSettingsModel() throws GaugeNotFoundException {
+        GaugeSettingsModel model = GaugeSettingsService.getSettings();
+        LOG.info(model.toString());
+        if (model.isGaugePathSet()) {
+            LOG.info("Using Gauge plugin settings to get Gauge executable path.");
+            return model;
+        }
         String path = EnvironmentUtil.getValue("PATH");
         LOG.info("PATH => " + path);
         if (!StringUtils.isEmpty(path)) {
             for (String entry : path.split(File.pathSeparator)) {
-                File gaugeExec = new File(entry, gaugeExecutable());
-                try {
-                    if (gaugeExec.exists() && gaugeExec.isFile() && gaugeExec.canExecute()) {
-                        LOG.info("executable path from `PATH`: " + gaugeExec.getAbsolutePath());
-                        return gaugeExec.getAbsolutePath();
-                    }
-                } catch (SecurityException ignored) {
+                File file = new File(entry, gaugeExecutable());
+                if (isValidGaugeExec(file)) {
+                    LOG.info("executable path from `PATH`: " + file.getAbsolutePath());
+                    return new GaugeSettingsModel(file.getAbsolutePath(), model.getHomePath(), model.getRootPath());
                 }
             }
         }
-        binaryPath = getBinaryPathFrom("GAUGE_ROOT");
-        if (binaryPath != null) return binaryPath;
-        LOG.error("Could not find executable in `GAUGE_HOME`, `PATH` or `GAUGE_ROOT`");
-        throw new GaugeNotFoundException("Could not find executable in `GAUGE_HOME`, `PATH` or `GAUGE_ROOT`. Gauge is not installed.");
+        String binaryPath = getBinaryPathFrom(Constants.GAUGE_ROOT, model.getRootPath());
+        if (binaryPath != null) return new GaugeSettingsModel(binaryPath, model.getHomePath(), model.getRootPath());
+        String msg = "Could not find executable in `PATH`. Please make sure Gauge is installed." +
+                "\nIf Gauge is installed then set the Gauge executable path in settings -> tools -> gauge.";
+        LOG.error(msg);
+        throw new GaugeNotFoundException(msg);
+    }
+
+    private static boolean isValidGaugeExec(File file) {
+        return file.exists() && file.isFile() && file.canExecute();
     }
 
     @Nullable
-    private static String getBinaryPathFrom(String name) {
-        String value = EnvironmentUtil.getValue(name);
+    private static String getBinaryPathFrom(String name, String value) {
         LOG.info(String.format("%s => %s", name, value));
         if (!StringUtils.isEmpty(value)) {
             File bin = new File(value, "bin");
@@ -186,5 +194,11 @@ public class GaugeUtil {
         while ((line = br.readLine()) != null)
             lastProcessStdout = lastProcessStdout.concat(line).concat(lineSeparator);
         return lastProcessStdout;
+    }
+
+    public static void setGaugeEnvironmentsTo(ProcessBuilder processBuilder, GaugeSettingsModel settings) {
+        Map<String, String> env = processBuilder.environment();
+        env.put(Constants.GAUGE_ROOT, settings.getRootPath());
+        env.put(Constants.GAUGE_HOME, settings.getHomePath());
     }
 }
