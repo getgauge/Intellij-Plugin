@@ -20,14 +20,15 @@ package com.thoughtworks.gauge.annotator;
 import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
-import com.intellij.codeInsight.template.TemplateBuilder;
-import com.intellij.codeInsight.template.TemplateBuilderFactory;
+import com.intellij.codeInsight.template.*;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
@@ -157,11 +158,10 @@ public class CreateStepImplFix extends BaseIntentionAction {
                             return;
                         }
                         PsiMethod addedStepImpl = addStepImplMethod(psifile);
-                        final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(addedStepImpl);
+                        final TemplateBuilderImpl builder = new TemplateBuilderImpl(addedStepImpl);
                         templateMethodName(addedStepImpl, builder);
                         templateParams(addedStepImpl, builder);
-                        templateBody(addedStepImpl, builder);
-                        userTemplateModify(builder);
+                        userTemplateModify(builder, addedStepImpl);
                     }
                 }.execute();
             }
@@ -212,23 +212,27 @@ public class CreateStepImplFix extends BaseIntentionAction {
                 }
             }
 
-            private void templateBody(PsiMethod addedElement, TemplateBuilder builder) {
-                final PsiCodeBlock body = addedElement.getBody();
-                if (body != null) {
-                    builder.replaceElement(body, new TextRange(2, 2), "");
-                }
-            }
-
-            private void userTemplateModify(TemplateBuilder builder) {
+            private void userTemplateModify(TemplateBuilderImpl builder, PsiMethod addedStepImpl) {
                 Editor editor = FileEditorManager.getInstance(project).openTextEditor(new OpenFileDescriptor(project, file, 0), true);
                 final PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
                 if (editor != null) {
                     documentManager.doPostponedOperationsAndUnblockDocument(editor.getDocument());
-                    builder.run(editor, false);
+                    Template template = builder.buildTemplate();
+                    TextRange range = InjectedLanguageManager.getInstance(project).injectedToHost(addedStepImpl, addedStepImpl.getTextRange());
+                    RangeMarker rangeMarker = editor.getDocument().createRangeMarker(range);
+                    editor.getCaretModel().moveToOffset(rangeMarker.getStartOffset());
+                    editor.getDocument().replaceString(rangeMarker.getStartOffset(), rangeMarker.getEndOffset(), "");
+                    TemplateManager.getInstance(project).startTemplate(editor, template, new TemplateEditingAdapter() {
+                        @Override
+                        public void templateFinished(Template template, boolean brokenOff) {
+                            TextRange textRange = addedStepImpl.getBody().getTextRange();
+                            ApplicationManager.getApplication().runWriteAction(() -> editor.getDocument().replaceString(textRange.getStartOffset() + 1, textRange.getEndOffset() - 1, "\n\t\t\n\t"));
+                            editor.getCaretModel().moveToOffset(addedStepImpl.getBody().getTextOffset() + 4);
+                        }
+                    });
                 }
             }
         });
-
     }
 
     @NotNull
