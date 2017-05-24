@@ -24,19 +24,21 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.template.TemplateBuilder;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
-import com.thoughtworks.gauge.connection.GaugeConnection;
 import com.thoughtworks.gauge.StepValue;
+import com.thoughtworks.gauge.connection.GaugeConnection;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
 import com.thoughtworks.gauge.language.psi.ConceptArg;
 import com.thoughtworks.gauge.language.psi.SpecArg;
 import com.thoughtworks.gauge.util.GaugeUtil;
 import com.thoughtworks.gauge.util.StepUtil;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -71,6 +73,8 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
         for (Type item : getStepsInModule(moduleForPsiElement)) {
             LookupElementBuilder element = LookupElementBuilder.create(item.getText()).withTypeText(item.getType(), true);
             element = element.withInsertHandler((context1, item1) -> {
+                String stepV = StringUtils.replace(StringUtils.replace(item.getText(), "<", "\""), ">", "\"");
+                context1.getDocument().replaceString(context1.getStartOffset(), context1.getEditor().getCaretModel().getOffset(), stepV);
                 if (context1.getCompletionChar() == '\t') {
                     context1.getDocument().insertString(context1.getEditor().getCaretModel().getOffset(), "\n");
                     PsiDocumentManager.getInstance(context1.getProject()).commitDocument(context1.getDocument());
@@ -93,7 +97,8 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
         for (int i = 0; i < stepParams.size(); i++) {
             PsiElement stepParam = stepParams.get(i);
             String replacementText = i + 1 > filledParams.size() ? stepParam.getText() : filledParams.get(i);
-            templateBuilder.replaceElement(stepParam, replacementText);
+            String substring = StringUtils.substring(replacementText, 1, replacementText.length() - 1);
+            templateBuilder.replaceElement(stepParam, new TextRange(1, replacementText.length() - 1), substring);
         }
         return templateBuilder;
     }
