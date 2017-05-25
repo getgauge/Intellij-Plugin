@@ -10,3 +10,4 @@ production-test/*
 .gradle
 build
 logs
+*.iml

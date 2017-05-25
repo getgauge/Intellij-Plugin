@@ -43,6 +43,7 @@ import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
+import com.thoughtworks.gauge.Step;
 import com.thoughtworks.gauge.StepValue;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.language.psi.SpecStep;
@@ -172,7 +173,7 @@ public class CreateStepImplFix extends BaseIntentionAction {
                 PsiDocumentManager.getInstance(project).commitAllDocuments();
 
                 StepValue stepValue = step.getStepValue();
-                final StringBuilder text = new StringBuilder(String.format("@Step(\"%s\")\n", stepValue.getStepAnnotationText()));
+                final StringBuilder text = new StringBuilder(String.format("@"+ Step.class.getName() +"(\"%s\")\n", stepValue.getStepAnnotationText()));
                 text.append(String.format("public void %s(%s){\n\n", getMethodName(psiClass), getParamList(stepValue.getParameters())));
                 text.append("}\n");
                 final PsiMethod stepMethod = JavaPsiFacade.getElementFactory(project).createMethodFromText(text.toString(), psiClass);
