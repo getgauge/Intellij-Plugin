@@ -20,6 +20,8 @@ package com.thoughtworks.gauge.autocomplete;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.CompletionResultSet;
+import com.intellij.codeInsight.completion.InsertionContext;
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.template.TemplateBuilder;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
@@ -72,35 +74,40 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
         }
         for (Type item : getStepsInModule(moduleForPsiElement)) {
             LookupElementBuilder element = LookupElementBuilder.create(item.getText()).withTypeText(item.getType(), true);
-            element = element.withInsertHandler((context1, item1) -> {
-                String stepV = StringUtils.replace(StringUtils.replace(item.getText(), "<", "\""), ">", "\"");
-                context1.getDocument().replaceString(context1.getStartOffset(), context1.getEditor().getCaretModel().getOffset(), stepV);
+            element = element.withInsertHandler((InsertionContext context1, LookupElement item1) -> {
                 if (context1.getCompletionChar() == '\t') {
                     context1.getDocument().insertString(context1.getEditor().getCaretModel().getOffset(), "\n");
                     PsiDocumentManager.getInstance(context1.getProject()).commitDocument(context1.getDocument());
                 }
                 PsiElement stepElement = context1.getFile().findElementAt(context1.getStartOffset()).getParent();
-                TemplateBuilder templateBuilder = getTemplateBuilder(stepElement, prefix);
+                final TemplateBuilder templateBuilder = TemplateBuilderFactory.getInstance().createTemplateBuilder(stepElement);
+                replaceStepParamElements(prefix, context1, stepElement, templateBuilder);
                 templateBuilder.run(context1.getEditor(), false);
             });
             resultSet.addElement(element);
         }
     }
 
-    private TemplateBuilder getTemplateBuilder(PsiElement stepElement, String prefix) {
-        final TemplateBuilder templateBuilder = TemplateBuilderFactory.getInstance().createTemplateBuilder(stepElement);
-
+    private void replaceStepParamElements(String prefix, InsertionContext context1, PsiElement stepElement, TemplateBuilder templateBuilder) {
         Class<? extends PsiElement> stepParamsClass = isConcept ? ConceptArg.class : SpecArg.class;
         List<? extends PsiElement> stepParams = PsiTreeUtil.getChildrenOfTypeAsList(stepElement, stepParamsClass);
-
         List<String> filledParams = getFilledParams(prefix);
         for (int i = 0; i < stepParams.size(); i++) {
             PsiElement stepParam = stepParams.get(i);
             String replacementText = i + 1 > filledParams.size() ? stepParam.getText() : filledParams.get(i);
-            String substring = StringUtils.substring(replacementText, 1, replacementText.length() - 1);
-            templateBuilder.replaceElement(stepParam, new TextRange(1, replacementText.length() - 1), substring);
+            replaceStepParamWithStaticArg(context1, stepParam, replacementText);
+            addToReplaceElement(templateBuilder, stepParam, replacementText);
         }
-        return templateBuilder;
+    }
+
+    private void replaceStepParamWithStaticArg(InsertionContext context1, PsiElement stepParam, String replacementText) {
+        String stepV = StringUtils.replace(StringUtils.replace(stepParam.getText(), "<", "\""), ">", "\"");
+        context1.getDocument().replaceString(stepParam.getTextOffset(), stepParam.getTextOffset() + replacementText.length(), stepV);
+    }
+
+    private void addToReplaceElement(TemplateBuilder templateBuilder, PsiElement stepParam, String replacementText) {
+        String substring = StringUtils.substring(replacementText, 1, replacementText.length() - 1);
+        templateBuilder.replaceElement(stepParam, new TextRange(1, replacementText.length() - 1), substring);
     }
 
     private List<String> getFilledParams(String prefix) {
