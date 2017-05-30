@@ -248,6 +248,7 @@
             <className>com.thoughtworks.gauge.intention.ConvertToStaticArgIntention</className>
             <descriptionDirectoryName>ConvertToStaticArgIntention</descriptionDirectoryName>
         </intentionAction>
+        <compiler.task implementation="com.thoughtworks.gauge.compiler.GaugeCompilerTask"/>
     </extensions>
 
     <application-components>

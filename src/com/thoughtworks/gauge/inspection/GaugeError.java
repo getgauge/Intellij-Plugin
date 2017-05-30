@@ -4,7 +4,7 @@ import com.intellij.openapi.util.text.StringUtil;
 
 import static com.thoughtworks.gauge.execution.ScenarioExecutionProducer.COLON;
 
-class GaugeError {
+public class GaugeError {
     private String type;
     private String fileName;
     private int lineNumber;
@@ -14,19 +14,27 @@ class GaugeError {
         this.type = type;
         this.fileName = fileName;
         this.lineNumber = lineNumber;
-        this.message = String.format("%s line number: %d, %s", this.type, lineNumber, message);
+        this.message = String.format("%s %s", this.type, message);
     }
 
     boolean isFrom(String fileName) {
         return this.fileName.equals(fileName);
     }
 
-    String getMessage() {
+    public String getMessage() {
         return message;
     }
 
-    int getOffset(String text) {
+    public int getOffset(String text) {
         return StringUtil.lineColToOffset(text, lineNumber - 1, 0);
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public int getLineNumber() {
+        return lineNumber;
     }
 
     static GaugeError getInstance(String error) {
