@@ -96,7 +96,7 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
             PsiElement stepParam = stepParams.get(i);
             String replacementText = i + 1 > filledParams.size() ? stepParam.getText() : filledParams.get(i);
             replaceStepParamWithStaticArg(context1, stepParam, replacementText);
-            addToReplaceElement(templateBuilder, stepParam, replacementText);
+            replaceElement(templateBuilder, stepParam, replacementText);
         }
     }
 
@@ -105,7 +105,7 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
         context1.getDocument().replaceString(stepParam.getTextOffset(), stepParam.getTextOffset() + replacementText.length(), stepV);
     }
 
-    private void addToReplaceElement(TemplateBuilder templateBuilder, PsiElement stepParam, String replacementText) {
+    private void replaceElement(TemplateBuilder templateBuilder, PsiElement stepParam, String replacementText) {
         String substring = StringUtils.substring(replacementText, 1, replacementText.length() - 1);
         templateBuilder.replaceElement(stepParam, new TextRange(1, replacementText.length() - 1), substring);
     }

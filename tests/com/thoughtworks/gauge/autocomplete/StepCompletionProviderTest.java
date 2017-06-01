@@ -57,4 +57,16 @@ public class StepCompletionProviderTest extends LightCodeInsightFixtureTestCase 
         String actual = myFixture.getEditor().getDocument().getText(new TextRange(47, 75));
         assertEquals(expected, actual);
     }
+
+    public void testStepAutoCompleteShouldReplaceBracesOfOnlyParams() throws Exception {
+        myFixture.configureByFiles("SimpleSpec.spec", "SimpleSpec.txt");
+        Gauge.addModule(myFixture.getModule(), new GaugeService(mockProcess, mockGaugeConnection));
+        StepValue stepValue1 = new StepValue("This is a step with {} and >", "This is a step with <param> and >", asList("param"));
+        when(mockGaugeConnection.fetchAllSteps()).thenReturn(asList(stepValue1));
+        myFixture.getEditor().getCaretModel().moveToOffset(49);
+        myFixture.complete(CompletionType.BASIC, 1);
+        String expected = "*This is a step with \"param\" and >";
+        String actual = myFixture.getEditor().getDocument().getText(new TextRange(47, 81));
+        assertEquals(expected, actual);
+    }
 }
