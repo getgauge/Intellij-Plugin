@@ -238,6 +238,16 @@
                           displayName="Global" groupName="Gauge" enabledByDefault="true" isInternal="true"/>
         <applicationConfigurable groupId="tools" id="com.thoughtworks.gauge" displayName="Gauge"
                                  instance="com.thoughtworks.gauge.settings.GaugeSettings"/>
+        <intentionAction>
+            <category>Gauge</category>
+            <className>com.thoughtworks.gauge.intention.ConvertToDynamicArgIntention</className>
+            <descriptionDirectoryName>ConvertToDynamicArgIntention</descriptionDirectoryName>
+        </intentionAction>
+        <intentionAction>
+            <category>Gauge</category>
+            <className>com.thoughtworks.gauge.intention.ConvertToStaticArgIntention</className>
+            <descriptionDirectoryName>ConvertToStaticArgIntention</descriptionDirectoryName>
+        </intentionAction>
     </extensions>
 
     <application-components>
