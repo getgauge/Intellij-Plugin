@@ -13,10 +13,10 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.List;
 
-public class GaugeCompilerTask implements CompileTask{
+public class GaugeCompilerTask implements CompileTask {
     @Override
     public boolean execute(CompileContext context) {
-        Module[] modules = ModuleManager.getInstance(context.getProject()).getModules();
+        Module[] modules = context.getCompileScope().getAffectedModules();
         for (Module module : modules) {
             File dir = GaugeUtil.moduleDir(module);
             List<GaugeError> errors = GaugeInspectionHelper.getErrors(dir);
