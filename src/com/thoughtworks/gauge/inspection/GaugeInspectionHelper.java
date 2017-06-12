@@ -15,9 +15,9 @@ import java.util.stream.Collectors;
 
 import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeSettings;
 
-public class GaugeInspectionHelper {
+class GaugeInspectionHelper {
     @NotNull
-    public static List<GaugeError> getErrors(File directory) {
+    static List<GaugeError> getErrors(File directory) {
         try {
             GaugeSettingsModel settings = getGaugeSettings();
             ProcessBuilder processBuilder = new ProcessBuilder(settings.getGaugePath(), "--validate");
