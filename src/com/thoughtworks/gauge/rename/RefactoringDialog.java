@@ -108,9 +108,9 @@ public class RefactoringDialog extends DialogWrapper {
         this.infoPane.setText("Compiling...");
         TransactionId contextTransaction = TransactionGuard.getInstance().getContextTransaction();
         Module module = GaugeUtil.moduleForPsiElement(file);
-        CompilerManager.getInstance(project).make((aborted, errors, warnings, context) -> {
+        CompilerManager.getInstance(project).make(module, (aborted, errors, warnings, context) -> {
             if (errors > 0) {
-                showErrorMessage("Please fix all compilation errors before refactoring steps.");
+                showErrorMessage("Please fix all errors before refactoring.");
                 return;
             }
             refactor(inputString, contextTransaction, module);
@@ -137,6 +137,7 @@ public class RefactoringDialog extends DialogWrapper {
     }
 
     private void showErrorMessage(String text) {
+        getRootPane().setDefaultButton(getButton(myCancelAction));
         this.infoPane.setVisible(false);
         setErrorText(text);
     }
