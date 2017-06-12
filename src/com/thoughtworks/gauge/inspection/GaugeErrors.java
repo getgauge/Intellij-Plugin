@@ -19,12 +19,4 @@ class GaugeErrors {
     static List<GaugeError> get(String key) {
         return e.get(key) == null ? new ArrayList<>() : e.get(key);
     }
-
-    public static List<GaugeError> getAll() {
-        ArrayList<GaugeError> errors = new ArrayList<>();
-        for (List<GaugeError> gaugeErrors : e.values()) {
-            errors.addAll(gaugeErrors);
-        }
-        return errors;
-    }
 }
