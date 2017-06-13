@@ -1,30 +1,16 @@
 package com.thoughtworks.gauge.rename;
 
-import com.intellij.openapi.application.TransactionGuard;
-import com.intellij.openapi.application.TransactionId;
-import com.intellij.openapi.compiler.CompileContext;
-import com.intellij.openapi.compiler.CompilerManager;
-import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.EditorTextField;
-import com.thoughtworks.gauge.core.Gauge;
-import com.thoughtworks.gauge.core.GaugeService;
-import com.thoughtworks.gauge.inspection.GaugeError;
-import com.thoughtworks.gauge.undo.UndoHandler;
-import com.thoughtworks.gauge.util.GaugeUtil;
-import gauge.messages.Api;
 import org.jetbrains.annotations.Nullable;
 import sun.swing.SwingUtilities2;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.nio.file.Paths;
 
 public class RefactoringDialog extends DialogWrapper {
     private EditorTextField inputText;
@@ -60,7 +46,7 @@ public class RefactoringDialog extends DialogWrapper {
     }
 
     private void registerActions() {
-        this.contentPane.registerKeyboardAction(e -> doOKAction(), KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),  JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        this.contentPane.registerKeyboardAction(e -> doOKAction(), KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 
     private void addListeners() {
@@ -104,63 +90,27 @@ public class RefactoringDialog extends DialogWrapper {
         this.infoPane.setEnabled(true);
         this.infoPane.setVisible(true);
         String inputString = inputText.getText();
-        compileAndRefactor(inputString);
-    }
-
-    private void compileAndRefactor(String inputString) {
-        this.infoPane.setText("Compiling...");
-        TransactionId contextTransaction = TransactionGuard.getInstance().getContextTransaction();
-        Module module = GaugeUtil.moduleForPsiElement(file);
-        CompilerManager.getInstance(project).make(module, (aborted, errors, warnings, context) -> {
-            if (errors > 0) {
-                showErrorMessage("Please fix all errors before refactoring.");
-                return;
+        new GaugeRefactorHandler(project, file, editor).compileAndRefactor(text, inputString, new RefactorStatusCallback() {
+            @Override
+            public void changeStatus(String message) {
+                infoPane.setText(message);
             }
-            refactor(inputString, contextTransaction, module, context);
+
+            @Override
+            public void showErrorMessage(String text) {
+                getRootPane().setDefaultButton(getButton(myCancelAction));
+                infoPane.setVisible(false);
+                setErrorText(text);
+            }
+
+            public void cancelDialog() {
+                doCancelAction();
+            }
         });
-    }
-
-    private void refactor(String inputString, TransactionId contextTransaction, Module module, CompileContext context) {
-        this.infoPane.setText("Refactoring...");
-        TransactionGuard.getInstance().submitTransaction(() -> {
-        }, contextTransaction, () -> {
-            Api.PerformRefactoringResponse response = null;
-            FileDocumentManager.getInstance().saveAllDocuments();
-            FileDocumentManager.getInstance().saveDocumentAsIs(editor.getDocument());
-            GaugeService gaugeService = Gauge.getGaugeService(module, true);
-            try {
-                response = gaugeService.getGaugeConnection().sendPerformRefactoringRequest(text, inputString);
-            } catch (Exception e) {
-                showErrorMessage(String.format("Could not execute refactor command: %s", e.toString()));
-                return;
-            }
-            new UndoHandler(response.getFilesChangedList(), module.getProject(), "Refactoring").handle();
-            showMessage(response, context);
-            onCancel();
-        });
-    }
-
-    private void showMessage(Api.PerformRefactoringResponse response, CompileContext context) {
-        if (!response.getSuccess()) {
-            for (String error : response.getErrorsList()) {
-                GaugeError gaugeError = GaugeError.getInstance(error);
-                context.addMessage(CompilerMessageCategory.ERROR, gaugeError.getMessage(), Paths.get(gaugeError.getFileName()).toUri().toString(), gaugeError.getLineNumber(), -1);
-            }
-        }
-    }
-
-    private void showErrorMessage(String text) {
-        getRootPane().setDefaultButton(getButton(myCancelAction));
-        this.infoPane.setVisible(false);
-        setErrorText(text);
     }
 
     @Override
     public void doCancelAction() {
-        onCancel();
-    }
-
-    private void onCancel() {
         this.getWindow().setVisible(false);
         dispose();
     }
