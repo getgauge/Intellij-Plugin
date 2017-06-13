@@ -4,13 +4,13 @@ import com.intellij.openapi.util.text.StringUtil;
 
 import static com.thoughtworks.gauge.execution.ScenarioExecutionProducer.COLON;
 
-class GaugeError {
+public class GaugeError {
     private String type;
     private String fileName;
     private int lineNumber;
     private String message;
 
-    private GaugeError(String type, String fileName, int lineNumber, String message) {
+    public GaugeError(String type, String fileName, int lineNumber, String message) {
         this.type = type;
         this.fileName = fileName;
         this.lineNumber = lineNumber;
@@ -21,15 +21,23 @@ class GaugeError {
         return this.fileName.equals(fileName);
     }
 
-    String getMessage() {
+    public String getMessage() {
         return message;
+    }
+
+    public int getLineNumber() {
+        return lineNumber;
+    }
+
+    public String getFileName() {
+        return fileName;
     }
 
     int getOffset(String text) {
         return StringUtil.lineColToOffset(text, lineNumber - 1, 0);
     }
 
-    static GaugeError getInstance(String error) {
+    public static GaugeError getInstance(String error) {
         try {
             String[] parts = error.split(" ");
             String[] fileInfo = parts[1].split(COLON);

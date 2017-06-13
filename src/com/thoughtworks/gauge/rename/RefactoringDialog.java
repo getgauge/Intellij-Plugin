@@ -2,7 +2,9 @@ package com.thoughtworks.gauge.rename;
 
 import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.application.TransactionId;
+import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompilerManager;
+import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
@@ -12,6 +14,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.ui.EditorTextField;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.core.GaugeService;
+import com.thoughtworks.gauge.inspection.GaugeError;
 import com.thoughtworks.gauge.undo.UndoHandler;
 import com.thoughtworks.gauge.util.GaugeUtil;
 import gauge.messages.Api;
@@ -21,6 +24,7 @@ import sun.swing.SwingUtilities2;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.nio.file.Paths;
 
 public class RefactoringDialog extends DialogWrapper {
     private EditorTextField inputText;
@@ -112,11 +116,11 @@ public class RefactoringDialog extends DialogWrapper {
                 showErrorMessage("Please fix all errors before refactoring.");
                 return;
             }
-            refactor(inputString, contextTransaction, module);
+            refactor(inputString, contextTransaction, module, context);
         });
     }
 
-    private void refactor(String inputString, TransactionId contextTransaction, Module module) {
+    private void refactor(String inputString, TransactionId contextTransaction, Module module, CompileContext context) {
         this.infoPane.setText("Refactoring...");
         TransactionGuard.getInstance().submitTransaction(() -> {
         }, contextTransaction, () -> {
@@ -131,8 +135,18 @@ public class RefactoringDialog extends DialogWrapper {
                 return;
             }
             new UndoHandler(response.getFilesChangedList(), module.getProject(), "Refactoring").handle();
+            showMessage(response, context);
             onCancel();
         });
+    }
+
+    private void showMessage(Api.PerformRefactoringResponse response, CompileContext context) {
+        if (!response.getSuccess()) {
+            for (String error : response.getErrorsList()) {
+                GaugeError gaugeError = GaugeError.getInstance(error);
+                context.addMessage(CompilerMessageCategory.ERROR, gaugeError.getMessage(), Paths.get(gaugeError.getFileName()).toUri().toString(), gaugeError.getLineNumber(), -1);
+            }
+        }
     }
 
     private void showErrorMessage(String text) {
