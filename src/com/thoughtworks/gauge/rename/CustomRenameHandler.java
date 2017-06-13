@@ -21,6 +21,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -86,9 +87,8 @@ public class CustomRenameHandler implements RenameHandler {
         } else if (isConcept(element)) {
             text = removeIdentifiers(((ConceptStepImpl) element).getStepValue().getStepAnnotationText());
         }
-        Messages.showInputDialog(project, String.format("Refactoring \"%s\" to : ", text), "Refactor", Messages.getInformationIcon(), text,
-                new RenameInputValidator(GaugeUtil.moduleForPsiElement(file), this.editor, text, project));
-
+        final RefactoringDialog form = new RefactoringDialog(this.editor.getProject(), file, this.editor, text);
+        form.show();
     }
 
     private String removeIdentifiers(String text) {
