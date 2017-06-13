@@ -92,19 +92,19 @@ public class RefactoringDialog extends DialogWrapper {
         String inputString = inputText.getText();
         new GaugeRefactorHandler(project, file, editor).compileAndRefactor(text, inputString, new RefactorStatusCallback() {
             @Override
-            public void changeStatus(String message) {
-                infoPane.setText(message);
+            public void onStatusChange(String statusMessage) {
+                infoPane.setText(statusMessage);
             }
 
             @Override
-            public void showErrorMessage(String text) {
-                getRootPane().setDefaultButton(getButton(myCancelAction));
-                infoPane.setVisible(false);
-                setErrorText(text);
-            }
-
-            public void cancelDialog() {
-                doCancelAction();
+            public void onFinish(RefactoringStatus refactoringStatus) {
+                if (refactoringStatus.isPassed()){
+                    doCancelAction();
+                }else {
+                    getRootPane().setDefaultButton(getButton(myCancelAction));
+                    infoPane.setVisible(false);
+                    setErrorText(refactoringStatus.getErrorMessage());
+                }
             }
         });
     }

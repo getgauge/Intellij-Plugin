@@ -33,11 +33,11 @@ class GaugeRefactorHandler {
     }
 
     void compileAndRefactor(String currentStepText, String newStepText, @Nullable RefactorStatusCallback refactorStatusCallback) {
-        refactorStatusCallback.changeStatus("Compiling...");
+        refactorStatusCallback.onStatusChange("Compiling...");
         TransactionId contextTransaction = TransactionGuard.getInstance().getContextTransaction();
         CompilerManager.getInstance(project).make((aborted, errors, warnings, context) -> {
             if (errors > 0) {
-                refactorStatusCallback.showErrorMessage("Please fix all errors before refactoring.");
+                refactorStatusCallback.onFinish(new RefactoringStatus(false, "Please fix all errors before refactoring."));
                 return;
             }
             refactor(currentStepText, newStepText, contextTransaction, context, refactorStatusCallback);
@@ -45,7 +45,7 @@ class GaugeRefactorHandler {
     }
 
     private void refactor(String currentStepText, String newStepText, TransactionId contextTransaction, CompileContext context, RefactorStatusCallback refactorStatusCallback) {
-        refactorStatusCallback.changeStatus("Refactoring...");
+        refactorStatusCallback.onStatusChange("Refactoring...");
         Module module = GaugeUtil.moduleForPsiElement(file);
         TransactionGuard.getInstance().submitTransaction(() -> {
         }, contextTransaction, () -> {
@@ -56,7 +56,7 @@ class GaugeRefactorHandler {
             try {
                 response = gaugeService.getGaugeConnection().sendPerformRefactoringRequest(currentStepText, newStepText);
             } catch (Exception e) {
-                refactorStatusCallback.showErrorMessage(String.format("Could not execute refactor command: %s", e.toString()));
+                refactorStatusCallback.onFinish(new RefactoringStatus(false, String.format("Could not execute refactor command: %s", e.toString())));
                 return;
             }
             new UndoHandler(response.getFilesChangedList(), module.getProject(), "Refactoring").handle();
@@ -64,12 +64,12 @@ class GaugeRefactorHandler {
                 showMessage(response, context, refactorStatusCallback);
                 return;
             }
-            refactorStatusCallback.cancelDialog();
+            refactorStatusCallback.onFinish(new RefactoringStatus(true));
         });
     }
 
     private void showMessage(Api.PerformRefactoringResponse response, CompileContext context, RefactorStatusCallback refactorStatusCallback) {
-        refactorStatusCallback.showErrorMessage("Please fix all errors before refactoring.");
+        refactorStatusCallback.onFinish(new RefactoringStatus(false, "Please fix all errors before refactoring."));
         for (String error : response.getErrorsList()) {
             GaugeError gaugeError = GaugeError.getInstance(error);
             context.addMessage(CompilerMessageCategory.ERROR, gaugeError.getMessage(), Paths.get(gaugeError.getFileName()).toUri().toString(), gaugeError.getLineNumber(), -1);

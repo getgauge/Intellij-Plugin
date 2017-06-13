@@ -1,9 +1,7 @@
 package com.thoughtworks.gauge.rename;
 
 interface RefactorStatusCallback {
-    void changeStatus(String message);
+    void onStatusChange(String statusMessage);
 
-    void showErrorMessage(String text);
-
-    void cancelDialog();
+    void onFinish(RefactoringStatus refactoringStatus);
 }
