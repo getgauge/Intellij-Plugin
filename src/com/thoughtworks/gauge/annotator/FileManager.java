@@ -4,11 +4,13 @@ import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.language.ConceptFileType;
@@ -29,7 +31,7 @@ public class FileManager {
 
         for (VirtualFile javaVFile : javaVirtualFiles) {
             PsiFile file = PsiManager.getInstance(module.getProject()).findFile(javaVFile);
-            if (file != null) {
+            if (file != null && PsiTreeUtil.findChildrenOfType(file, PsiClass.class).size() > 0) {
                 javaFiles.add(file);
             }
         }
