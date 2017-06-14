@@ -6,7 +6,6 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.EditorTextField;
 import org.jetbrains.annotations.Nullable;
-import sun.swing.SwingUtilities2;
 
 import javax.swing.*;
 import java.awt.*;
@@ -98,9 +97,9 @@ public class RefactoringDialog extends DialogWrapper {
 
             @Override
             public void onFinish(RefactoringStatus refactoringStatus) {
-                if (refactoringStatus.isPassed()){
+                if (refactoringStatus.isPassed()) {
                     doCancelAction();
-                }else {
+                } else {
                     getRootPane().setDefaultButton(getButton(myCancelAction));
                     infoPane.setVisible(false);
                     setErrorText(refactoringStatus.getErrorMessage());
@@ -122,7 +121,7 @@ public class RefactoringDialog extends DialogWrapper {
     }
 
     private void setSize() {
-        int stringWidth = SwingUtilities2.stringWidth(this.heading, this.heading.getFontMetrics(this.heading.getFont()), this.heading.getText());
+        int stringWidth = SwingUtilities.computeStringWidth(this.heading.getFontMetrics(this.heading.getFont()), this.heading.getText());
         int height = this.contentPane.getHeight();
         this.contentPane.setSize(new Dimension(stringWidth + 30, height));
         this.contentPane.setMinimumSize(new Dimension(stringWidth + 30, height));
