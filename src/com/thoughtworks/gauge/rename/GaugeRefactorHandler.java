@@ -72,7 +72,11 @@ class GaugeRefactorHandler {
         refactorStatusCallback.onFinish(new RefactoringStatus(false, "Please fix all errors before refactoring."));
         for (String error : response.getErrorsList()) {
             GaugeError gaugeError = GaugeError.getInstance(error);
-            context.addMessage(CompilerMessageCategory.ERROR, gaugeError.getMessage(), Paths.get(gaugeError.getFileName()).toUri().toString(), gaugeError.getLineNumber(), -1);
+            if (gaugeError != null) {
+                context.addMessage(CompilerMessageCategory.ERROR, gaugeError.getMessage(), Paths.get(gaugeError.getFileName()).toUri().toString(), gaugeError.getLineNumber(), -1);
+            } else {
+                context.addMessage(CompilerMessageCategory.ERROR, error, null, -1, -1);
+            }
         }
     }
 }
