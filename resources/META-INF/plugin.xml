@@ -215,7 +215,6 @@
         <findUsagesHandlerFactory implementation="com.thoughtworks.gauge.findUsages.CustomFindUsagesHandlerFactory"/>
         <defaultLiveTemplatesProvider implementation="com.thoughtworks.gauge.idea.template.TableTemplateProvider"/>
         <liveTemplateContext implementation="com.thoughtworks.gauge.idea.template.LiveTemplateContext"/>
-        <fileEditorProvider implementation="com.thoughtworks.gauge.markdownPreview.MarkdownPreviewEditorProvider"/>
         <fileBasedIndex implementation="com.thoughtworks.gauge.stub.FileStub"/>
         <lang.commenter language="Specification" implementationClass="com.thoughtworks.gauge.language.StepCommenter"/>
         <lang.commenter language="Concept" implementationClass="com.thoughtworks.gauge.language.StepCommenter"/>
@@ -248,6 +247,7 @@
             <className>com.thoughtworks.gauge.intention.ConvertToStaticArgIntention</className>
             <descriptionDirectoryName>ConvertToStaticArgIntention</descriptionDirectoryName>
         </intentionAction>
+        <webBrowserUrlProvider implementation="com.thoughtworks.gauge.markdownPreview.GaugeWebBrowserPreview"/>
     </extensions>
 
     <application-components>
