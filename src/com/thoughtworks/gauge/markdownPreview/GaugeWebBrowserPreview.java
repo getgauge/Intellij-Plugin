@@ -11,17 +11,11 @@ import com.intellij.util.UrlImpl;
 import com.thoughtworks.gauge.language.ConceptFileType;
 import com.thoughtworks.gauge.language.SpecFileType;
 import org.jetbrains.annotations.Nullable;
-import org.pegdown.PegDownProcessor;
 
 import java.io.File;
 import java.nio.file.Paths;
 
 public class GaugeWebBrowserPreview extends WebBrowserUrlProvider {
-
-    private PegDownProcessor initProcessor() {
-        MarkdownExtensions markdownExtensions = new MarkdownExtensions();
-        return new PegDownProcessor(markdownExtensions.getExtensionsValue(), markdownExtensions.getParsingTimeout());
-    }
 
     @Override
     public boolean canHandleElement(OpenInBrowserRequest request) {
@@ -34,8 +28,8 @@ public class GaugeWebBrowserPreview extends WebBrowserUrlProvider {
     @Override
     protected Url getUrl(OpenInBrowserRequest request, VirtualFile virtualFile) throws BrowserException {
         try {
-            String markdownToHtml = String.format("<div id=\"markdown-preview\">%s</div>",
-                    initProcessor().markdownToHtml(Formatter.format(request.getFile().getText())));
+            String markdownToHtml = String.format("<div id=\"markdown-preview\" class=\"markdown-body\">%s</div>",
+                    new MarkdownProcessor().getHtml(Formatter.format(request.getFile().getText())));
             File preview = PreviewFileUtil.getCssFile(request.getProject().getName());
             File htmlFile = PreviewFileUtil.createHtmlFile(request, virtualFile, request.getProject().getName());
             String styleSheetLink = "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + Paths.get(preview.toURI()) + "\">";
