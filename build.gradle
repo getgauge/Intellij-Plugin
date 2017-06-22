@@ -46,7 +46,15 @@ allprojects {
 dependencies {
     compile(
             'com.thoughtworks.gauge:gauge-java:+',
-            'org.pegdown:pegdown:1.6.0',
+            'com.vladsch.flexmark:flexmark:0.19.8',
+            'com.vladsch.flexmark:flexmark-ext-tables:0.19.8',
+            'com.vladsch.flexmark:flexmark-ext-typographic:0.19.8',
+            'com.vladsch.flexmark:flexmark-ext-autolink:0.19.8',
+            'com.vladsch.flexmark:flexmark-ext-abbreviation:0.19.8',
+            'com.vladsch.flexmark:flexmark-ext-wikilink:0.19.8',
+            'com.vladsch.flexmark:flexmark-ext-definition:0.19.8',
+            'com.vladsch.flexmark:flexmark-ext-gfm-strikethrough:0.19.8'
+
     )
     testCompile(
             'org.mockito:mockito-all:1.10.19',
