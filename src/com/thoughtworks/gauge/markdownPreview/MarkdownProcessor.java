@@ -20,7 +20,9 @@ class MarkdownProcessor {
     String getHtml(String markdownText) {
         MutableDataSet options = getOptions();
 
-        Parser parser = Parser.builder(options).build();
+        Parser.Builder builder = Parser.builder(options);
+        builder.postProcessorFactory(new TagFactory(false));
+        Parser parser = builder.build();
         HtmlRenderer renderer = HtmlRenderer.builder(options).build();
 
         Node document = parser.parse(markdownText);

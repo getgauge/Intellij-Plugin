@@ -314,6 +314,11 @@
     margin-bottom: 10px;
 }
 
+.markdown-body .tag {
+    font-size: 12px;
+    color: grey;
+}
+
 .markdown-body blockquote {
     margin: 0;
 }
