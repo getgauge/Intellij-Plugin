@@ -20,7 +20,7 @@ class GaugeInspectionHelper {
     static List<GaugeError> getErrors(File directory) {
         try {
             GaugeSettingsModel settings = getGaugeSettings();
-            ProcessBuilder processBuilder = new ProcessBuilder(settings.getGaugePath(), "--validate");
+            ProcessBuilder processBuilder = new ProcessBuilder(settings.getGaugePath(), "validate");
             GaugeUtil.setGaugeEnvironmentsTo(processBuilder, settings);
             processBuilder.directory(directory);
             Process process = processBuilder.start();

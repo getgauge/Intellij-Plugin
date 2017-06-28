@@ -51,21 +51,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.thoughtworks.gauge.GaugeConstant.ENV_FLAG;
-import static com.thoughtworks.gauge.GaugeConstant.GAUGE_DEBUG_OPTS_ENV;
 
 public class GaugeRunConfiguration extends LocatableConfigurationBase implements RunProfileWithCompileBeforeLaunchOption {
 
-    public static final String SIMPLE_CONSOLE_FLAG = "--simple-console";
-    public static final String TAGS_FLAG = "--tags";
-    public static final String PARALLEL_FLAG = "--parallel";
-    private static final String PARALLEL_NODES_FLAG = "-n";
-    private static final String TABLE_ROWS_FLAG = "--table-rows";
-    public static final String GAUGE_CUSTOM_CLASSPATH = "gauge_custom_classpath";
-    public static final String SPEC_FILE_DELIMITER = "||";
-    private static final java.lang.String SPEC_FILE_DELIMITER_REGEX = "\\|\\|";
     private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.execution.GaugeRunConfiguration");
-
     private String specsToExecute;
     private Module module;
     private String environment;
@@ -103,7 +92,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
                     environment.put(Constants.GAUGE_ROOT, settings.getRootPath());
                     environment.put(Constants.GAUGE_HOME, settings.getHomePath());
                 } catch (GaugeNotFoundException e) {
-                    commandLine.setExePath(GaugeConstant.GAUGE);
+                    commandLine.setExePath(Constants.GAUGE);
                 } finally {
                     addFlags(commandLine, env);
                     DebugInfo debugInfo = createDebugInfo(commandLine, env);
@@ -116,7 +105,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
     private DebugInfo createDebugInfo(GeneralCommandLine commandLine, ExecutionEnvironment env) {
         if (isDebugExecution(env)) {
             String port = debugPort();
-            commandLine.getEnvironment().put(GAUGE_DEBUG_OPTS_ENV, port);
+            commandLine.getEnvironment().put(GaugeConstant.GAUGE_DEBUG_OPTS_ENV, port);
             return new DebugInfo(true, port);
         }
         return new DebugInfo(false, "");
@@ -127,9 +116,10 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
     }
 
     private void addFlags(GeneralCommandLine commandLine, ExecutionEnvironment env) {
-        commandLine.addParameter(SIMPLE_CONSOLE_FLAG);
+        commandLine.addParameter(Constants.RUN);
+        commandLine.addParameter(Constants.SIMPLE_CONSOLE_FLAG);
         if (!Strings.isBlank(tags)) {
-            commandLine.addParameter(TAGS_FLAG);
+            commandLine.addParameter(Constants.TAGS_FLAG);
             commandLine.addParameter(tags);
         }
         commandLine.setWorkDirectory(env.getProject().getBasePath());
@@ -137,7 +127,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         if (module != null)
             commandLine.setWorkDirectory(GaugeUtil.moduleDir(module));
         if (!Strings.isBlank(environment)) {
-            commandLine.addParameters(ENV_FLAG, environment);
+            commandLine.addParameters(Constants.ENV_FLAG, environment);
         }
         addTableRowsRangeFlags(commandLine);
         addParallelExecFlags(commandLine, env);
@@ -156,14 +146,14 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         Module module = getModule();
         if (module != null) {
             String cp = GaugeUtil.classpathForModule(module);
-            LOG.info(String.format("Setting `%s` to `%s`", GAUGE_CUSTOM_CLASSPATH, cp));
-            commandLine.getEnvironment().put(GAUGE_CUSTOM_CLASSPATH, cp);
+            LOG.info(String.format("Setting `%s` to `%s`", Constants.GAUGE_CUSTOM_CLASSPATH, cp));
+            commandLine.getEnvironment().put(Constants.GAUGE_CUSTOM_CLASSPATH, cp);
         }
     }
 
     private void addTableRowsRangeFlags(GeneralCommandLine commandLine) {
         if (!Strings.isBlank(rowsRange)) {
-            commandLine.addParameter(TABLE_ROWS_FLAG);
+            commandLine.addParameter(Constants.TABLE_ROWS_FLAG);
             commandLine.addParameter(rowsRange);
         }
     }
@@ -187,11 +177,11 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
 
     private void addParallelExecFlags(GeneralCommandLine commandLine, ExecutionEnvironment env) {
         if (parallelExec(env)) {
-            commandLine.addParameter(PARALLEL_FLAG);
+            commandLine.addParameter(Constants.PARALLEL_FLAG);
             try {
                 if (!Strings.isEmpty(parallelNodes)) {
                     int nodes = Integer.parseInt(this.parallelNodes);
-                    commandLine.addParameters(PARALLEL_NODES_FLAG, parallelNodes);
+                    commandLine.addParameters(Constants.PARALLEL_NODES_FLAG, parallelNodes);
                 }
             } catch (NumberFormatException e) {
                 System.err.println("Incorrect number of parallel execution streams specified: " + parallelNodes);
@@ -205,7 +195,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
     }
 
     private void addSpecs(GeneralCommandLine commandLine, String specsToExecute) {
-        String[] specNames = specsToExecute.split(SPEC_FILE_DELIMITER_REGEX);
+        String[] specNames = specsToExecute.split(Constants.SPEC_FILE_DELIMITER_REGEX);
         for (String specName : specNames) {
             if (!specName.isEmpty()) {
                 commandLine.addParameter(specName.trim());
@@ -291,7 +281,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         for (String specName : specsArrayToExecute) {
             builder.append(specName);
             if (specsArrayToExecute.indexOf(specName) != specsArrayToExecute.size() - 1) {
-                builder.append(SPEC_FILE_DELIMITER);
+                builder.append(Constants.SPEC_FILE_DELIMITER);
             }
         }
         setSpecsToExecute(builder.toString());

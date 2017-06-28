@@ -40,14 +40,11 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 
-import static com.thoughtworks.gauge.GaugeConstant.DAEMONIZE_FLAG;
-import static com.thoughtworks.gauge.execution.GaugeRunConfiguration.GAUGE_CUSTOM_CLASSPATH;
 import static com.thoughtworks.gauge.util.GaugeUtil.*;
 
 
 public class GaugeModuleComponent implements ModuleComponent {
     public static final String GAUGE_SUPPORTED_VERSION = "0.8.0";
-    public static final String API_PORT_FLAG = "--api-port";
     private final Module module;
     private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.GaugeModuleComponent");
 
@@ -125,11 +122,11 @@ public class GaugeModuleComponent implements ModuleComponent {
         try {
             GaugeSettingsModel settings = getGaugeSettings();
             String port = String.valueOf(apiPort);
-            ProcessBuilder gauge = new ProcessBuilder(settings.getGaugePath(), DAEMONIZE_FLAG, API_PORT_FLAG, port);
+            ProcessBuilder gauge = new ProcessBuilder(settings.getGaugePath(), Constants.DAEMON_COMMAND, port);
             GaugeUtil.setGaugeEnvironmentsTo(gauge, settings);
             String cp = classpathForModule(module);
-            LOG.info(String.format("Setting `%s` to `%s`", GAUGE_CUSTOM_CLASSPATH, cp));
-            gauge.environment().put(GAUGE_CUSTOM_CLASSPATH, cp);
+            LOG.info(String.format("Setting `%s` to `%s`", Constants.GAUGE_CUSTOM_CLASSPATH, cp));
+            gauge.environment().put(Constants.GAUGE_CUSTOM_CLASSPATH, cp);
             File dir = moduleDir(module);
             LOG.info(String.format("Using `%s` as api port to connect to gauge API for project %s", port, dir));
             gauge.directory(dir);

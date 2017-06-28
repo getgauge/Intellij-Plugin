@@ -58,7 +58,7 @@ public class SpecFormatter extends AnAction {
         }
         try {
             GaugeSettingsModel settings = getGaugeSettings();
-            ProcessBuilder processBuilder = new ProcessBuilder(settings.getGaugePath(), "--format", fileName);
+            ProcessBuilder processBuilder = new ProcessBuilder(settings.getGaugePath(), "format", fileName);
             GaugeUtil.setGaugeEnvironmentsTo(processBuilder, settings);
             processBuilder.directory(new File(projectDir));
             Process process = processBuilder.start();
