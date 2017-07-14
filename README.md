@@ -18,8 +18,8 @@ See the [documentation](http://getgauge.io/documentation/user/current/ide_suppor
 Installation
 ------------
 
-* [Stable](http://getgauge.io/documentation/user/current/ide_support/intellij_idea.html#installation)
-* [Nightly](http://getgauge.io/documentation/user/current/ide_support/intellij_idea.html#installing-nightly)
+* [Stable](https://docs.getgauge.io/using.html#installation)
+* [Nightly](https://docs.getgauge.io/using.html#installing-nightly)
 
 License
 -------
