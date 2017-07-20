@@ -53,8 +53,7 @@ public class GaugeRunProcessHandler extends ColoredProcessHandler {
         Runnable runnable = () -> {
             final long startTime = System.currentTimeMillis();
             GenericDebuggerRunner basicProgramRunner = new GenericDebuggerRunner();
-            ProjectPropertiesComponentImpl propertiesComponent = new ProjectPropertiesComponentImpl();
-            RunManagerImpl manager = new RunManagerImpl(project, propertiesComponent);
+            RunManagerImpl manager = new RunManagerImpl(project);
             ConfigurationFactory configFactory = RemoteConfigurationType.getInstance().getConfigurationFactories()[0];
             RemoteConfiguration remoteConfig = new RemoteConfiguration(project, configFactory);
             remoteConfig.PORT = debugInfo.getPort();

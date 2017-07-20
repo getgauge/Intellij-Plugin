@@ -55,7 +55,7 @@ public class GaugeModuleType extends ModuleType<GaugeModuleBuilder> {
     }
 
     @Override
-    public Icon getBigIcon() {
+    public Icon getIcon() {
         return GaugeIcon.GAUGE_LOGO;
     }
 
