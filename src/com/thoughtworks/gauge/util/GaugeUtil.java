@@ -68,12 +68,10 @@ public class GaugeUtil {
                 File file = new File(entry, gaugeExecutable());
                 if (isValidGaugeExec(file)) {
                     LOG.info("executable path from `PATH`: " + file.getAbsolutePath());
-                    return new GaugeSettingsModel(file.getAbsolutePath(), model.getHomePath(), model.getRootPath());
+                    return new GaugeSettingsModel(file.getAbsolutePath(), model.getHomePath());
                 }
             }
         }
-        String binaryPath = getBinaryPathFrom(Constants.GAUGE_ROOT, model.getRootPath());
-        if (binaryPath != null) return new GaugeSettingsModel(binaryPath, model.getHomePath(), model.getRootPath());
         String msg = "Could not find executable in `PATH`. Please make sure Gauge is installed." +
                 "\nIf Gauge is installed then set the Gauge executable path in settings -> tools -> gauge.";
         throw new GaugeNotFoundException(msg);
@@ -196,7 +194,6 @@ public class GaugeUtil {
 
     public static void setGaugeEnvironmentsTo(ProcessBuilder processBuilder, GaugeSettingsModel settings) {
         Map<String, String> env = processBuilder.environment();
-        env.put(Constants.GAUGE_ROOT, settings.getRootPath());
         env.put(Constants.GAUGE_HOME, settings.getHomePath());
     }
 }

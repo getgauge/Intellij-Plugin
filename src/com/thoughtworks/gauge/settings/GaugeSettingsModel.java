@@ -5,16 +5,14 @@ import com.thoughtworks.gauge.Constants;
 public class GaugeSettingsModel {
     public String gaugePath;
     public String homePath;
-    public String rootPath;
 
-    public GaugeSettingsModel(String gaugePath, String homePath, String rootPath) {
+    public GaugeSettingsModel(String gaugePath, String homePath) {
         this.gaugePath = gaugePath;
         this.homePath = homePath;
-        this.rootPath = rootPath;
     }
 
     public GaugeSettingsModel() {
-        this("", "", "");
+        this("", "");
     }
 
     public String getGaugePath() {
@@ -25,18 +23,13 @@ public class GaugeSettingsModel {
         return homePath == null ? System.getenv(Constants.GAUGE_HOME) : homePath;
     }
 
-    public String getRootPath() {
-        return rootPath == null ? System.getenv(Constants.GAUGE_ROOT) : rootPath;
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         GaugeSettingsModel that = (GaugeSettingsModel) o;
-        if (gaugePath != null ? !gaugePath.equals(that.gaugePath) : that.gaugePath != null) return false;
-        if (homePath != null ? !homePath.equals(that.homePath) : that.homePath != null) return false;
-        return rootPath != null ? rootPath.equals(that.rootPath) : that.rootPath == null;
+        return (gaugePath != null ? gaugePath.equals(that.gaugePath) : that.gaugePath == null) && (homePath != null ? homePath.equals(that.homePath) : that.homePath == null);
     }
 
     public boolean isGaugePathSet() {
@@ -48,7 +41,6 @@ public class GaugeSettingsModel {
         return "GaugeSettingsModel{" +
                 "gaugePath='" + gaugePath + '\'' +
                 ", homePath='" + homePath + '\'' +
-                ", rootPath='" + rootPath + '\'' +
                 '}';
     }
 }
