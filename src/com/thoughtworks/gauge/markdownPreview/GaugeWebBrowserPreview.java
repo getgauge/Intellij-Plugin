@@ -2,7 +2,16 @@ package com.thoughtworks.gauge.markdownPreview;
 
 import com.intellij.ide.browsers.OpenInBrowserRequest;
 import com.intellij.ide.browsers.WebBrowserUrlProvider;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationAction;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -10,12 +19,28 @@ import com.intellij.util.Url;
 import com.intellij.util.UrlImpl;
 import com.thoughtworks.gauge.language.ConceptFileType;
 import com.thoughtworks.gauge.language.SpecFileType;
+import com.thoughtworks.gauge.settings.GaugeSettingsModel;
+import com.thoughtworks.gauge.util.GaugeUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.nio.file.Paths;
+import java.io.IOException;
+
+import static com.intellij.openapi.vcs.VcsNotifier.STANDARD_NOTIFICATION;
+import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeSettings;
 
 public class GaugeWebBrowserPreview extends WebBrowserUrlProvider {
+    private static File tempDirectory;
+    private static Boolean installing = false;
+
+
+    private static File createOrGetTempDirectory(String projectName) throws IOException {
+        if (tempDirectory == null) {
+            tempDirectory = FileUtil.createTempDirectory(projectName, null, true);
+        }
+        return tempDirectory;
+    }
 
     @Override
     public boolean canHandleElement(OpenInBrowserRequest request) {
@@ -28,16 +53,75 @@ public class GaugeWebBrowserPreview extends WebBrowserUrlProvider {
     @Override
     protected Url getUrl(OpenInBrowserRequest request, VirtualFile virtualFile) throws BrowserException {
         try {
-            String markdownToHtml = String.format("<div id=\"markdown-preview\" class=\"markdown-body\">%s</div>",
-                    new MarkdownProcessor().getHtml(Formatter.format(request.getFile().getText())));
-            File preview = PreviewFileUtil.getCssFile(request.getProject().getName());
-            File htmlFile = PreviewFileUtil.createHtmlFile(request, virtualFile, request.getProject().getName());
-            String styleSheetLink = "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + Paths.get(preview.toURI()) + "\">";
-            FileUtil.writeToFile(htmlFile, String.format("%s\n %s", styleSheetLink, markdownToHtml));
-            return new UrlImpl(htmlFile.getPath());
+            GaugeSettingsModel settings = getGaugeSettings();
+            ProcessBuilder processBuilder = new ProcessBuilder(settings.getGaugePath(), "version", "-m");
+            Process process = processBuilder.start();
+            int exitCode = process.waitFor();
+            if (exitCode == 0) {
+                String output = GaugeUtil.getOutput(process.getInputStream(), "\n");
+                if (output.contains("spectacle")) {
+                    return previewUrl(request, virtualFile, settings, process);
+                } else {
+                    Notification notification = STANDARD_NOTIFICATION.createNotification("Error: Specification Preview", "Missing plugin: Spectacle. To install, run `gauge install spectacle` or click below", NotificationType.ERROR, null);
+                    notification.addAction(new NotificationAction("Install Spectacle") {
+                        @Override
+                        public void actionPerformed(@NotNull AnActionEvent e, @NotNull Notification notification) {
+                            installSpectacle(request.getProject());
+                        }
+                    });
+                    Notifications.Bus.notify(notification);
+                }
+            }
         } catch (Exception e) {
             Messages.showWarningDialog(String.format("Unable to create html file for %s", virtualFile.getName()), "Error");
         }
         return null;
+    }
+
+    @Nullable
+    private Url previewUrl(OpenInBrowserRequest request, VirtualFile virtualFile, GaugeSettingsModel settings, Process process) throws IOException, InterruptedException {
+        ProcessBuilder docsProcessBuilder = new ProcessBuilder(settings.getGaugePath(), "docs", "spectacle", "specs/" + virtualFile.getName());
+        String projectName = request.getProject().getName();
+        docsProcessBuilder.environment().put("spectacle_out_dir", createOrGetTempDirectory(projectName).getPath() + "/docs");
+        GaugeUtil.setGaugeEnvironmentsTo(docsProcessBuilder, settings);
+        docsProcessBuilder.directory(new File(request.getProject().getBasePath()));
+        Process docsProcess = docsProcessBuilder.start();
+        int docsExitCode = docsProcess.waitFor();
+        if (docsExitCode != 0) {
+            String docsOutput = String.format("<pre>%s</pre>", GaugeUtil.getOutput(process.getInputStream(), " ").replace("<", "&lt;").replace(">", "&gt;"));
+            Notifications.Bus.notify(new Notification("Specification Preview", "Error: Specification Preview", docsOutput, NotificationType.ERROR));
+            return null;
+        }
+        return new UrlImpl(FileUtil.join(createOrGetTempDirectory(projectName).getPath(), "docs/html/specs/" + virtualFile.getNameWithoutExtension() + ".html"));
+    }
+
+    private void installSpectacle(Project project) {
+        if (installing) {
+            Notifications.Bus.notify(new Notification("Installing", "Installation in progress...", "Installing Plugin: Spectacle", NotificationType.INFORMATION));
+            return;
+        }
+        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Installing plugin : Spectacle", false) {
+            public void run(@NotNull ProgressIndicator progressIndicator) {
+                progressIndicator.setIndeterminate(true);
+                progressIndicator.setText("Installing plugin : Spectacle, if not installed");
+                String failureMessage = "Plugin installation unsuccessful";
+                try {
+                    GaugeSettingsModel settings = getGaugeSettings();
+                    ProcessBuilder processBuilder = new ProcessBuilder(settings.getGaugePath(), "install", "spectacle");
+                    GaugeUtil.setGaugeEnvironmentsTo(processBuilder, settings);
+                    processBuilder.directory(new File(project.getBasePath()));
+                    Process process = processBuilder.start();
+                    int exitCode = process.waitFor();
+                    installing = false;
+                    if (exitCode != 0) {
+                        throw new RuntimeException(failureMessage);
+                    }
+                } catch (Exception e) {
+                    Messages.showWarningDialog(String.format("Failed to install plugin spectacle"), "Error");
+                }
+                progressIndicator.cancel();
+            }
+        });
+        installing = true;
     }
 }
