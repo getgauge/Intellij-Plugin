@@ -27,6 +27,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
 import com.intellij.util.EnvironmentUtil;
 import com.thoughtworks.gauge.Constants;
+import com.thoughtworks.gauge.GaugeConstant;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import com.thoughtworks.gauge.language.ConceptFileType;
@@ -97,7 +98,7 @@ public class GaugeUtil {
     }
 
     private static String gaugeExecutable() {
-        return isWindows() ? Constants.GAUGE + ".exe" : Constants.GAUGE;
+        return isWindows() ? GaugeConstant.GAUGE + ".exe" : GaugeConstant.GAUGE;
     }
 
     private static boolean isWindows() {

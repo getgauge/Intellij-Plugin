@@ -35,7 +35,7 @@ public class GaugeVersion {
         GaugeVersionInfo gaugeVersionInfo = new GaugeVersionInfo();
         try {
             GaugeSettingsModel settings = getGaugeSettings();
-            ProcessBuilder processBuilder = new ProcessBuilder(settings.getGaugePath(), "version", "-m");
+            ProcessBuilder processBuilder = new ProcessBuilder(settings.getGaugePath(), "--version", "--machine-readable");
             GaugeUtil.setGaugeEnvironmentsTo(processBuilder, settings);
             Process process = processBuilder.start();
             int exitCode = process.waitFor();

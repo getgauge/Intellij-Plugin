@@ -24,20 +24,8 @@ public class Constants {
     public static final String CONCEPT_EXTENSION = "cpt";
     public static final String MANIFEST_FILE = "manifest.json";
     public static final String SPECS_DIR = "specs";
+    public static final String FILE_ENCODING = "utf-8";
+    public static final String LINE_SEPARATOR = System.getProperty("line.separator");
     public static final String GAUGE_ROOT = "GAUGE_ROOT";
     public static final String GAUGE_HOME = "GAUGE_HOME";
-    public static final String GAUGE = "gauge";
-    public static final String ENV_FLAG = "--env";
-    public static final String INIT_COMMAND = "init";
-    public static final String DAEMON_COMMAND = "daemon";
-    public static final String RUN = "run";
-    public static final String SIMPLE_CONSOLE_FLAG = "--simple-console";
-    public static final String TAGS_FLAG = "--tags";
-    public static final String PARALLEL_FLAG = "--parallel";
-    public static final String PARALLEL_NODES_FLAG = "-n";
-    public static final String TABLE_ROWS_FLAG = "--table-rows";
-    public static final String GAUGE_CUSTOM_CLASSPATH = "gauge_custom_classpath";
-    public static final String SPEC_FILE_DELIMITER = "||";
-    public static final java.lang.String SPEC_FILE_DELIMITER_REGEX = "\\|\\|";
-
 }

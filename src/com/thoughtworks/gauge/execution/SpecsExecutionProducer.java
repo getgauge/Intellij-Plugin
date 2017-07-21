@@ -29,13 +29,13 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
-import com.thoughtworks.gauge.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.thoughtworks.gauge.execution.GaugeRunConfiguration.SPEC_FILE_DELIMITER;
 import static com.thoughtworks.gauge.util.GaugeUtil.isSpecFile;
 
 
@@ -87,7 +87,7 @@ public class SpecsExecutionProducer extends RunConfigurationProducer {
         VirtualFile[] selectedFiles = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(context.getDataContext());
         if (selectedFiles == null) return false;
         String specs = ((GaugeRunConfiguration) config).getSpecsToExecute();
-        return StringUtil.join(getSpecs(selectedFiles), Constants.SPEC_FILE_DELIMITER).equals(specs);
+        return StringUtil.join(getSpecs(selectedFiles), SPEC_FILE_DELIMITER).equals(specs);
     }
 
     @NotNull
