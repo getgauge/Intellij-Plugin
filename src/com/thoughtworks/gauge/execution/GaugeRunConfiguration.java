@@ -100,7 +100,6 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
                     GaugeSettingsModel settings = GaugeUtil.getGaugeSettings();
                     commandLine.setExePath(settings.getGaugePath());
                     Map<String, String> environment = commandLine.getEnvironment();
-                    environment.put(Constants.GAUGE_ROOT, settings.getRootPath());
                     environment.put(Constants.GAUGE_HOME, settings.getHomePath());
                 } catch (GaugeNotFoundException e) {
                     commandLine.setExePath(GaugeConstant.GAUGE);

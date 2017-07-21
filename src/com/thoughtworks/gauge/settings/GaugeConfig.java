@@ -17,12 +17,10 @@ public class GaugeConfig extends SettingsEditor<ApplicationConfiguration> {
     private JButton rootChooser;
     private JTextField gaugePath;
     private JTextField homePath;
-    private JTextField rootPath;
 
     public GaugeConfig() {
         gaugeChooser.addActionListener(e -> setPath(gaugePath, true));
         homeChooser.addActionListener(e -> setPath(homePath, false));
-        rootChooser.addActionListener(e -> setPath(rootPath, false));
     }
 
     @Override
@@ -49,11 +47,10 @@ public class GaugeConfig extends SettingsEditor<ApplicationConfiguration> {
 
     public void setValues(GaugeSettingsModel model) {
         this.homePath.setText(model.homePath);
-        this.rootPath.setText(model.rootPath);
         this.gaugePath.setText(model.gaugePath);
     }
 
     public GaugeSettingsModel getValues() {
-        return new GaugeSettingsModel(this.gaugePath.getText(), this.homePath.getText(), this.rootPath.getText());
+        return new GaugeSettingsModel(this.gaugePath.getText(), this.homePath.getText());
     }
 }
