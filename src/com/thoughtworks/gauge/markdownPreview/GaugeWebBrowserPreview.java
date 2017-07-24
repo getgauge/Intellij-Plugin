@@ -50,9 +50,9 @@ public class GaugeWebBrowserPreview extends WebBrowserUrlProvider {
         try {
             GaugeSettingsModel settings = getGaugeSettings();
             Spectacle spectacle = new Spectacle(request.getProject(), settings);
-            if (spectacle.isInstalled()){
+            if (spectacle.isInstalled()) {
                 return previewUrl(request, virtualFile, settings);
-            }else {
+            } else {
                 spectacle.notifyToInstall();
             }
         } catch (Exception e) {
