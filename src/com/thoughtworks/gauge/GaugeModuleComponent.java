@@ -55,15 +55,6 @@ public class GaugeModuleComponent implements ModuleComponent {
         this.module = module;
     }
 
-    @Override
-    public void initComponent() {
-    }
-
-    @Override
-    public void disposeComponent() {
-        Gauge.disposeComponent(module);
-    }
-
     @NotNull
     @Override
     public String getComponentName() {
@@ -83,6 +74,7 @@ public class GaugeModuleComponent implements ModuleComponent {
 
     @Override
     public void projectClosed() {
+        Gauge.disposeComponent(module);
         GaugeService gaugeService = Gauge.getGaugeService(module, true);
         if (gaugeService != null && gaugeService.getGaugeProcess() != null) {
             gaugeService.getGaugeProcess().destroy();
