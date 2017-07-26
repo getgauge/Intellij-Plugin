@@ -5,7 +5,7 @@ buildscript {
 }
 
 plugins {
-    id "org.jetbrains.intellij" version "0.2.0"
+    id "org.jetbrains.intellij" version "0.2.15"
     id "java"
     id "idea"
 }
@@ -14,16 +14,13 @@ intellij {
     version ideaVersion
     pluginName 'Gauge-Java-Intellij'
     sameSinceUntilBuild false
-    publish {
+    publishPlugin {
         username publishUsername
         password publishPassword
-        channel publishChannel
+        channels publishChannel
     }
     patchPluginXml {
-        if (customSinceBuild) {
-            sinceBuild customSinceBuild
-        }
-        untilBuild ''
+        sinceBuild customSinceBuild
     }
 }
 
@@ -46,15 +43,6 @@ allprojects {
 dependencies {
     compile(
             'com.thoughtworks.gauge:gauge-java:+',
-            'com.vladsch.flexmark:flexmark:0.19.8',
-            'com.vladsch.flexmark:flexmark-ext-tables:0.19.8',
-            'com.vladsch.flexmark:flexmark-ext-typographic:0.19.8',
-            'com.vladsch.flexmark:flexmark-ext-autolink:0.19.8',
-            'com.vladsch.flexmark:flexmark-ext-abbreviation:0.19.8',
-            'com.vladsch.flexmark:flexmark-ext-wikilink:0.19.8',
-            'com.vladsch.flexmark:flexmark-ext-definition:0.19.8',
-            'com.vladsch.flexmark:flexmark-ext-gfm-strikethrough:0.19.8'
-
     )
     testCompile(
             'org.mockito:mockito-all:1.10.19',
