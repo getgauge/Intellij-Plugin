@@ -38,6 +38,10 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      <p>0.3.6</p>
+      <ul>
+            <li> Bug Fixes </li>
+      </ul>
       <p>0.3.5</p>
       <ul>
            <li> Enhanced spec/concept preview </li>
