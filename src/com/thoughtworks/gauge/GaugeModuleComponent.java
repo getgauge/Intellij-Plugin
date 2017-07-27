@@ -26,9 +26,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleComponent;
 import com.thoughtworks.gauge.connection.GaugeConnection;
 import com.thoughtworks.gauge.core.Gauge;
-import com.thoughtworks.gauge.core.GaugeExceptionHandler;
-import com.thoughtworks.gauge.core.GaugeService;
-import com.thoughtworks.gauge.core.GaugeVersion;
+import com.thoughtworks.gauge.core.*;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import com.thoughtworks.gauge.module.GaugeModuleType;
 import com.thoughtworks.gauge.module.lib.LibHelperFactory;
@@ -41,12 +39,10 @@ import java.io.File;
 import java.io.IOException;
 
 import static com.thoughtworks.gauge.GaugeConstant.DAEMONIZE_FLAG;
-import static com.thoughtworks.gauge.execution.GaugeRunConfiguration.GAUGE_CUSTOM_CLASSPATH;
 import static com.thoughtworks.gauge.util.GaugeUtil.*;
 
 
 public class GaugeModuleComponent implements ModuleComponent {
-    public static final String GAUGE_SUPPORTED_VERSION = "0.8.0";
     public static final String API_PORT_FLAG = "--api-port";
     private final Module module;
     private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.GaugeModuleComponent");
@@ -63,12 +59,6 @@ public class GaugeModuleComponent implements ModuleComponent {
 
     @Override
     public void projectOpened() {
-        if (GaugeUtil.isGaugeModule(module) && GaugeVersion.isLessThan(GAUGE_SUPPORTED_VERSION)) {
-            String message = "This plugin version supports Gauge " + GAUGE_SUPPORTED_VERSION + " or above. Please refer <a href=\"https://docs.getgauge.io/installing.html\">this doc</a> to update Gauge.";
-            Notification notification = new Notification("Gauge", "Version Incompatible", message, NotificationType.ERROR, NotificationListener.URL_OPENING_LISTENER);
-            Notifications.Bus.notify(notification, module.getProject());
-            return;
-        }
         new LibHelperFactory().helperFor(module).checkDeps();
     }
 
@@ -83,10 +73,6 @@ public class GaugeModuleComponent implements ModuleComponent {
 
     @Override
     public void moduleAdded() {
-        if (GaugeUtil.isGaugeModule(module)) {
-            GaugeVersion.updateVersionInfo();
-            if (GaugeVersion.isLessThan(GAUGE_SUPPORTED_VERSION)) return;
-        }
         projectOpened();
     }
 
@@ -120,8 +106,8 @@ public class GaugeModuleComponent implements ModuleComponent {
             ProcessBuilder gauge = new ProcessBuilder(settings.getGaugePath(), DAEMONIZE_FLAG, API_PORT_FLAG, port);
             GaugeUtil.setGaugeEnvironmentsTo(gauge, settings);
             String cp = classpathForModule(module);
-            LOG.info(String.format("Setting `%s` to `%s`", GAUGE_CUSTOM_CLASSPATH, cp));
-            gauge.environment().put(GAUGE_CUSTOM_CLASSPATH, cp);
+            LOG.info(String.format("Setting `%s` to `%s`", Constants.GAUGE_CUSTOM_CLASSPATH, cp));
+            gauge.environment().put(Constants.GAUGE_CUSTOM_CLASSPATH, cp);
             File dir = moduleDir(module);
             LOG.info(String.format("Using `%s` as api port to connect to gauge API for project %s", port, dir));
             gauge.directory(dir);

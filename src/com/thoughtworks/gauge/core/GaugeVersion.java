@@ -19,39 +19,36 @@ package com.thoughtworks.gauge.core;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.settings.GaugeSettingsModel;
 import com.thoughtworks.gauge.util.GaugeUtil;
 
 import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeSettings;
 
 public class GaugeVersion {
-    static GaugeVersionInfo versionInfo = getVersion();
+    private static GaugeVersionInfo versionInfo = getVersion(true);
 
-    public static void updateVersionInfo() {
-        versionInfo = getVersion();
-    }
-
-    private static GaugeVersionInfo getVersion() {
+    public static GaugeVersionInfo getVersion(Boolean update) {
+        if (!update) return versionInfo;
         GaugeVersionInfo gaugeVersionInfo = new GaugeVersionInfo();
         try {
             GaugeSettingsModel settings = getGaugeSettings();
-            ProcessBuilder processBuilder = new ProcessBuilder(settings.getGaugePath(), "--version", "--machine-readable");
+            ProcessBuilder processBuilder = new ProcessBuilder(settings.getGaugePath(), Constants.VERSION, Constants.MACHINE_READABLE);
             GaugeUtil.setGaugeEnvironmentsTo(processBuilder, settings);
             Process process = processBuilder.start();
             int exitCode = process.waitFor();
             if (exitCode == 0) {
                 String output = GaugeUtil.getOutput(process.getInputStream(), "\n");
+                if (output.startsWith("[DEPRECATED]"))
+                    output = output.substring(output.indexOf("\n")).trim();
                 GsonBuilder builder = new GsonBuilder();
                 Gson gson = builder.create();
                 gaugeVersionInfo = gson.fromJson(output, GaugeVersionInfo.class);
             }
         } catch (Exception ignored) {
         }
+        versionInfo = gaugeVersionInfo;
         return gaugeVersionInfo;
-    }
-
-    public static Boolean isLessThan(String v1) {
-        return versionInfo.isLessThan(new GaugeVersionInfo(v1));
     }
 }
 

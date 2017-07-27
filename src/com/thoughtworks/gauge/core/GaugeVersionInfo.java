@@ -1,20 +1,20 @@
 package com.thoughtworks.gauge.core;
 
-class GaugeVersionInfo {
+import java.util.List;
+
+public class GaugeVersionInfo {
     public String version;
+    public List<Plugin> plugins;
 
-    GaugeVersionInfo(String v1) {
+    public GaugeVersionInfo(String v1, List<Plugin> plugins) {
         this.version = v1;
+        this.plugins = plugins;
     }
 
-    GaugeVersionInfo() {
+    public GaugeVersionInfo() {
     }
 
-    Boolean isLessThan(GaugeVersionInfo versionInfo) {
-        return isVersionAvailable() && this.version.compareTo(versionInfo.version) < 0;
-    }
-
-    private Boolean isVersionAvailable() {
-        return this.version != null;
+    public Boolean isPluginInstalled(String plugin) {
+        return plugins.stream().anyMatch(p -> plugin.equalsIgnoreCase(p.name));
     }
 }

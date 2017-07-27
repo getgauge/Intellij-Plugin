@@ -69,7 +69,7 @@ public class GaugeExceptionHandler extends Thread {
         String pluginVersion = plugin == null ? "" : plugin.getVersion();
         String apiVersion = ApplicationInfo.getInstance().getApiVersion();
         String ideaVersion = ApplicationInfo.getInstance().getFullVersion();
-        String gaugeVersion = GaugeVersion.versionInfo.version;
+        String gaugeVersion = GaugeVersion.getVersion(false).version;
         String body = String.format(ISSUE_TEMPLATE, stacktrace, ideaVersion, apiVersion, pluginVersion, gaugeVersion);
         String content = String.format(NOTIFICATION_TEMPLATE, LINE_BREAK, body);
         return new Notification("Gauge Exception", NOTIFICATION_TITLE, content, NotificationType.ERROR, NotificationListener.URL_OPENING_LISTENER);

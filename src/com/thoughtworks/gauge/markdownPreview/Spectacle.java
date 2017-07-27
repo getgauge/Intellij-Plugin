@@ -9,22 +9,21 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
-import com.thoughtworks.gauge.exception.GaugeNotFoundException;
+import com.thoughtworks.gauge.Constants;
+import com.thoughtworks.gauge.core.GaugeVersion;
 import com.thoughtworks.gauge.settings.GaugeSettingsModel;
 import com.thoughtworks.gauge.util.GaugeUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.IOException;
 
 import static com.intellij.openapi.vcs.VcsNotifier.STANDARD_NOTIFICATION;
-import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeSettings;
 
 class Spectacle {
+    public static final String NAME = "spectacle";
     private final Project project;
     private GaugeSettingsModel settings;
-    private boolean installing = false;
+    private static boolean installing = false;
 
     Spectacle(Project project, GaugeSettingsModel settings) {
         this.project = project;
@@ -37,41 +36,31 @@ class Spectacle {
             Notifications.Bus.notify(new Notification("Installing", "Installation in progress...", "Installing Plugin: Spectacle", NotificationType.INFORMATION));
             return;
         }
+        installing = true;
         ProgressManager.getInstance().run(new Task.Backgroundable(this.project, "Installing Plugin : Spectacle", false) {
             public void run(@NotNull ProgressIndicator progressIndicator) {
                 progressIndicator.setIndeterminate(true);
                 progressIndicator.setText("Installing plugin : Spectacle");
-                String failureMessage = "Plugin installation unsuccessful";
                 try {
-                    ProcessBuilder processBuilder = new ProcessBuilder(settings.getGaugePath(), "install", "spectacle");
+                    ProcessBuilder processBuilder = new ProcessBuilder(settings.getGaugePath(), Constants.INSTALL, NAME);
                     GaugeUtil.setGaugeEnvironmentsTo(processBuilder, settings);
-                    processBuilder.directory(new File(project.getBasePath()));
                     Process process = processBuilder.start();
                     int exitCode = process.waitFor();
                     installing = false;
-                    if (exitCode != 0) {
-                        throw new RuntimeException(failureMessage);
-                    } else {
-                        Notifications.Bus.notify(new Notification("Successful", "Installation Completed", "Installation of plugin Spectacle is completed successfully", NotificationType.INFORMATION));
-                    }
+                    if (exitCode != 0)
+                        throw new RuntimeException(GaugeUtil.getOutput(process.getInputStream(), "\n"));
+                    Notifications.Bus.notify(new Notification("Successful", "Installation Completed", "Installation of plugin Spectacle is completed successfully", NotificationType.INFORMATION));
                 } catch (Exception e) {
-                    Messages.showWarningDialog("Failed to install plugin spectacle", "Error");
+                    Notification notification = new Notification("Error", "Installation Failed", e.getMessage(), NotificationType.ERROR);
+                    Notifications.Bus.notify(notification, project);
                 }
                 progressIndicator.cancel();
             }
         });
-        installing = true;
     }
 
     boolean isInstalled() throws IOException, InterruptedException {
-        ProcessBuilder processBuilder = new ProcessBuilder(settings.getGaugePath(), "version", "-m");
-        Process process = processBuilder.start();
-        int exitCode = process.waitFor();
-        if (exitCode == 0) {
-            String output = GaugeUtil.getOutput(process.getInputStream(), "\n");
-            return output.contains("spectacle");
-        }
-        return false;
+        return GaugeVersion.getVersion(true).isPluginInstalled(NAME);
     }
 
     void notifyToInstall() {

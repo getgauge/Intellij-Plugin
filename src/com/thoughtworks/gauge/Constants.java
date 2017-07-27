@@ -24,8 +24,20 @@ public class Constants {
     public static final String CONCEPT_EXTENSION = "cpt";
     public static final String MANIFEST_FILE = "manifest.json";
     public static final String SPECS_DIR = "specs";
+    public static final String GAUGE_HOME = "GAUGE_HOME";
+    public static final String INSTALL = "--install";
+    public static final String DOCS = "--docs";
+    public static final String VERSION = "--version";
+    public static final String MACHINE_READABLE = "--machine-readable";
+    public static final String SIMPLE_CONSOLE_FLAG = "--simple-console";
+    public static final String TAGS_FLAG = "--tags";
+    public static final String PARALLEL_FLAG = "--parallel";
+    public static final String PARALLEL_NODES_FLAG = "-n";
+    public static final String TABLE_ROWS_FLAG = "--table-rows";
+    public static final String GAUGE_CUSTOM_CLASSPATH = "gauge_custom_classpath";
+    public static final String SPEC_FILE_DELIMITER = "||";
+    public static final String SPEC_FILE_DELIMITER_REGEX = "\\|\\|";
     public static final String FILE_ENCODING = "utf-8";
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");
     public static final String GAUGE_ROOT = "GAUGE_ROOT";
-    public static final String GAUGE_HOME = "GAUGE_HOME";
 }
