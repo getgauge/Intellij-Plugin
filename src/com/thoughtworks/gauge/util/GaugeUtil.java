@@ -180,7 +180,7 @@ public class GaugeUtil {
 
     @NotNull
     public static File getProjectDirForGradleProject(Module module) {
-        return new File(module.getModuleFilePath().split(".idea")[0]);
+        return new File(module.getModuleFilePath().contains(".idea") ? module.getModuleFilePath().split(".idea")[0] : new File(module.getModuleFilePath()).getParent());
     }
 
     public static String getOutput(InputStream stream, String lineSeparator) throws IOException {

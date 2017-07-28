@@ -26,18 +26,12 @@ import java.util.*;
 
 public class Gauge {
     private static final String GROUP_ID = "external.system.module.group";
-    private static final String LINKED_ID = "external.linked.project.id";
     private static Hashtable<Module, GaugeService> gaugeProjectHandle = new Hashtable<>();
     private static HashMap<String, HashSet<Module>> linkedModulesMap = new HashMap<>();
     private static Hashtable<Module, ReferenceCache> moduleReferenceCaches = new Hashtable<>();
 
     public static void addModule(Module module, GaugeService gaugeService) {
-        String value = getProjectGroupValue(module);
-        String optionValue = module.getOptionValue(LINKED_ID);
-        if (optionValue == null) optionValue = module.getName();
-        if (!optionValue.contains(":"))
-            gaugeProjectHandle.put(module, gaugeService);
-        addToModulesMap(module, value);
+        getSubModules(module).forEach(m -> gaugeProjectHandle.put(m, gaugeService));
     }
 
     public static GaugeService getGaugeService(Module module, boolean moduleDependent) {
@@ -98,6 +92,10 @@ public class Gauge {
     }
 
     public static void disposeComponent(Module module) {
-        linkedModulesMap.remove(getProjectGroupValue(module));
+        if (module == null) return;
+        String value = getProjectGroupValue(module);
+        linkedModulesMap.remove(value);
+        GaugeService service = gaugeProjectHandle.get(module);
+        if (service != null) service.getGaugeProcess().destroy();
     }
 }
