@@ -10,6 +10,7 @@ import com.intellij.util.indexing.*;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.IOUtil;
 import com.intellij.util.io.KeyDescriptor;
+import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.language.ConceptFileType;
 import com.thoughtworks.gauge.language.SpecFileType;
 import com.thoughtworks.gauge.language.psi.impl.ConceptStepImpl;
@@ -43,7 +44,7 @@ public class FileStub extends FileBasedIndexExtension<String, Set<Integer>> {
             List<PsiElement> steps = new ArrayList<>();
             PsiFile psiFile;
             try {
-                psiFile = ((FileContentImpl) fileContent).createFileFromText(FileUtils.readFileToString(new File(fileContent.getFile().getPath())));
+                psiFile = ((FileContentImpl) fileContent).createFileFromText(FileUtils.readFileToString(new File(fileContent.getFile().getPath()), Constants.FILE_ENCODING));
             } catch (IOException e) {
                 return Collections.emptyMap();
             }

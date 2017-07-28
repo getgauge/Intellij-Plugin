@@ -118,9 +118,9 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
     }
 
     private void addFlags(GeneralCommandLine commandLine, ExecutionEnvironment env) {
-        commandLine.addParameter(Constants.SIMPLE_CONSOLE_FLAG);
+        commandLine.addParameter(Constants.SIMPLE_CONSOLE);
         if (!Strings.isBlank(tags)) {
-            commandLine.addParameter(Constants.TAGS_FLAG);
+            commandLine.addParameter(Constants.TAGS);
             commandLine.addParameter(tags);
         }
         commandLine.setWorkDirectory(env.getProject().getBasePath());
@@ -154,7 +154,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
 
     private void addTableRowsRangeFlags(GeneralCommandLine commandLine) {
         if (!Strings.isBlank(rowsRange)) {
-            commandLine.addParameter(Constants.TABLE_ROWS_FLAG);
+            commandLine.addParameter(Constants.TABLE_ROWS);
             commandLine.addParameter(rowsRange);
         }
     }
@@ -178,11 +178,11 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
 
     private void addParallelExecFlags(GeneralCommandLine commandLine, ExecutionEnvironment env) {
         if (parallelExec(env)) {
-            commandLine.addParameter(Constants.PARALLEL_FLAG);
+            commandLine.addParameter(Constants.PARALLEL);
             try {
                 if (!Strings.isEmpty(parallelNodes)) {
                     int nodes = Integer.parseInt(this.parallelNodes);
-                    commandLine.addParameters(Constants.PARALLEL_NODES_FLAG, parallelNodes);
+                    commandLine.addParameters(Constants.PARALLEL_NODES, parallelNodes);
                 }
             } catch (NumberFormatException e) {
                 System.err.println("Incorrect number of parallel execution streams specified: " + parallelNodes);

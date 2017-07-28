@@ -25,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class Gauge {
-    private static final String GROUP_ID = "external.system.module.group";
     private static Hashtable<Module, GaugeService> gaugeProjectHandle = new Hashtable<>();
     private static HashMap<String, HashSet<Module>> linkedModulesMap = new HashMap<>();
     private static Hashtable<Module, ReferenceCache> moduleReferenceCaches = new Hashtable<>();
@@ -81,9 +80,8 @@ public class Gauge {
 
     @NotNull
     private static String getProjectGroupValue(Module module) {
-        String value = module.getOptionValue(GROUP_ID);
-        if (value == null) value = module.getName();
-        return value;
+        String[] values = ModuleManager.getInstance(module.getProject()).getModuleGroupPath(module);
+        return values == null || values.length < 1 ? module.getName() : values[0];
     }
 
     private static GaugeService getGaugeService() {
@@ -96,6 +94,6 @@ public class Gauge {
         String value = getProjectGroupValue(module);
         linkedModulesMap.remove(value);
         GaugeService service = gaugeProjectHandle.get(module);
-        if (service != null) service.getGaugeProcess().destroy();
+        if (service != null && service.getGaugeProcess().isAlive()) service.getGaugeProcess().destroy();
     }
 }

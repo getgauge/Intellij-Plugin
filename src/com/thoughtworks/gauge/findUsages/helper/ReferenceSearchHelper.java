@@ -32,7 +32,7 @@ public class ReferenceSearchHelper {
 
     public boolean shouldFindReferences(@NotNull ReferencesSearch.SearchParameters searchParameters, PsiElement element) {
         return helper.isGaugeModule(element) &&
-                !searchParameters.getScope().getDisplayName().equals(UNKNOWN_SCOPE) &&
+                !searchParameters.getScopeDeterminedByUser().getDisplayName().equals(UNKNOWN_SCOPE) &&
                 GaugeUtil.isGaugeElement(element);
     }
 

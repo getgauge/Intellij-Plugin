@@ -17,16 +17,13 @@
 
 package com.thoughtworks.gauge;
 
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationListener;
-import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleComponent;
 import com.thoughtworks.gauge.connection.GaugeConnection;
 import com.thoughtworks.gauge.core.Gauge;
-import com.thoughtworks.gauge.core.*;
+import com.thoughtworks.gauge.core.GaugeExceptionHandler;
+import com.thoughtworks.gauge.core.GaugeService;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import com.thoughtworks.gauge.module.GaugeModuleType;
 import com.thoughtworks.gauge.module.lib.LibHelperFactory;
@@ -38,12 +35,10 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 
-import static com.thoughtworks.gauge.GaugeConstant.DAEMONIZE_FLAG;
 import static com.thoughtworks.gauge.util.GaugeUtil.*;
 
 
 public class GaugeModuleComponent implements ModuleComponent {
-    public static final String API_PORT_FLAG = "--api-port";
     private final Module module;
     private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.GaugeModuleComponent");
 
@@ -57,19 +52,8 @@ public class GaugeModuleComponent implements ModuleComponent {
         return "GaugeModuleComponent";
     }
 
-    @Override
-    public void projectOpened() {
-        new LibHelperFactory().helperFor(module).checkDeps();
-    }
-
-    @Override
-    public void projectClosed() {
-        Gauge.disposeComponent(module);
-    }
-
-    @Override
     public void moduleAdded() {
-        projectOpened();
+        new LibHelperFactory().helperFor(module).checkDeps();
     }
 
     /**
@@ -88,18 +72,14 @@ public class GaugeModuleComponent implements ModuleComponent {
     }
 
     private static GaugeConnection initializeGaugeConnection(int apiPort) {
-        if (apiPort != -1) {
-            return new GaugeConnection(apiPort);
-        } else {
-            return null;
-        }
+        return apiPort != -1 ? new GaugeConnection(apiPort) : null;
     }
 
     private static Process initializeGaugeProcess(int apiPort, Module module) {
         try {
             GaugeSettingsModel settings = getGaugeSettings();
             String port = String.valueOf(apiPort);
-            ProcessBuilder gauge = new ProcessBuilder(settings.getGaugePath(), DAEMONIZE_FLAG, API_PORT_FLAG, port);
+            ProcessBuilder gauge = new ProcessBuilder(settings.getGaugePath(), Constants.DAEMONIZE, Constants.API_PORT, port);
             GaugeUtil.setGaugeEnvironmentsTo(gauge, settings);
             String cp = classpathForModule(module);
             LOG.info(String.format("Setting `%s` to `%s`", Constants.GAUGE_CUSTOM_CLASSPATH, cp));
@@ -117,11 +97,11 @@ public class GaugeModuleComponent implements ModuleComponent {
     }
 
     public static void makeGaugeModuleType(Module module) {
-        module.setOption("type", GaugeModuleType.MODULE_TYPE_ID);
+        module.setModuleType(GaugeModuleType.MODULE_TYPE_ID);
     }
 
     public static boolean isGaugeModule(Module module) {
-        return GaugeModuleType.MODULE_TYPE_ID.equals(module.getOptionValue(Module.ELEMENT_TYPE)) || isGaugeProjectDir(moduleDir(module));
+        return GaugeModuleType.MODULE_TYPE_ID.equals(module.getModuleTypeName()) || isGaugeProjectDir(moduleDir(module));
     }
 
     public static boolean isGaugeProject(Module module) {

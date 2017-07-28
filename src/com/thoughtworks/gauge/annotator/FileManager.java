@@ -26,7 +26,7 @@ import static com.intellij.psi.search.GlobalSearchScope.moduleScope;
 
 public class FileManager {
     public static List<PsiFile> getAllJavaFiles(Module module) {
-        Collection<VirtualFile> javaVirtualFiles = FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, JavaFileType.INSTANCE, moduleScope(module));
+        Collection<VirtualFile> javaVirtualFiles = FileTypeIndex.getFiles(JavaFileType.INSTANCE, moduleScope(module));
         List<PsiFile> javaFiles = new ArrayList<>();
 
         for (VirtualFile javaVFile : javaVirtualFiles) {
@@ -40,7 +40,7 @@ public class FileManager {
     }
 
     public static List<PsiFile> getAllConceptFiles(Project project) {
-        Collection<VirtualFile> virtualFiles = FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, ConceptFileType.INSTANCE, GlobalSearchScope.projectScope(project));
+        Collection<VirtualFile> virtualFiles = FileTypeIndex.getFiles(ConceptFileType.INSTANCE, GlobalSearchScope.projectScope(project));
         List<PsiFile> files = new ArrayList<>();
 
         for (VirtualFile ConceptVFile : virtualFiles) {
@@ -79,12 +79,12 @@ public class FileManager {
     }
 
     public static List<VirtualFile> getAllSpecFiles(Project project) {
-        Collection<VirtualFile> virtualFiles = FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, SpecFileType.INSTANCE, GlobalSearchScope.projectScope(project));
+        Collection<VirtualFile> virtualFiles = FileTypeIndex.getFiles(SpecFileType.INSTANCE, GlobalSearchScope.projectScope(project));
         return new ArrayList<>(virtualFiles);
     }
 
     public static List<VirtualFile> getConceptFiles(Project project) {
-        Collection<VirtualFile> virtualFiles = FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, ConceptFileType.INSTANCE, GlobalSearchScope.projectScope(project));
+        Collection<VirtualFile> virtualFiles = FileTypeIndex.getFiles(ConceptFileType.INSTANCE, GlobalSearchScope.projectScope(project));
         return new ArrayList<>(virtualFiles);
     }
 }

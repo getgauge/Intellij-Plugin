@@ -26,7 +26,6 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 public class GaugeTestRunner extends DefaultProgramRunner {
@@ -39,16 +38,9 @@ public class GaugeTestRunner extends DefaultProgramRunner {
         return profile instanceof GaugeRunConfiguration;
     }
 
-    protected RunContentDescriptor doExecute(Project project, RunProfileState state, RunContentDescriptor contentToReuse, ExecutionEnvironment env) throws ExecutionException {
+    protected RunContentDescriptor doExecute(RunProfileState state, ExecutionEnvironment env) throws ExecutionException {
         FileDocumentManager.getInstance().saveAllDocuments();
-
         ExecutionResult executionResult = state.execute(env.getExecutor(), this);
-        if (executionResult == null) {
-            return null;
-        }
-
-        final RunContentBuilder contentBuilder = new RunContentBuilder(executionResult, env);
-
-        return contentBuilder.showRunContent(contentToReuse);
+        return executionResult == null ? null : new RunContentBuilder(executionResult, env).showRunContent(env.getContentToReuse());
     }
 }

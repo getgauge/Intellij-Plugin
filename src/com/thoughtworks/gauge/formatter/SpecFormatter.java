@@ -30,6 +30,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.settings.GaugeSettingsModel;
 import com.thoughtworks.gauge.util.GaugeUtil;
 
@@ -58,7 +59,7 @@ public class SpecFormatter extends AnAction {
         }
         try {
             GaugeSettingsModel settings = getGaugeSettings();
-            ProcessBuilder processBuilder = new ProcessBuilder(settings.getGaugePath(), "--format", fileName);
+            ProcessBuilder processBuilder = new ProcessBuilder(settings.getGaugePath(), Constants.FORMAT, fileName);
             GaugeUtil.setGaugeEnvironmentsTo(processBuilder, settings);
             processBuilder.directory(new File(projectDir));
             Process process = processBuilder.start();

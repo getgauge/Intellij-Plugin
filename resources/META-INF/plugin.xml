@@ -15,10 +15,9 @@
 <!--You should have received a copy of the GNU General Public License-->
 <!--along with getgauge/Intellij-plugin.  If not, see <http:www.gnu.org/licenses/>.-->
 
-<idea-plugin version="2">
+<idea-plugin>
     <id>com.thoughtworks.gauge</id>
     <name>Gauge</name>
-    <version>0.2.5</version>
     <vendor email="getgauge@googlegroups.com" url="http://getgauge.io">Gauge</vendor>
 
     <description><![CDATA[
@@ -166,6 +165,12 @@
     ]]>
     </change-notes>
 
+    <project-components>
+        <component>
+            <implementation-class>com.thoughtworks.gauge.GaugeComponent</implementation-class>
+        </component>
+    </project-components>
+
     <!-- please see http:confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
          on how to target different products -->
     <!-- uncomment to enable plugin in all products
@@ -184,9 +189,9 @@
                                implementationClass="com.thoughtworks.gauge.parser.SpecParserDefinition"/>
         <lang.parserDefinition language="Concept"
                                implementationClass="com.thoughtworks.gauge.parser.ConceptParserDefinition"/>
-        <lang.syntaxHighlighterFactory key="Specification"
+        <lang.syntaxHighlighterFactory language="Specification"
                                        implementationClass="com.thoughtworks.gauge.highlight.SpecSyntaxHighlighterFactory"/>
-        <lang.syntaxHighlighterFactory key="Concept"
+        <lang.syntaxHighlighterFactory language="Concept"
                                        implementationClass="com.thoughtworks.gauge.highlight.ConceptSyntaxHighlighterFactory"/>
         <colorSettingsPage implementation="com.thoughtworks.gauge.highlight.SpecColorSettingsPage"/>
         <colorSettingsPage implementation="com.thoughtworks.gauge.highlight.ConceptColorSettingsPage"/>

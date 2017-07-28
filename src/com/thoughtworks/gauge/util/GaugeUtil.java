@@ -20,7 +20,9 @@ package com.thoughtworks.gauge.util;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.roots.ExternalProjectSystemRegistry;
 import com.intellij.openapi.roots.OrderEnumerator;
+import com.intellij.openapi.roots.ProjectModelExternalSource;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -108,8 +110,8 @@ public class GaugeUtil {
     }
 
     public static boolean isMavenModule(Module module) {
-        String isMavenOption = module.getOptionValue("org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule");
-        return isMavenOption != null && isMavenOption.toLowerCase().equals("true");
+        ProjectModelExternalSource source = ExternalProjectSystemRegistry.getInstance().getExternalSource(module);
+        return source != null && "maven".equalsIgnoreCase(source.getId());
     }
 
     public static boolean isGaugeProjectDir(File dir) {
@@ -171,7 +173,8 @@ public class GaugeUtil {
     }
 
     public static boolean isGradleModule(Module module) {
-        return "GRADLE".equalsIgnoreCase(module.getOptionValue("external.system.id"));
+        ProjectModelExternalSource source = ExternalProjectSystemRegistry.getInstance().getExternalSource(module);
+        return source != null && "gradle".equalsIgnoreCase(source.getId());
     }
 
     public static boolean isGaugeElement(PsiElement element) {
