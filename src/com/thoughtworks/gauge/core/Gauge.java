@@ -30,7 +30,9 @@ public class Gauge {
     private static Hashtable<Module, ReferenceCache> moduleReferenceCaches = new Hashtable<>();
 
     public static void addModule(Module module, GaugeService gaugeService) {
-        getSubModules(module).forEach(m -> gaugeProjectHandle.put(m, gaugeService));
+        HashSet<Module> modules = getSubModules(module);
+        if (modules.isEmpty()) modules.add(module);
+        modules.forEach(m -> gaugeProjectHandle.put(m, gaugeService));
     }
 
     public static GaugeService getGaugeService(Module module, boolean moduleDependent) {
