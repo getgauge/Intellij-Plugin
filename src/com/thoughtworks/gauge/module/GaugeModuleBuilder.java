@@ -29,6 +29,7 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import com.thoughtworks.gauge.module.lib.GaugeLibHelper;
 import com.thoughtworks.gauge.settings.GaugeSettingsModel;
@@ -42,7 +43,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.thoughtworks.gauge.GaugeConstant.INIT_FLAG;
 import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeSettings;
 
 public class GaugeModuleBuilder extends JavaModuleBuilder {
@@ -79,7 +79,7 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
                     GaugeSettingsModel settings = getGaugeSettings();
                     final String[] init = {
                             settings.getGaugePath(),
-                            INIT_FLAG, getLanguage()
+                            Constants.INIT_FLAG, getLanguage()
                     };
                     ProcessBuilder processBuilder = new ProcessBuilder(init);
                     processBuilder.directory(new File(getModuleFileDirectory()));

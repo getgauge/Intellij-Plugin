@@ -98,7 +98,7 @@ public class GaugeUtil {
     }
 
     private static String gaugeExecutable() {
-        return isWindows() ? GaugeConstant.GAUGE + ".exe" : GaugeConstant.GAUGE;
+        return isWindows() ? Constants.GAUGE + ".exe" : Constants.GAUGE;
     }
 
     private static boolean isWindows() {

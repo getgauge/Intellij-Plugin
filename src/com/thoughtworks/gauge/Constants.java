@@ -18,7 +18,7 @@
 package com.thoughtworks.gauge;
 
 public class Constants {
-
+    public static final String GAUGE = "gauge";
     public static final String SPEC_EXTENSION = "spec";
     public static final String MD_EXTENSION = "md";
     public static final String CONCEPT_EXTENSION = "cpt";
@@ -38,10 +38,10 @@ public class Constants {
     public static final String DAEMONIZE = "--daemonize";
     public static final String VALIDATE = "--validate";
     public static final String FORMAT = "--format";
+    public static final String INIT_FLAG = "--init";
+    public static final String ENV_FLAG = "--env";
     public static final String GAUGE_CUSTOM_CLASSPATH = "gauge_custom_classpath";
     public static final String SPEC_FILE_DELIMITER = "||";
     public static final String SPEC_FILE_DELIMITER_REGEX = "\\|\\|";
     public static final String FILE_ENCODING = "utf-8";
-    public static final String LINE_SEPARATOR = System.getProperty("line.separator");
-    public static final String GAUGE_ROOT = "GAUGE_ROOT";
 }

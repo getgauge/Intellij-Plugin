@@ -37,7 +37,6 @@ import com.intellij.openapi.util.JDOMExternalizer;
 import com.intellij.openapi.util.WriteExternalException;
 import com.jgoodies.common.base.Strings;
 import com.thoughtworks.gauge.Constants;
-import com.thoughtworks.gauge.GaugeConstant;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import com.thoughtworks.gauge.settings.GaugeSettingsModel;
 import com.thoughtworks.gauge.util.GaugeUtil;
@@ -51,7 +50,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.thoughtworks.gauge.GaugeConstant.ENV_FLAG;
 import static com.thoughtworks.gauge.GaugeConstant.GAUGE_DEBUG_OPTS_ENV;
 
 public class GaugeRunConfiguration extends LocatableConfigurationBase implements RunProfileWithCompileBeforeLaunchOption {
@@ -94,7 +92,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
                     Map<String, String> environment = commandLine.getEnvironment();
                     environment.put(Constants.GAUGE_HOME, settings.getHomePath());
                 } catch (GaugeNotFoundException e) {
-                    commandLine.setExePath(GaugeConstant.GAUGE);
+                    commandLine.setExePath(Constants.GAUGE);
                 } finally {
                     addFlags(commandLine, env);
                     DebugInfo debugInfo = createDebugInfo(commandLine, env);
@@ -128,7 +126,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         if (module != null)
             commandLine.setWorkDirectory(GaugeUtil.moduleDir(module));
         if (!Strings.isBlank(environment)) {
-            commandLine.addParameters(ENV_FLAG, environment);
+            commandLine.addParameters(Constants.ENV_FLAG, environment);
         }
         addTableRowsRangeFlags(commandLine);
         addParallelExecFlags(commandLine, env);
