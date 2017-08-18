@@ -24,7 +24,7 @@ public class Constants {
     public static final String CONCEPT_EXTENSION = "cpt";
     public static final String MANIFEST_FILE = "manifest.json";
     public static final String SPECS_DIR = "specs";
-    public static final String GAUGE_HOME = "GAUGE_HOME";
+    public static final String RUN = "run";
     public static final String INSTALL = "--install";
     public static final String DOCS = "--docs";
     public static final String VERSION = "--version";
@@ -38,8 +38,9 @@ public class Constants {
     public static final String DAEMONIZE = "--daemonize";
     public static final String VALIDATE = "--validate";
     public static final String FORMAT = "--format";
-    public static final String INIT_FLAG = "--init";
     public static final String ENV_FLAG = "--env";
+    public static final String INIT_FLAG = "--init";
+    public static final String GAUGE_HOME = "GAUGE_HOME";
     public static final String GAUGE_CUSTOM_CLASSPATH = "gauge_custom_classpath";
     public static final String SPEC_FILE_DELIMITER = "||";
     public static final String SPEC_FILE_DELIMITER_REGEX = "\\|\\|";
