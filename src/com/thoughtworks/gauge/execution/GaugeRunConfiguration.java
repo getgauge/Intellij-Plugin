@@ -25,7 +25,6 @@ import com.intellij.execution.application.ApplicationConfigurationType;
 import com.intellij.execution.configuration.ConfigurationFactoryEx;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.executors.DefaultDebugExecutor;
-import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -81,25 +80,20 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
     @Nullable
     @Override
     public RunProfileState getState(@NotNull Executor executor, @NotNull final ExecutionEnvironment env) throws ExecutionException {
-        return new CommandLineState(env) {
-            @NotNull
-            @Override
-            protected ProcessHandler startProcess() throws ExecutionException {
-                GeneralCommandLine commandLine = new GeneralCommandLine();
-                try {
-                    GaugeSettingsModel settings = GaugeUtil.getGaugeSettings();
-                    commandLine.setExePath(settings.getGaugePath());
-                    Map<String, String> environment = commandLine.getEnvironment();
-                    environment.put(Constants.GAUGE_HOME, settings.getHomePath());
-                } catch (GaugeNotFoundException e) {
-                    commandLine.setExePath(Constants.GAUGE);
-                } finally {
-                    addFlags(commandLine, env);
-                    DebugInfo debugInfo = createDebugInfo(commandLine, env);
-                    return GaugeRunProcessHandler.runCommandLine(commandLine, debugInfo, getProject());
-                }
-            }
-        };
+        GeneralCommandLine commandLine = new GeneralCommandLine();
+        try {
+            GaugeSettingsModel settings = GaugeUtil.getGaugeSettings();
+            commandLine.setExePath(settings.getGaugePath());
+            Map<String, String> environment = commandLine.getEnvironment();
+            environment.put(Constants.GAUGE_HOME, settings.getHomePath());
+        } catch (GaugeNotFoundException e) {
+            commandLine.setExePath(Constants.GAUGE);
+        } finally {
+            addFlags(commandLine, env);
+            DebugInfo debugInfo = createDebugInfo(commandLine, env);
+            GaugeRunProcessHandler handler = GaugeRunProcessHandler.runCommandLine(commandLine, debugInfo, getProject());
+            return new GaugeCommandLineState(handler, env, this);
+        }
     }
 
     private DebugInfo createDebugInfo(GeneralCommandLine commandLine, ExecutionEnvironment env) {
@@ -116,6 +110,8 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
     }
 
     private void addFlags(GeneralCommandLine commandLine, ExecutionEnvironment env) {
+        commandLine.addParameter(Constants.RUN);
+        commandLine.addParameter(Constants.MACHINE_READABLE);
         commandLine.addParameter(Constants.SIMPLE_CONSOLE);
         if (!Strings.isBlank(tags)) {
             commandLine.addParameter(Constants.TAGS);
