@@ -29,7 +29,6 @@ import com.intellij.execution.process.ProcessTerminatedListener;
 import com.intellij.execution.remote.RemoteConfiguration;
 import com.intellij.execution.remote.RemoteConfigurationType;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.ide.util.ProjectPropertiesComponentImpl;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.project.Project;
@@ -40,7 +39,7 @@ public class GaugeRunProcessHandler extends ColoredProcessHandler {
         super(process, commandLineString);
     }
 
-    public static GaugeRunProcessHandler runCommandLine(final GeneralCommandLine commandLine, GaugeRunConfiguration.DebugInfo debugInfo, Project project) throws ExecutionException {
+    public static GaugeRunProcessHandler runCommandLine(final GeneralCommandLine commandLine, GaugeDebugInfo debugInfo, Project project) throws ExecutionException {
         final GaugeRunProcessHandler gaugeRunProcess = new GaugeRunProcessHandler(commandLine.createProcess(), commandLine.getCommandLineString());
         ProcessTerminatedListener.attach(gaugeRunProcess);
         if (debugInfo.shouldDebug()) {
@@ -49,7 +48,7 @@ public class GaugeRunProcessHandler extends ColoredProcessHandler {
         return gaugeRunProcess;
     }
 
-    private static void launchDebugger(final Project project, final GaugeRunConfiguration.DebugInfo debugInfo) {
+    private static void launchDebugger(final Project project, final GaugeDebugInfo debugInfo) {
         Runnable runnable = () -> {
             final long startTime = System.currentTimeMillis();
             GenericDebuggerRunner basicProgramRunner = new GenericDebuggerRunner();

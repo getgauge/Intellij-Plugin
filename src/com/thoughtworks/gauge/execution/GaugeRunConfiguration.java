@@ -24,7 +24,6 @@ import com.intellij.execution.application.ApplicationConfiguration;
 import com.intellij.execution.application.ApplicationConfigurationType;
 import com.intellij.execution.configuration.ConfigurationFactoryEx;
 import com.intellij.execution.configurations.*;
-import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -36,10 +35,7 @@ import com.intellij.openapi.util.JDOMExternalizer;
 import com.intellij.openapi.util.WriteExternalException;
 import com.jgoodies.common.base.Strings;
 import com.thoughtworks.gauge.Constants;
-import com.thoughtworks.gauge.exception.GaugeNotFoundException;
-import com.thoughtworks.gauge.settings.GaugeSettingsModel;
 import com.thoughtworks.gauge.util.GaugeUtil;
-import com.thoughtworks.gauge.util.SocketUtils;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,7 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.thoughtworks.gauge.GaugeConstant.GAUGE_DEBUG_OPTS_ENV;
+import static com.thoughtworks.gauge.execution.GaugeDebugInfo.isDebugExecution;
 
 public class GaugeRunConfiguration extends LocatableConfigurationBase implements RunProfileWithCompileBeforeLaunchOption {
 
@@ -80,33 +76,9 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
     @Nullable
     @Override
     public RunProfileState getState(@NotNull Executor executor, @NotNull final ExecutionEnvironment env) throws ExecutionException {
-        GeneralCommandLine commandLine = new GeneralCommandLine();
-        try {
-            GaugeSettingsModel settings = GaugeUtil.getGaugeSettings();
-            commandLine.setExePath(settings.getGaugePath());
-            Map<String, String> environment = commandLine.getEnvironment();
-            environment.put(Constants.GAUGE_HOME, settings.getHomePath());
-        } catch (GaugeNotFoundException e) {
-            commandLine.setExePath(Constants.GAUGE);
-        } finally {
-            addFlags(commandLine, env);
-            DebugInfo debugInfo = createDebugInfo(commandLine, env);
-            GaugeRunProcessHandler handler = GaugeRunProcessHandler.runCommandLine(commandLine, debugInfo, getProject());
-            return new GaugeCommandLineState(handler, env, this);
-        }
-    }
-
-    private DebugInfo createDebugInfo(GeneralCommandLine commandLine, ExecutionEnvironment env) {
-        if (isDebugExecution(env)) {
-            String port = debugPort();
-            commandLine.getEnvironment().put(GAUGE_DEBUG_OPTS_ENV, port);
-            return new DebugInfo(true, port);
-        }
-        return new DebugInfo(false, "");
-    }
-
-    private String debugPort() {
-        return String.valueOf(SocketUtils.findFreePortForApi());
+        GeneralCommandLine commandLine = GaugeCommandLine.getInstance(getModule(), getProject());
+        addFlags(commandLine, env);
+        return new GaugeCommandLineState(commandLine, getProject(), env, this);
     }
 
     private void addFlags(GeneralCommandLine commandLine, ExecutionEnvironment env) {
@@ -117,10 +89,6 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
             commandLine.addParameter(Constants.TAGS);
             commandLine.addParameter(tags);
         }
-        commandLine.setWorkDirectory(env.getProject().getBasePath());
-        Module module = getModule();
-        if (module != null)
-            commandLine.setWorkDirectory(GaugeUtil.moduleDir(module));
         if (!Strings.isBlank(environment)) {
             commandLine.addParameters(Constants.ENV_FLAG, environment);
         }
@@ -131,10 +99,6 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         if (!Strings.isBlank(specsToExecute)) {
             addSpecs(commandLine, specsToExecute);
         }
-    }
-
-    private boolean isDebugExecution(ExecutionEnvironment env) {
-        return DefaultDebugExecutor.EXECUTOR_ID.equals(env.getExecutor().getId());
     }
 
     private void addProjectClasspath(GeneralCommandLine commandLine) {
@@ -165,7 +129,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         if (!envs.isEmpty()) {
             commandLine.withEnvironment(envs);
         }
-        if (!programParameters.getWorkingDirectory().isEmpty()) {
+        if (programParameters.getWorkingDirectory() != null && !programParameters.getWorkingDirectory().isEmpty()) {
             commandLine.setWorkDirectory(new File(programParameters.getWorkingDirectory()));
         }
     }
@@ -175,7 +139,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
             commandLine.addParameter(Constants.PARALLEL);
             try {
                 if (!Strings.isEmpty(parallelNodes)) {
-                    int nodes = Integer.parseInt(this.parallelNodes);
+                    Integer.parseInt(this.parallelNodes);
                     commandLine.addParameters(Constants.PARALLEL_NODES, parallelNodes);
                 }
             } catch (NumberFormatException e) {
@@ -308,32 +272,5 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
 
     public void setRowsRange(String rowsRange) {
         this.rowsRange = rowsRange;
-    }
-
-    public class DebugInfo {
-        private final boolean shouldDebug;
-        private final String port;
-        private String host = "localhost";
-
-        public DebugInfo(boolean shouldDebug, String port) {
-            this.shouldDebug = shouldDebug;
-            this.port = port;
-        }
-
-        public boolean shouldDebug() {
-            return shouldDebug;
-        }
-
-        public String getPort() {
-            return port;
-        }
-
-        public int getPortInt() {
-            return Integer.parseInt(port);
-        }
-
-        public String getHost() {
-            return host;
-        }
     }
 }

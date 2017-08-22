@@ -40,6 +40,7 @@ public class Constants {
     public static final String FORMAT = "--format";
     public static final String ENV_FLAG = "--env";
     public static final String INIT_FLAG = "--init";
+    public static final String FAILED = "--failed";
     public static final String GAUGE_HOME = "GAUGE_HOME";
     public static final String GAUGE_CUSTOM_CLASSPATH = "gauge_custom_classpath";
     public static final String SPEC_FILE_DELIMITER = "||";

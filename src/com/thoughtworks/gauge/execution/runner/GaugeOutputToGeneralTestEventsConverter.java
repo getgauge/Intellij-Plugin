@@ -3,10 +3,12 @@ package com.thoughtworks.gauge.execution.runner;
 import com.google.gson.GsonBuilder;
 import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.sm.ServiceMessageBuilder;
+import com.intellij.execution.testframework.sm.runner.GeneralTestEventsProcessor;
 import com.intellij.execution.testframework.sm.runner.OutputToGeneralTestEventsConverter;
 import com.intellij.openapi.util.Key;
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessageVisitor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.text.ParseException;
 import java.util.*;
@@ -16,7 +18,7 @@ public class GaugeOutputToGeneralTestEventsConverter extends OutputToGeneralTest
     private static final String BEFORE = "Before";
     private static final String AFTER = "After";
     private static final int DEFAULT_ID = 0;
-    public static final String GAUGE_FILE_PREFIX = "gauge://";
+    private static final String GAUGE_FILE_PREFIX = "gauge://";
     private int id = 0;
     private Key outputType;
     private ServiceMessageVisitor visitor;
@@ -24,6 +26,13 @@ public class GaugeOutputToGeneralTestEventsConverter extends OutputToGeneralTest
 
     public GaugeOutputToGeneralTestEventsConverter(@NotNull String testFrameworkName, @NotNull TestConsoleProperties consoleProperties) {
         super(testFrameworkName, consoleProperties);
+    }
+
+    @Override
+    public void setProcessor(@Nullable GeneralTestEventsProcessor processor) {
+        super.setProcessor(processor);
+        if (processor != null)
+            processor.onRootPresentationAdded("Test Suite", null, null);
     }
 
     @Override
@@ -63,7 +72,9 @@ public class GaugeOutputToGeneralTestEventsConverter extends OutputToGeneralTest
 
     private boolean processSpecEnd(ExecutionEvent event) throws ParseException {
         finishHooks(event, BEFORE, AFTER, event.id, idCache.get(event.id));
-        return processMessage(ServiceMessageBuilder.testSuiteFinished(event.name), idCache.get(event.id), DEFAULT_ID);
+        ServiceMessageBuilder msg = ServiceMessageBuilder.testSuiteFinished(event.name);
+        addAttribute(msg, "duration", String.valueOf(event.result.time));
+        return processMessage(msg, idCache.get(event.id), DEFAULT_ID);
     }
 
     private boolean processScenarioStarted(ExecutionEvent event, int parentId) throws ParseException {
@@ -75,7 +86,9 @@ public class GaugeOutputToGeneralTestEventsConverter extends OutputToGeneralTest
         String name = getScenarioIdentifier(event, event.name);
         if (event.result.status.equalsIgnoreCase(ExecutionEvent.FAIL))
             scenarioFailedMessage(ServiceMessageBuilder.testFailed(name), id, parentId, event.result);
-        return processMessage(ServiceMessageBuilder.testFinished(name), id, parentId);
+        ServiceMessageBuilder scenarioEnd = ServiceMessageBuilder.testFinished(name);
+        addAttribute(scenarioEnd, "duration", String.valueOf(event.result.time));
+        return processMessage(scenarioEnd, id, parentId);
     }
 
     private boolean finishHooks(ExecutionEvent event, String before, String after, String prefix, int parentId) throws ParseException {
@@ -106,11 +119,10 @@ public class GaugeOutputToGeneralTestEventsConverter extends OutputToGeneralTest
         if (result.beforeHookFailure != null) errors.add(result.beforeHookFailure);
         if (result.errors != null) errors.addAll(Arrays.asList(result.errors));
         if (result.afterHookFailure != null) errors.add(result.afterHookFailure);
-        msg.addAttribute("message", errors.stream().map(this::formatError).collect(Collectors.joining("\n\n")));
+        addAttribute(msg, "message", errors.stream().map(this::formatError).collect(Collectors.joining("\n\n")));
         processMessage(msg, nodeId, parentId);
     }
 
-    @NotNull
     private String formatError(ExecutionError e) {
         return format(e.text, "Failed: ", "\n") +
                 format(e.filename, "Filename: ", "\n") +
@@ -123,18 +135,22 @@ public class GaugeOutputToGeneralTestEventsConverter extends OutputToGeneralTest
     }
 
     private void addErrorMessage(ServiceMessageBuilder msg, ExecutionError error) {
-        msg.addAttribute("message", formatError(error));
+        addAttribute(msg, "message", formatError(error));
     }
 
     private void addLocation(ExecutionEvent event, ServiceMessageBuilder msg) {
-        msg.addAttribute("locationHint", GAUGE_FILE_PREFIX + event.filename + ":" + event.line.toString());
+        addAttribute(msg, "locationHint", GAUGE_FILE_PREFIX + event.filename + ":" + event.line.toString());
     }
 
     private boolean processMessage(ServiceMessageBuilder msg, int nodeId, int parentId) throws ParseException {
-        msg.addAttribute("nodeId", String.valueOf(nodeId));
-        msg.addAttribute("parentNodeId", String.valueOf(parentId));
+        addAttribute(msg, "nodeId", String.valueOf(nodeId));
+        addAttribute(msg, "parentNodeId", String.valueOf(parentId));
         super.processServiceMessages(msg.toString(), outputType, visitor);
         return true;
+    }
+
+    private void addAttribute(ServiceMessageBuilder scenarioEnd, String duration, String value) {
+        scenarioEnd.addAttribute(duration, value);
     }
 
     private String getScenarioIdentifier(ExecutionEvent event, String value) {
