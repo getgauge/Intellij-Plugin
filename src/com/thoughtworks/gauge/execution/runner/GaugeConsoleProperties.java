@@ -29,6 +29,7 @@ public class GaugeConsoleProperties extends SMTRunnerConsoleProperties implement
         super(config, gauge, executor);
         setIdBasedTestTree(true);
         setValueOf(HIDE_PASSED_TESTS, false);
+        setValueOf(HIDE_IGNORED_TEST, false);
         setValueOf(SCROLL_TO_SOURCE, true);
         setValueOf(SHOW_INLINE_STATISTICS, false);
         setValueOf(SHOW_STATISTICS, false);

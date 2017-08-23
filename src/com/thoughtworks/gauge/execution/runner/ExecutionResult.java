@@ -8,4 +8,12 @@ public class ExecutionResult {
     public ExecutionError beforeHookFailure;
     public ExecutionError afterHookFailure;
     public TableInfo table;
+
+    public boolean skipped() {
+        return status.equalsIgnoreCase(ExecutionEvent.SKIP);
+    }
+
+    public boolean failed() {
+        return status.equalsIgnoreCase(ExecutionEvent.FAIL);
+    }
 }
