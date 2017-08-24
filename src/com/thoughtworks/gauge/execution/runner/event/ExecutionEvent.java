@@ -1,4 +1,4 @@
-package com.thoughtworks.gauge.execution.runner;
+package com.thoughtworks.gauge.execution.runner.event;
 
 public class ExecutionEvent {
     public String type;
@@ -14,7 +14,6 @@ public class ExecutionEvent {
     public static final String SCENARIO_START = "scenarioStart";
     public static final String SCENARIO_END = "scenarioEnd";
     public static final String SUITE_END = "suiteEnd";
-    public static final String PASS = "pass";
     public static final String FAIL = "fail";
     public static final String SKIP = "skip";
 }

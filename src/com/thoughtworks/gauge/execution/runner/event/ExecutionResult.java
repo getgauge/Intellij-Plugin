@@ -1,4 +1,4 @@
-package com.thoughtworks.gauge.execution.runner;
+package com.thoughtworks.gauge.execution.runner.event;
 
 public class ExecutionResult {
     public String status;
