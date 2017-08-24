@@ -37,7 +37,7 @@ public class GaugeConsoleProperties extends SMTRunnerConsoleProperties implement
 
     @Override
     public OutputToGeneralTestEventsConverter createTestEventsConverter(@NotNull String testFrameworkName, @NotNull TestConsoleProperties consoleProperties) {
-        return new GaugeOutputToGeneralTestEventsConverter(testFrameworkName, consoleProperties);
+        return new GaugeOutputToGeneralTestEventsProcessor(testFrameworkName, consoleProperties);
     }
 
     @Nullable
