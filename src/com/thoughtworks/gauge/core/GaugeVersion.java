@@ -39,8 +39,6 @@ public class GaugeVersion {
             int exitCode = process.waitFor();
             if (exitCode == 0) {
                 String output = GaugeUtil.getOutput(process.getInputStream(), "\n");
-                if (output.startsWith("[DEPRECATED]"))
-                    output = output.substring(output.indexOf("\n")).trim();
                 GsonBuilder builder = new GsonBuilder();
                 Gson gson = builder.create();
                 gaugeVersionInfo = gson.fromJson(output, GaugeVersionInfo.class);

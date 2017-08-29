@@ -191,7 +191,8 @@ public class GaugeUtil {
         String lastProcessStdout = "";
         String line;
         while ((line = br.readLine()) != null)
-            lastProcessStdout = lastProcessStdout.concat(line).concat(lineSeparator);
+            if (!line.startsWith("[DEPRECATED]"))
+                lastProcessStdout = lastProcessStdout.concat(line).concat(lineSeparator);
         return lastProcessStdout;
     }
 
