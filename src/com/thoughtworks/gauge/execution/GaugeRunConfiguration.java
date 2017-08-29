@@ -35,6 +35,8 @@ import com.intellij.openapi.util.JDOMExternalizer;
 import com.intellij.openapi.util.WriteExternalException;
 import com.jgoodies.common.base.Strings;
 import com.thoughtworks.gauge.Constants;
+import com.thoughtworks.gauge.core.GaugeVersion;
+import com.thoughtworks.gauge.settings.GaugeSettingsService;
 import com.thoughtworks.gauge.util.GaugeUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -51,6 +53,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
 
     private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.execution.GaugeRunConfiguration");
 
+    public static final String TEST_RUNNER_SUPPORT_VERSION = "0.9.2";
     private String specsToExecute;
     private Module module;
     private String environment;
@@ -82,8 +85,11 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
     }
 
     private void addFlags(GeneralCommandLine commandLine, ExecutionEnvironment env) {
-        commandLine.addParameter(Constants.RUN);
-        commandLine.addParameter(Constants.MACHINE_READABLE);
+        if (GaugeVersion.isGreaterOrEqual(TEST_RUNNER_SUPPORT_VERSION, true)
+                && GaugeSettingsService.getSettings().useIntelliJTestRunner()) {
+            commandLine.addParameter(Constants.RUN);
+            commandLine.addParameter(Constants.MACHINE_READABLE);
+        }
         commandLine.addParameter(Constants.SIMPLE_CONSOLE);
         if (!Strings.isBlank(tags)) {
             commandLine.addParameter(Constants.TAGS);
@@ -129,7 +135,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         if (!envs.isEmpty()) {
             commandLine.withEnvironment(envs);
         }
-        if (programParameters.getWorkingDirectory() != null && !programParameters.getWorkingDirectory().isEmpty()) {
+        if (Strings.isNotEmpty(programParameters.getWorkingDirectory())) {
             commandLine.setWorkDirectory(new File(programParameters.getWorkingDirectory()));
         }
     }

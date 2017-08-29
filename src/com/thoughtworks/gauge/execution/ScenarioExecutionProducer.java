@@ -29,6 +29,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.language.SpecFile;
 import com.thoughtworks.gauge.language.psi.impl.SpecScenarioImpl;
 import com.thoughtworks.gauge.util.GaugeUtil;
@@ -36,7 +37,6 @@ import com.thoughtworks.gauge.util.GaugeUtil;
 import static com.thoughtworks.gauge.util.GaugeUtil.isSpecFile;
 
 public class ScenarioExecutionProducer extends RunConfigurationProducer {
-    public static final String COLON = ":";
     private final int NO_SCENARIOS = -1;
     private final int NON_SCENARIO_CONTEXT = -2;
 
@@ -69,7 +69,7 @@ public class ScenarioExecutionProducer extends RunConfigurationProducer {
             } else {
                 String scenarioName = getScenarioName(context);
                 configuration.setName(scenarioName);
-                ((GaugeRunConfiguration) configuration).setSpecsToExecute(name + COLON + scenarioIdentifier);
+                ((GaugeRunConfiguration) configuration).setSpecsToExecute(name + Constants.SPEC_SCENARIO_DELIMITER + scenarioIdentifier);
             }
             ((GaugeRunConfiguration) configuration).setModule(module);
             return true;
@@ -86,7 +86,7 @@ public class ScenarioExecutionProducer extends RunConfigurationProducer {
         if (location == null || location.getVirtualFile() == null || context.getPsiLocation() == null) return false;
         String specsToExecute = ((GaugeRunConfiguration) configuration).getSpecsToExecute();
         int identifier = getScenarioIdentifier(context, context.getPsiLocation().getContainingFile());
-        return specsToExecute != null && specsToExecute.equals(location.getVirtualFile().getPath() + COLON + identifier);
+        return specsToExecute != null && specsToExecute.equals(location.getVirtualFile().getPath() + Constants.SPEC_SCENARIO_DELIMITER + identifier);
     }
 
     private String getScenarioName(ConfigurationContext context) {

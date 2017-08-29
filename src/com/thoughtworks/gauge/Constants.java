@@ -46,4 +46,7 @@ public class Constants {
     public static final String SPEC_FILE_DELIMITER = "||";
     public static final String SPEC_FILE_DELIMITER_REGEX = "\\|\\|";
     public static final String FILE_ENCODING = "utf-8";
+    private static final String COLON = ":";
+    public static final String SPEC_SCENARIO_DELIMITER = COLON;
+    public static final String CLASSPATH_DELIMITER = COLON;
 }

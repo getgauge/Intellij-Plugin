@@ -48,5 +48,10 @@ public class GaugeVersion {
         versionInfo = gaugeVersionInfo;
         return gaugeVersionInfo;
     }
+
+    public static Boolean isGreaterOrEqual(String v1, Boolean update) {
+        getVersion(update);
+        return versionInfo.isGreaterOrEqual(new GaugeVersionInfo(v1));
+    }
 }
 

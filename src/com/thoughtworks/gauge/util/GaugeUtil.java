@@ -29,7 +29,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
 import com.intellij.util.EnvironmentUtil;
 import com.thoughtworks.gauge.Constants;
-import com.thoughtworks.gauge.GaugeConstant;
 import com.thoughtworks.gauge.core.Gauge;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import com.thoughtworks.gauge.language.ConceptFileType;
@@ -70,7 +69,7 @@ public class GaugeUtil {
                 File file = new File(entry, gaugeExecutable());
                 if (isValidGaugeExec(file)) {
                     LOG.info("executable path from `PATH`: " + file.getAbsolutePath());
-                    return new GaugeSettingsModel(file.getAbsolutePath(), model.getHomePath());
+                    return new GaugeSettingsModel(file.getAbsolutePath(), model.getHomePath(), model.useIntelliJTestRunner());
                 }
             }
         }
@@ -145,7 +144,7 @@ public class GaugeUtil {
         if (GaugeUtil.isGradleModule(module)) {
             String cp = "";
             for (Module module1 : Gauge.getSubModules(module))
-                cp += OrderEnumerator.orderEntries(module1).recursively().getPathsList().getPathsString() + ":";
+                cp += OrderEnumerator.orderEntries(module1).recursively().getPathsList().getPathsString() + Constants.CLASSPATH_DELIMITER;
             return cp;
         }
         return OrderEnumerator.orderEntries(module).recursively().getPathsList().getPathsString();

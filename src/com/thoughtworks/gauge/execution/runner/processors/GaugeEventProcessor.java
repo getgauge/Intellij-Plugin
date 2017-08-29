@@ -1,6 +1,7 @@
 package com.thoughtworks.gauge.execution.runner.processors;
 
 import com.intellij.execution.testframework.sm.ServiceMessageBuilder;
+import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.execution.runner.MessageProcessor;
 import com.thoughtworks.gauge.execution.runner.TestsCache;
 import com.thoughtworks.gauge.execution.runner.event.ExecutionError;
@@ -49,7 +50,7 @@ abstract class GaugeEventProcessor implements EventProcessor {
 
     void addLocation(ExecutionEvent event, ServiceMessageBuilder msg) {
         if (event.filename != null && event.line != null)
-            msg.addAttribute("locationHint", FILE_PREFIX + event.filename + ":" + event.line.toString());
+            msg.addAttribute("locationHint", FILE_PREFIX + event.filename + Constants.SPEC_SCENARIO_DELIMITER + event.line.toString());
     }
 
     private void failTest(Integer parentId, String name, ExecutionError failure, String key, ExecutionEvent event) throws ParseException {
