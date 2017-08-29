@@ -1,8 +1,7 @@
 package com.thoughtworks.gauge.inspection;
 
 import com.intellij.openapi.util.text.StringUtil;
-
-import static com.thoughtworks.gauge.execution.ScenarioExecutionProducer.COLON;
+import com.thoughtworks.gauge.Constants;
 
 public class GaugeError {
     private String type;
@@ -40,7 +39,7 @@ public class GaugeError {
     public static GaugeError getInstance(String error) {
         try {
             String[] parts = error.split(" ");
-            String[] fileInfo = parts[1].split(COLON);
+            String[] fileInfo = parts[1].split(Constants.SPEC_SCENARIO_DELIMITER);
             return new GaugeError(parts[0], fileInfo[0], Integer.parseInt(fileInfo[1]), error.split(":\\d+:? ")[1]);
         } catch (Exception e) {
             return null;

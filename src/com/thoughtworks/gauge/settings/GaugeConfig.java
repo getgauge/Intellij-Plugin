@@ -17,6 +17,7 @@ public class GaugeConfig extends SettingsEditor<ApplicationConfiguration> {
     private JButton rootChooser;
     private JTextField gaugePath;
     private JTextField homePath;
+    private JCheckBox useIntelliJTestRunner;
 
     public GaugeConfig() {
         gaugeChooser.addActionListener(e -> setPath(gaugePath, true));
@@ -48,9 +49,10 @@ public class GaugeConfig extends SettingsEditor<ApplicationConfiguration> {
     public void setValues(GaugeSettingsModel model) {
         this.homePath.setText(model.homePath);
         this.gaugePath.setText(model.gaugePath);
+        this.useIntelliJTestRunner.setSelected(model.useIntelliJTestRunner);
     }
 
     public GaugeSettingsModel getValues() {
-        return new GaugeSettingsModel(this.gaugePath.getText(), this.homePath.getText());
+        return new GaugeSettingsModel(this.gaugePath.getText(), this.homePath.getText(), this.useIntelliJTestRunner.isSelected());
     }
 }

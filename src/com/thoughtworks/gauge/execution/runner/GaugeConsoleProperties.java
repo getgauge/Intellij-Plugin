@@ -16,6 +16,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.execution.GaugeRunConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,7 +59,7 @@ public class GaugeConsoleProperties extends SMTRunnerConsoleProperties implement
     public SMTestLocator getTestLocator() {
         return (protocol, path, project, globalSearchScope) -> {
             try {
-                String[] fileInfo = path.split(":");
+                String[] fileInfo = path.split(Constants.SPEC_SCENARIO_DELIMITER);
                 VirtualFile file = LocalFileSystem.getInstance().findFileByPath(fileInfo[0]);
                 if (file == null) return new ArrayList<>();
                 PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
