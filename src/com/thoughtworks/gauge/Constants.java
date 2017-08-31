@@ -49,4 +49,5 @@ public class Constants {
     private static final String COLON = ":";
     public static final String SPEC_SCENARIO_DELIMITER = COLON;
     public static final String CLASSPATH_DELIMITER = COLON;
+    public static final String HIDE_SUGGESTION = "--hide-suggestion";
 }

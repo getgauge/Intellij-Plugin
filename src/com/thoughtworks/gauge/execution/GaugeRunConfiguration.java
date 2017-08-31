@@ -89,6 +89,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
                 && GaugeSettingsService.getSettings().useIntelliJTestRunner()) {
             commandLine.addParameter(Constants.RUN);
             commandLine.addParameter(Constants.MACHINE_READABLE);
+            commandLine.addParameter(Constants.HIDE_SUGGESTION);
         }
         commandLine.addParameter(Constants.SIMPLE_CONSOLE);
         if (!Strings.isBlank(tags)) {
