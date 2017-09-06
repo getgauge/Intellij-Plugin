@@ -41,7 +41,7 @@ public class ScenarioEventProcessorTest {
         event.result = new ExecutionResult();
         event.result.status = ExecutionEvent.FAIL;
         event.result.time = 1;
-        event.result.errors = new ExecutionError[]{getError("text", "message", "filename", "stacktrace")};
+        event.result.errors = new ExecutionError[]{getError("text", "message", "filename", "", "stacktrace")};
 
         processor.onEnd(event);
 
@@ -63,7 +63,7 @@ public class ScenarioEventProcessorTest {
         event.result = new ExecutionResult();
         event.result.status = ExecutionEvent.SKIP;
         event.result.time = 1;
-        event.result.errors = new ExecutionError[]{getError("text", "message", "filename", "stacktrace")};
+        event.result.errors = new ExecutionError[]{getError("text", "message", "filename", "", "stacktrace")};
 
         processor.onEnd(event);
 
@@ -84,8 +84,8 @@ public class ScenarioEventProcessorTest {
         event.name = "name";
         event.result = new ExecutionResult();
         event.result.status = ExecutionEvent.FAIL;
-        event.result.beforeHookFailure = getError("text", "message", "filename", "stacktrace");
-        event.result.afterHookFailure = getError("text1", "message1", "filename1", "stacktrace1");
+        event.result.beforeHookFailure = getError("text", "message", "filename", "", "stacktrace");
+        event.result.afterHookFailure = getError("text1", "message1", "filename1", "", "stacktrace1");
         event.result.time = 1;
 
         processor.onEnd(event);
@@ -124,11 +124,12 @@ public class ScenarioEventProcessorTest {
         verify(mockProcessor, times(1)).process(argThat(new ServiceMessageBuilderMatcher<>(started)), any(Integer.class), any(Integer.class));
     }
 
-    public static ExecutionError getError(String text, String message, String filename, String stacktrace) {
+    public static ExecutionError getError(String text, String message, String filename, String line, String stacktrace) {
         ExecutionError error = new ExecutionError();
         error.text = text;
         error.message = message;
         error.filename = filename;
+        error.lineNo = line;
         error.stackTrace = stacktrace;
         return error;
     }

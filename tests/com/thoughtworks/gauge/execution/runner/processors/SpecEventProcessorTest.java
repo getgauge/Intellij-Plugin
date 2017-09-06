@@ -39,7 +39,7 @@ public class SpecEventProcessorTest {
         event.name = "name";
         event.result = new ExecutionResult();
         event.result.time = 10;
-        event.result.beforeHookFailure = getError("text", "message", "filename", "stacktrace");
+        event.result.beforeHookFailure = getError("text", "message", "filename", "", "stacktrace");
 
         processor.onEnd(event);
 
@@ -66,7 +66,7 @@ public class SpecEventProcessorTest {
         event.name = "name";
         event.result = new ExecutionResult();
         event.result.time = 10;
-        event.result.afterHookFailure = getError("text1", "message1", "filename1", "stacktrace1");
+        event.result.afterHookFailure = getError("text1", "message1", "filename1", "", "stacktrace1");
 
         processor.onEnd(event);
 
@@ -92,8 +92,8 @@ public class SpecEventProcessorTest {
         event.name = "name";
         event.result = new ExecutionResult();
         event.result.time = 10;
-        event.result.beforeHookFailure = getError("text", "message", "filename", "stacktrace");
-        event.result.afterHookFailure = getError("text1", "message1", "filename1", "stacktrace1");
+        event.result.beforeHookFailure = getError("text", "message", "filename", "", "stacktrace");
+        event.result.afterHookFailure = getError("text1", "message1", "filename1", "", "stacktrace1");
 
         processor.onEnd(event);
 

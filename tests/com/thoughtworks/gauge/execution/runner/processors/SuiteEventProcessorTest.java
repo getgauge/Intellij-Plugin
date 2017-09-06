@@ -33,7 +33,7 @@ public class SuiteEventProcessorTest {
         ExecutionEvent event = new ExecutionEvent();
         event.type = ExecutionEvent.SUITE_END;
         event.result = new ExecutionResult();
-        event.result.beforeHookFailure = getError("text", "message", "filename", "stacktrace");
+        event.result.beforeHookFailure = getError("text", "message", "filename", "","stacktrace");
 
         processor.onEnd(event);
 
@@ -54,7 +54,7 @@ public class SuiteEventProcessorTest {
         ExecutionEvent event = new ExecutionEvent();
         event.type = ExecutionEvent.SUITE_END;
         event.result = new ExecutionResult();
-        event.result.afterHookFailure = getError("text", "message", "filename", "stacktrace");
+        event.result.afterHookFailure = getError("text", "message", "filename", "","stacktrace");
 
         processor.onEnd(event);
 
@@ -74,8 +74,8 @@ public class SuiteEventProcessorTest {
         ExecutionEvent event = new ExecutionEvent();
         event.type = ExecutionEvent.SUITE_END;
         event.result = new ExecutionResult();
-        event.result.beforeHookFailure = getError("text", "message", "filename", "stacktrace");
-        event.result.afterHookFailure = getError("text1", "message1", "filename1", "stacktrace1");
+        event.result.beforeHookFailure = getError("text", "message", "filename", "","stacktrace");
+        event.result.afterHookFailure = getError("text1", "message1", "filename1", "","stacktrace1");
 
         processor.onEnd(event);
 
