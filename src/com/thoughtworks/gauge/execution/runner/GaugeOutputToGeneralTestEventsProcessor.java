@@ -1,12 +1,14 @@
 package com.thoughtworks.gauge.execution.runner;
 
 import com.google.gson.GsonBuilder;
+import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.sm.ServiceMessageBuilder;
 import com.intellij.execution.testframework.sm.runner.GeneralTestEventsProcessor;
 import com.intellij.execution.testframework.sm.runner.OutputToGeneralTestEventsConverter;
 import com.intellij.openapi.util.Key;
 import com.thoughtworks.gauge.execution.runner.event.ExecutionEvent;
+import com.thoughtworks.gauge.execution.runner.event.ExecutionResult;
 import com.thoughtworks.gauge.execution.runner.processors.*;
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessageVisitor;
 import org.jetbrains.annotations.NotNull;
@@ -17,13 +19,16 @@ import java.util.Arrays;
 import java.util.List;
 
 public class GaugeOutputToGeneralTestEventsProcessor extends OutputToGeneralTestEventsConverter implements MessageProcessor {
+    private static final Integer SUCCESS = 0;
+    private final ProcessHandler handler;
     private Key outputType;
     private ServiceMessageVisitor visitor;
     private List<EventProcessor> processors;
     private EventProcessor unexpectedEndProcessor;
 
-    GaugeOutputToGeneralTestEventsProcessor(@NotNull String testFrameworkName, @NotNull TestConsoleProperties consoleProperties) {
+    GaugeOutputToGeneralTestEventsProcessor(@NotNull String testFrameworkName, @NotNull TestConsoleProperties consoleProperties, ProcessHandler handler) {
         super(testFrameworkName, consoleProperties);
+        this.handler = handler;
         TestsCache cache = new TestsCache();
         processors = Arrays.asList(
                 new SuiteEventProcessor(this, cache),
@@ -50,7 +55,11 @@ public class GaugeOutputToGeneralTestEventsProcessor extends OutputToGeneralTest
                 if (processor.canProcess(event)) return processor.process(event);
         }
         if (text.trim().startsWith("Process finished with exit code") && unexpectedEndProcessor.canProcess(null))
-            unexpectedEndProcessor.process(null);
+            unexpectedEndProcessor.process(new ExecutionEvent() {{
+                result = new ExecutionResult() {{
+                    status = SUCCESS.equals(handler.getExitCode()) ? ExecutionEvent.SKIP : ExecutionEvent.FAIL;
+                }};
+            }});
         return super.processServiceMessages(text, outputType, visitor);
     }
 

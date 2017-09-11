@@ -2,6 +2,7 @@ package com.thoughtworks.gauge.execution.runner;
 
 import com.intellij.execution.Executor;
 import com.intellij.execution.PsiLocation;
+import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.actions.AbstractRerunFailedTestsAction;
 import com.intellij.execution.testframework.sm.SMCustomMessagesParsing;
@@ -26,8 +27,11 @@ import java.util.Collections;
 
 public class GaugeConsoleProperties extends SMTRunnerConsoleProperties implements SMCustomMessagesParsing {
 
-    public GaugeConsoleProperties(GaugeRunConfiguration config, String gauge, Executor executor) {
+    private final ProcessHandler handler;
+
+    public GaugeConsoleProperties(GaugeRunConfiguration config, String gauge, Executor executor, ProcessHandler handler) {
         super(config, gauge, executor);
+        this.handler = handler;
         setIdBasedTestTree(true);
         setValueOf(HIDE_PASSED_TESTS, false);
         setValueOf(HIDE_IGNORED_TEST, false);
@@ -38,7 +42,7 @@ public class GaugeConsoleProperties extends SMTRunnerConsoleProperties implement
 
     @Override
     public OutputToGeneralTestEventsConverter createTestEventsConverter(@NotNull String testFrameworkName, @NotNull TestConsoleProperties consoleProperties) {
-        return new GaugeOutputToGeneralTestEventsProcessor(testFrameworkName, consoleProperties);
+        return new GaugeOutputToGeneralTestEventsProcessor(testFrameworkName, consoleProperties, handler);
     }
 
     @Nullable

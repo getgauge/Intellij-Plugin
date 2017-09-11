@@ -19,11 +19,16 @@ public class UnexpectedEndProcessor extends GaugeEventProcessor {
 
     @Override
     Boolean onEnd(ExecutionEvent event) throws ParseException {
-        getProcessor().process(ServiceMessageBuilder.testStarted("Failed"), 1, SuiteEventProcessor.SUITE_ID);
-        ServiceMessageBuilder failed = ServiceMessageBuilder.testFailed("Failed");
-        failed.addAttribute("message", "");
-        getProcessor().process(failed, 1, 0);
-        getProcessor().process(ServiceMessageBuilder.testFinished("Failed"), 1, SuiteEventProcessor.SUITE_ID);
+        String name = "Failed";
+        ServiceMessageBuilder msg = ServiceMessageBuilder.testFailed(name);
+        if (event.result.skipped()) {
+            name = "Ignored";
+            msg = ServiceMessageBuilder.testIgnored(name);
+        }
+        getProcessor().process(ServiceMessageBuilder.testStarted(name), 1, SuiteEventProcessor.SUITE_ID);
+        msg.addAttribute("message", " ");
+        getProcessor().process(msg, 1, 0);
+        getProcessor().process(ServiceMessageBuilder.testFinished(name), 1, SuiteEventProcessor.SUITE_ID);
         return false;
     }
 

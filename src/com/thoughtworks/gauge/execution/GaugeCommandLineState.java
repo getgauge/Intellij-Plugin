@@ -46,10 +46,10 @@ public class GaugeCommandLineState extends CommandLineState {
     public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
         if (GaugeVersion.isGreaterOrEqual(GaugeRunConfiguration.TEST_RUNNER_SUPPORT_VERSION, false)
                 && GaugeSettingsService.getSettings().useIntelliJTestRunner()) {
-            ProcessHandler processHandler = startProcess();
-            GaugeConsoleProperties properties = new GaugeConsoleProperties(config, "Gauge", executor);
-            ConsoleView console = SMTestRunnerConnectionUtil.createAndAttachConsole("Gauge", processHandler, properties);
-            DefaultExecutionResult result = new DefaultExecutionResult(console, processHandler, createActions(console, processHandler));
+            ProcessHandler handler = startProcess();
+            GaugeConsoleProperties properties = new GaugeConsoleProperties(config, "Gauge", executor, handler);
+            ConsoleView console = SMTestRunnerConnectionUtil.createAndAttachConsole("Gauge", handler, properties);
+            DefaultExecutionResult result = new DefaultExecutionResult(console, handler, createActions(console, handler));
             if (ActionManager.getInstance().getAction("RerunFailedTests") != null) {
                 AbstractRerunFailedTestsAction action = properties.createRerunFailedTestsAction(console);
                 if (action != null) {
