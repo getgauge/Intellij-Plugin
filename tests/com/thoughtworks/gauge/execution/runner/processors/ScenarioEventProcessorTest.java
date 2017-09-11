@@ -68,7 +68,7 @@ public class ScenarioEventProcessorTest {
         processor.onEnd(event);
 
         ServiceMessageBuilder skipped = ServiceMessageBuilder.testIgnored("name");
-        skipped.addAttribute("message", "Failed: text\nFilename: filename\nMessage: message\nStack Trace:\nstacktrace");
+        skipped.addAttribute("message", "Skipped: text\nFilename: filename\nMessage: message\nStack Trace:\nstacktrace");
         ServiceMessageBuilder finished = ServiceMessageBuilder.testFinished("name");
         finished.addAttribute("duration", "1");
         verify(mockProcessor, times(1)).process(argThat(new ServiceMessageBuilderMatcher<>(skipped)), any(Integer.class), any(Integer.class));
