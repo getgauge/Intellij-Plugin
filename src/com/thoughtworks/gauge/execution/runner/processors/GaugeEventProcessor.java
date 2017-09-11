@@ -57,7 +57,7 @@ abstract class GaugeEventProcessor implements EventProcessor {
         if (failure != null) {
             addTest(name, parentId, key, event);
             ServiceMessageBuilder failed = ServiceMessageBuilder.testFailed(name);
-            failed.addAttribute("message", failure.format());
+            failed.addAttribute("message", failure.format("Failed"));
             getProcessor().process(failed, getCache().getId(key), parentId);
             getProcessor().process(ServiceMessageBuilder.testFinished(name), getCache().getId(key), parentId);
         }

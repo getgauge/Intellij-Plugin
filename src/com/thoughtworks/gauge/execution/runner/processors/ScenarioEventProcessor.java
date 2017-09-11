@@ -33,9 +33,9 @@ public class ScenarioEventProcessor extends GaugeEventProcessor {
         Integer id = getCache().getId(getIdentifier(event, event.id));
         String name = getIdentifier(event, event.name);
         if (event.result.failed())
-            scenarioMessage(ServiceMessageBuilder.testFailed(name), id, parentId, event.result);
+            scenarioMessage(ServiceMessageBuilder.testFailed(name), id, parentId, event.result, "Failed: ");
         else if (event.result.skipped())
-            scenarioMessage(ServiceMessageBuilder.testIgnored(name), id, parentId, event.result);
+            scenarioMessage(ServiceMessageBuilder.testIgnored(name), id, parentId, event.result, "Skipped: ");
         ServiceMessageBuilder scenarioEnd = ServiceMessageBuilder.testFinished(name);
         scenarioEnd.addAttribute("duration", String.valueOf(event.result.time));
         return getProcessor().process(scenarioEnd, id, parentId);
@@ -47,7 +47,7 @@ public class ScenarioEventProcessor extends GaugeEventProcessor {
                 event.type.equalsIgnoreCase(ExecutionEvent.SCENARIO_END);
     }
 
-    private void scenarioMessage(ServiceMessageBuilder msg, Integer nodeId, Integer parentId, ExecutionResult result) throws ParseException {
+    private void scenarioMessage(ServiceMessageBuilder msg, Integer nodeId, Integer parentId, ExecutionResult result, String status) throws ParseException {
         List<ExecutionError> errors = new ArrayList<>();
         String tableText = "";
         if (result.table != null)
@@ -56,7 +56,7 @@ public class ScenarioEventProcessor extends GaugeEventProcessor {
         if (result.errors != null) errors.addAll(Arrays.asList(result.errors));
         if (result.afterHookFailure != null) errors.add(result.afterHookFailure);
         msg.addAttribute("message", tableText + errors.stream()
-                .map(ExecutionError::format)
+                .map(e -> e.format(status))
                 .collect(Collectors.joining("\n\n")));
         getProcessor().process(msg, nodeId, parentId);
     }

@@ -7,8 +7,8 @@ public class ExecutionError {
     public String message;
     public String stackTrace;
 
-    public String format() {
-        return format(this.text, "Failed: ", "\n") +
+    public String format(String status) {
+        return format(this.text, status, "\n") +
                 format(getFileNameWithLineNo(), "Filename: ", "\n") +
                 format(this.message, "Message: ", "\n") +
                 format(this.stackTrace, "Stack Trace:\n", "");
