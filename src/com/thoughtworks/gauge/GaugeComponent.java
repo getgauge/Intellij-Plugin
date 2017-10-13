@@ -1,11 +1,20 @@
 package com.thoughtworks.gauge;
 
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.thoughtworks.gauge.core.Gauge;
+import com.thoughtworks.gauge.core.GaugeVersion;
 
+import java.io.File;
 import java.util.Arrays;
+
+import static com.intellij.openapi.vcs.VcsNotifier.STANDARD_NOTIFICATION;
+import static com.thoughtworks.gauge.Constants.MIN_GAUGE_VERSION;
+import static com.thoughtworks.gauge.util.GaugeUtil.isGaugeProjectDir;
 
 public class GaugeComponent implements ProjectComponent {
 
@@ -13,6 +22,16 @@ public class GaugeComponent implements ProjectComponent {
 
     public GaugeComponent(Project project) {
         this.project = project;
+    }
+
+    @Override
+    public void projectOpened() {
+        if (isGaugeProjectDir(new File(this.project.getBasePath()))) {
+            if (!GaugeVersion.isGreaterOrEqual(MIN_GAUGE_VERSION, false)) {
+                Notification notification = new Notification("Error", "Unsupported Gauge Version", String.format("This version of Gauge Intellij plugin only works with Gauge version >= %s", MIN_GAUGE_VERSION), NotificationType.ERROR);
+                Notifications.Bus.notify(notification, this.project);
+            }
+        }
     }
 
     @Override

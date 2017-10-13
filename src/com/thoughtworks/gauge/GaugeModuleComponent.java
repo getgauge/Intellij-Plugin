@@ -79,7 +79,7 @@ public class GaugeModuleComponent implements ModuleComponent {
         try {
             GaugeSettingsModel settings = getGaugeSettings();
             String port = String.valueOf(apiPort);
-            ProcessBuilder gauge = new ProcessBuilder(settings.getGaugePath(), Constants.DAEMONIZE, Constants.API_PORT, port);
+            ProcessBuilder gauge = new ProcessBuilder(settings.getGaugePath(), Constants.DAEMON, port);
             GaugeUtil.setGaugeEnvironmentsTo(gauge, settings);
             String cp = classpathForModule(module);
             LOG.info(String.format("Setting `%s` to `%s`", Constants.GAUGE_CUSTOM_CLASSPATH, cp));
