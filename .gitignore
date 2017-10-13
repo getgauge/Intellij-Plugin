@@ -12,3 +12,6 @@ build
 logs
 *.iml
 classes
+.classpath
+.settings
+.project

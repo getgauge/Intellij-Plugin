@@ -30,6 +30,7 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.thoughtworks.gauge.Constants;
+import com.thoughtworks.gauge.core.GaugeVersion;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import com.thoughtworks.gauge.module.lib.GaugeLibHelper;
 import com.thoughtworks.gauge.settings.GaugeSettingsModel;
@@ -43,6 +44,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.thoughtworks.gauge.Constants.MIN_GAUGE_VERSION;
 import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeSettings;
 
 public class GaugeModuleBuilder extends JavaModuleBuilder {
@@ -55,11 +57,14 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
         new GaugeLibHelper(modifiableRootModel.getModule()).checkDeps();
     }
 
-    private void checkGaugeIsInstalled() {
+    private void checkGaugeIsInstalled() throws ConfigurationException {
         try {
             getGaugeSettings();
+            if (!GaugeVersion.isGreaterOrEqual(MIN_GAUGE_VERSION, false)) {
+                throw new ConfigurationException(String.format("This version of Gauge Intellij plugin only works with Gauge version >= %s", MIN_GAUGE_VERSION), "Unsupported Gauge Version");
+            }
         } catch (GaugeNotFoundException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new ConfigurationException(e.getMessage(), "Gauge Not Found");
         }
     }
 
@@ -115,5 +120,4 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
         paths.add(Pair.create(path, ""));
         return paths;
     }
-
 }
