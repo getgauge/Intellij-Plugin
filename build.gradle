@@ -21,6 +21,7 @@ intellij {
     }
     patchPluginXml {
         sinceBuild customSinceBuild
+        untilBuild customUntilBuild
     }
 }
 
