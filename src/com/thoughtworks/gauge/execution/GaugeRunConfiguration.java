@@ -85,9 +85,9 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
     }
 
     private void addFlags(GeneralCommandLine commandLine, ExecutionEnvironment env) {
+        commandLine.addParameter(Constants.RUN);
         if (GaugeVersion.isGreaterOrEqual(TEST_RUNNER_SUPPORT_VERSION, true)
                 && GaugeSettingsService.getSettings().useIntelliJTestRunner()) {
-            commandLine.addParameter(Constants.RUN);
             commandLine.addParameter(Constants.MACHINE_READABLE);
             commandLine.addParameter(Constants.HIDE_SUGGESTION);
         }
