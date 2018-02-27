@@ -58,8 +58,9 @@ public class GaugeWebBrowserPreview extends WebBrowserUrlProvider {
     private Url previewUrl(OpenInBrowserRequest request, VirtualFile virtualFile, GaugeSettingsModel settings) throws IOException, InterruptedException {
         ProcessBuilder builder = new ProcessBuilder(settings.getGaugePath(), Constants.DOCS, Spectacle.NAME, virtualFile.getPath());
         String projectName = request.getProject().getName();
-        builder.environment().put("spectacle_out_dir", createOrGetTempDirectory(projectName).getPath() + "/docs");
-        builder.directory(GaugeUtil.moduleDir(GaugeUtil.moduleForPsiElement(request.getFile())));
+        builder.environment().put("spectacle_out_dir", FileUtil.join(createOrGetTempDirectory(projectName).getPath(), "docs"));
+        File gaugeModuleDir = GaugeUtil.moduleDir(GaugeUtil.moduleForPsiElement(request.getFile()));
+        builder.directory(gaugeModuleDir);
         GaugeUtil.setGaugeEnvironmentsTo(builder, settings);
         Process docsProcess = builder.start();
         int exitCode = docsProcess.waitFor();
@@ -68,6 +69,7 @@ public class GaugeWebBrowserPreview extends WebBrowserUrlProvider {
             Notifications.Bus.notify(new Notification("Specification Preview", "Error: Specification Preview", docsOutput, NotificationType.ERROR));
             return null;
         }
-        return new UrlImpl(FileUtil.join(createOrGetTempDirectory(projectName).getPath(), "docs/html/specs/" + virtualFile.getNameWithoutExtension() + ".html"));
+        String relativePath = FileUtil.getRelativePath(gaugeModuleDir, new File(virtualFile.getParent().getPath()));
+        return new UrlImpl(FileUtil.join(createOrGetTempDirectory(projectName).getPath(), "docs", "html", relativePath, virtualFile.getNameWithoutExtension() + ".html"));
     }
 }
