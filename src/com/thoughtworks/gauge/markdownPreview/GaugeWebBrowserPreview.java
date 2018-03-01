@@ -43,6 +43,7 @@ public class GaugeWebBrowserPreview extends WebBrowserUrlProvider {
     @Override
     protected Url getUrl(OpenInBrowserRequest request, VirtualFile virtualFile) throws BrowserException {
         try {
+            if (!request.isAppendAccessToken()) return null;
             GaugeSettingsModel settings = getGaugeSettings();
             Spectacle spectacle = new Spectacle(request.getProject(), settings);
             if (spectacle.isInstalled())
