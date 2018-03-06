@@ -37,6 +37,23 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      <p>0.3.10</p>
+      <ul>
+            <li> Bug Fixes </li>
+      </ul>
+      <p>0.3.9</p>
+      <ul>
+            <li> Adding support for IntelliJ IDEA 2017.3.* </li>
+      </ul>
+      <p>0.3.8</p>
+      <ul>
+            <li> Removing support for gauge version < 0.9.0 </li>
+      </ul>
+      <p>0.3.7</p>
+      <ul>
+            <li> IntelliJ Test runner for spec execution </li>
+            <li> Bug Fixes </li>
+      </ul>
       <p>0.3.6</p>
       <ul>
             <li> Bug Fixes </li>
