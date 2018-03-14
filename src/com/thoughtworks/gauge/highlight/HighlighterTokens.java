@@ -19,12 +19,14 @@ package com.thoughtworks.gauge.highlight;
 
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.editor.markup.TextAttributes;
-
-import java.awt.*;
 
 import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey;
 
+/**
+ * Tokens indicating the text attributes that will be applied for syntax highlighting. It is tied to other Intellij
+ * syntax highlighting concepts (e.g. static variables, constants, line comments). The exact colors and such are
+ * determined by the user's IDE theme and preferences in the IDE Settings.
+ */
 public class HighlighterTokens {
     public static final TextAttributesKey SPEC_HEADING = createTextAttributesKey("SPEC_HEADING", DefaultLanguageHighlighterColors.KEYWORD);
     public static final TextAttributesKey SCENARIO_HEADING = createTextAttributesKey("SCENARIO_HEADING", DefaultLanguageHighlighterColors.INSTANCE_METHOD);

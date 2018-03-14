@@ -23,6 +23,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * A factory for creating a syntax highlighter for Gauge concepts.
+ */
 public class ConceptSyntaxHighlighterFactory extends SyntaxHighlighterFactory {
     @NotNull
     @Override

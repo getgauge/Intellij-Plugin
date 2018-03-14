@@ -26,6 +26,10 @@ import com.thoughtworks.gauge.language.token.SpecTokenTypes;
 import com.thoughtworks.gauge.lexer.SpecLexer;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * A class that describes what highlighting styles should be applied to various tokens (headings, comments, etc) in a
+ * Gauge specification (.spec) file.
+ */
 public class SpecSyntaxHighlighter extends SyntaxHighlighterBase {
 
     @NotNull
