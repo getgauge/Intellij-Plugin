@@ -13,7 +13,7 @@ The plugin provides the following basic features:
 * Support for Concepts
 * Support for Refactoring
 
-See the [documentation](http://getgauge.io/documentation/user/current/ide_support/intellij_idea.html) for more details.
+See the [documentation](https://docs.gauge.org/using.html#intellij-idea) for more details.
 
 Installation
 ------------
