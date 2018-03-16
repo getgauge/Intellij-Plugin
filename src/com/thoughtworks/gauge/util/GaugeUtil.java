@@ -41,7 +41,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.serialization.PathMacroUtil;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Map;
 
 import static com.thoughtworks.gauge.Constants.SPECS_DIR;
@@ -113,6 +117,12 @@ public class GaugeUtil {
         return source != null && "maven".equalsIgnoreCase(source.getId());
     }
 
+    /**
+     * Returns whether or not the given file is a Gauge project directory. A file is a Gauge project directory if it
+     * is a directory that contains both a manifest file and a specs directory.
+     * @param dir the file to be examined.
+     * @return whether or not the given file is a Gauge project directory.
+     */
     public static boolean isGaugeProjectDir(File dir) {
         return containsManifest(dir) && containsSpecsDir(dir);
     }
