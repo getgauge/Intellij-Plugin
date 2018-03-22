@@ -35,9 +35,14 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 
-import static com.thoughtworks.gauge.util.GaugeUtil.*;
+import static com.thoughtworks.gauge.util.GaugeUtil.classpathForModule;
+import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeSettings;
+import static com.thoughtworks.gauge.util.GaugeUtil.isGaugeProjectDir;
+import static com.thoughtworks.gauge.util.GaugeUtil.moduleDir;
 
-
+/**
+ * The definition for what a Gauge module is according to IDEA.
+ */
 public class GaugeModuleComponent implements ModuleComponent {
     private final Module module;
     private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.GaugeModuleComponent");
@@ -52,6 +57,7 @@ public class GaugeModuleComponent implements ModuleComponent {
         return "GaugeModuleComponent";
     }
 
+    @Override
     public void moduleAdded() {
         new LibHelperFactory().helperFor(module).checkDeps();
     }
@@ -96,14 +102,30 @@ public class GaugeModuleComponent implements ModuleComponent {
         return null;
     }
 
+    /**
+     * Sets the type of the given module to that of a Gauge module
+     * @param module the module to be set
+     */
     public static void makeGaugeModuleType(Module module) {
         module.setModuleType(GaugeModuleType.MODULE_TYPE_ID);
     }
 
+    /**
+     * Returns whether the module is a Gauge module. A module is a Gauge module if either its module type name
+     * indicates that it is a Gauge module, or if it is a Gauge project.
+     * @param module the module to be examined
+     * @return whether the module is a Gauge module.
+     */
     public static boolean isGaugeModule(Module module) {
         return GaugeModuleType.MODULE_TYPE_ID.equals(module.getModuleTypeName()) || isGaugeProjectDir(moduleDir(module));
     }
 
+    /**
+     * Returns whether or not the module is a Gauge project. A module is a Gauge project if the module is also a
+     * Gauge project directory (i.e. it has a `specs` directory and other required components).
+     * @param module the module to be examined
+     * @return whether or not the module is a Gauge project
+     */
     public static boolean isGaugeProject(Module module) {
         return isGaugeProjectDir(moduleDir(module));
     }
