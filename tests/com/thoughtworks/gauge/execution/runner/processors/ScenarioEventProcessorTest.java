@@ -10,7 +10,10 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.argThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 public class ScenarioEventProcessorTest {
     @Test
@@ -41,12 +44,12 @@ public class ScenarioEventProcessorTest {
         event.result = new ExecutionResult();
         event.result.status = ExecutionEvent.FAIL;
         event.result.time = 1;
-        event.result.errors = new ExecutionError[]{getError("text", "message", "filename", "", "stacktrace")};
+        event.result.errors = new ExecutionError[]{getError("text", "message", "filename", "123", "stacktrace")};
 
         processor.onEnd(event);
 
         ServiceMessageBuilder failed = ServiceMessageBuilder.testFailed("name");
-        failed.addAttribute("message", "Failed: text\nFilename: filename\nMessage: message\nStack Trace:\nstacktrace");
+        failed.addAttribute("message", "Failed: text\nFilename: filename:123\nMessage: message\nStack Trace:\nstacktrace");
         ServiceMessageBuilder finished = ServiceMessageBuilder.testFinished("name");
         finished.addAttribute("duration", "1");
         verify(mockProcessor, times(1)).process(argThat(new ServiceMessageBuilderMatcher<>(failed)), any(Integer.class), any(Integer.class));
@@ -63,12 +66,12 @@ public class ScenarioEventProcessorTest {
         event.result = new ExecutionResult();
         event.result.status = ExecutionEvent.SKIP;
         event.result.time = 1;
-        event.result.errors = new ExecutionError[]{getError("text", "message", "filename", "", "stacktrace")};
+        event.result.errors = new ExecutionError[]{getError("text", "message", "filename", "123", "stacktrace")};
 
         processor.onEnd(event);
 
         ServiceMessageBuilder skipped = ServiceMessageBuilder.testIgnored("name");
-        skipped.addAttribute("message", "Skipped: text\nFilename: filename\nMessage: message\nStack Trace:\nstacktrace");
+        skipped.addAttribute("message", "Skipped: text\nFilename: filename:123\nMessage: message\nStack Trace:\nstacktrace");
         ServiceMessageBuilder finished = ServiceMessageBuilder.testFinished("name");
         finished.addAttribute("duration", "1");
         verify(mockProcessor, times(1)).process(argThat(new ServiceMessageBuilderMatcher<>(skipped)), any(Integer.class), any(Integer.class));
