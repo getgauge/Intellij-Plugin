@@ -26,7 +26,10 @@ import com.thoughtworks.gauge.language.token.ConceptTokenTypes;
 import com.thoughtworks.gauge.lexer.ConceptLexer;
 import org.jetbrains.annotations.NotNull;
 
-
+/**
+ * A class that describes what highlighting styles should be applied to various tokens (headings, comments, etc) in a
+ * Gauge concept (.cpt) file. It is unrelated to concepts within specification (.spec) files.
+ */
 public class ConceptSyntaxHighlighter implements SyntaxHighlighter {
     @NotNull
     @Override

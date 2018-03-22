@@ -25,9 +25,13 @@ import com.intellij.openapi.options.colors.ColorSettingsPage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.Map;
 
+/**
+ * The page that appears in the Intellij IDEA Settings page, allowing the user to override the default appearances of
+ * syntax elements (headers, comments, etc) within Gauge specification (.spec) files.
+ */
 public class SpecColorSettingsPage implements ColorSettingsPage {
     private static final AttributesDescriptor[] DESCRIPTORS = new AttributesDescriptor[]{
             new AttributesDescriptor("Specification Heading", HighlighterTokens.SPEC_HEADING),
