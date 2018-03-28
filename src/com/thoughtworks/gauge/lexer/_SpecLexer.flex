@@ -15,6 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with getgauge/Intellij-plugin.  If not, see <http://www.gnu.org/licenses/>.
 
+package com.thoughtworks.gauge.lexer;
+
 import com.intellij.lexer.*;
 import com.intellij.psi.tree.IElementType;
 import static com.thoughtworks.gauge.language.token.SpecTokenTypes.*;
@@ -22,8 +24,8 @@ import static com.thoughtworks.gauge.language.token.SpecTokenTypes.*;
 %%
 
 %{
-  public com.thoughtworks.gauge.lexer._SpecLexer() {
-    this((java.io.Reader)null);
+  public _SpecLexer() {
+    this(null);
   }
 %}
 
