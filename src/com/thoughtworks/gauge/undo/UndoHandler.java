@@ -66,7 +66,7 @@ public class UndoHandler {
                     Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
                     getInstance().refreshAndFindFileByIoFile(new File(fileName));
                     if (document != null)
-                        document.setText(StringUtils.join(FileUtils.readLines(new File(fileName), EncodingManager.getInstance().getEncoding(virtualFile, true)).toArray(), "\n"));
+                        document.setText(StringUtils.join(FileUtils.readLines(new File(fileName), EncodingManager.getInstance().getEncoding(virtualFile, true).toString()).toArray(), "\n"));
                 }
             } catch (Exception ignored) {
             }

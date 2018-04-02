@@ -11,7 +11,7 @@ import static com.intellij.openapi.components.RoamingType.DISABLED;
 @State(
         name = "GaugeConfiguration",
         storages = {
-                @Storage(id = "other", file = "GaugeConfig.xml", roamingType = DISABLED),
+                @Storage(file = "GaugeConfig.xml", roamingType = DISABLED),
         }
 )
 public class GaugeSettingsService implements PersistentStateComponent<GaugeSettingsModel> {
