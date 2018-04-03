@@ -37,6 +37,11 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      <p>0.3.11</p>
+      <ul>
+            <li> Adding support for IntelliJ IDEA 2018.1.* </li>
+            <li> Improvements to SpecLexer and ConceptLexer </li>
+      </ul>
       <p>0.3.10</p>
       <ul>
             <li> Bug Fixes </li>
