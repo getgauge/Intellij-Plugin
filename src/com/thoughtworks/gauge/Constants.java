@@ -49,5 +49,5 @@ public class Constants {
     public static final String SPEC_SCENARIO_DELIMITER = COLON;
     public static final String CLASSPATH_DELIMITER = COLON;
     public static final String HIDE_SUGGESTION = "--hide-suggestion";
-    public static final String MIN_GAUGE_VERSION="0.9.0";
+    public static final String MIN_GAUGE_VERSION = "0.9.0";
 }

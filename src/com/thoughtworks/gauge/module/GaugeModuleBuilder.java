@@ -49,7 +49,7 @@ import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeSettings;
 
 public class GaugeModuleBuilder extends JavaModuleBuilder {
 
-
+    @Override
     public void setupRootModel(ModifiableRootModel modifiableRootModel) throws ConfigurationException {
         checkGaugeIsInstalled();
         super.setupRootModel(modifiableRootModel);
@@ -74,8 +74,12 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
         return ProjectWizardStepFactory.getInstance().createJavaSettingsStep(settingsStep, this, this::isSuitableSdkType);
     }
 
-    private void gaugeInit(final ModifiableRootModel modifiableRootModel) {
-        ProgressManager.getInstance().run(new Task.Modal(modifiableRootModel.getProject(), "Initializing gauge-" + getLanguage() + " project", false) {
+    private void gaugeInit(final ModifiableRootModel modifiableRootModel) throws ConfigurationException {
+        File directory = new File(getModuleFileDirectory());
+        if(GaugeUtil.isGaugeProjectDir(directory)){
+            throw  new ConfigurationException("Given location is already a Gauge Project. Please try to initialize a Gauge project in a different location.");
+        }
+        ProgressManager.getInstance().run(new Task.Modal(modifiableRootModel.getProject(), "Initializing gauge-" + getLanguage() + " project", true) {
             public void run(@NotNull ProgressIndicator progressIndicator) {
                 progressIndicator.setIndeterminate(true);
                 progressIndicator.setText("Installing gauge-" + getLanguage() + " plugin if not installed");
@@ -87,7 +91,7 @@ public class GaugeModuleBuilder extends JavaModuleBuilder {
                             Constants.INIT_FLAG, getLanguage()
                     };
                     ProcessBuilder processBuilder = new ProcessBuilder(init);
-                    processBuilder.directory(new File(getModuleFileDirectory()));
+                    processBuilder.directory(directory);
                     GaugeUtil.setGaugeEnvironmentsTo(processBuilder, settings);
                     Process process = processBuilder.start();
                     final int exitCode = process.waitFor();
