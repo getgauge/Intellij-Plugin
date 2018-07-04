@@ -73,7 +73,7 @@ public class GaugeOutputToGeneralTestEventsProcessor extends OutputToGeneralTest
 
     @Override
     public boolean processLineBreak() {
-        super.flushBufferBeforeTerminating();
+        super.flushBufferOnProcessTermination(0);
         return true;
     }
 }
