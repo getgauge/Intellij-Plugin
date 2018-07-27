@@ -48,7 +48,7 @@ public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesS
     }
 
     @Override
-    public void processQuery(@NotNull final ReferencesSearch.SearchParameters searchParameters, @NotNull final Processor<PsiReference> processor) {
+    public void processQuery(@NotNull ReferencesSearch.SearchParameters searchParameters, @NotNull Processor<? super PsiReference> processor) {
         ApplicationManager.getApplication().runReadAction(() -> {
             if (!helper.shouldFindReferences(searchParameters, searchParameters.getElementToSearch())) return;
             if (EventQueue.isDispatchThread())
@@ -58,7 +58,7 @@ public class ReferenceSearch extends QueryExecutorBase<PsiReference, ReferencesS
         });
     }
 
-    private void processElements(final ReferencesSearch.SearchParameters searchParameters, final Processor<PsiReference> processor) {
+    private void processElements(final ReferencesSearch.SearchParameters searchParameters, final Processor<? super PsiReference> processor) {
         ApplicationManager.getApplication().runReadAction(() -> {
             StepCollector collector = helper.getStepCollector(searchParameters.getElementToSearch());
             collector.collect();
