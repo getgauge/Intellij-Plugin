@@ -23,9 +23,12 @@ import com.intellij.execution.Executor;
 import com.intellij.execution.application.ApplicationConfiguration;
 import com.intellij.execution.application.ApplicationConfigurationType;
 import com.intellij.execution.configuration.ConfigurationFactoryEx;
-import com.intellij.execution.configurations.*;
+import com.intellij.execution.configurations.GeneralCommandLine;
+import com.intellij.execution.configurations.LocatableConfigurationBase;
+import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.execution.configurations.RunProfileState;
+import com.intellij.execution.configurations.RunProfileWithCompileBeforeLaunchOption;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.SettingsEditor;
@@ -37,7 +40,6 @@ import com.jgoodies.common.base.Strings;
 import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.core.GaugeVersion;
 import com.thoughtworks.gauge.settings.GaugeSettingsService;
-import com.thoughtworks.gauge.util.GaugeUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,8 +52,6 @@ import java.util.Map;
 import static com.thoughtworks.gauge.execution.GaugeDebugInfo.isDebugExecution;
 
 public class GaugeRunConfiguration extends LocatableConfigurationBase implements RunProfileWithCompileBeforeLaunchOption {
-
-    private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.execution.GaugeRunConfiguration");
 
     public static final String TEST_RUNNER_SUPPORT_VERSION = "0.9.2";
     private String specsToExecute;
@@ -102,18 +102,8 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         addTableRowsRangeFlags(commandLine);
         addParallelExecFlags(commandLine, env);
         addProgramArguments(commandLine);
-        addProjectClasspath(commandLine);
         if (!Strings.isBlank(specsToExecute)) {
             addSpecs(commandLine, specsToExecute);
-        }
-    }
-
-    private void addProjectClasspath(GeneralCommandLine commandLine) {
-        Module module = getModule();
-        if (module != null) {
-            String cp = GaugeUtil.classpathForModule(module);
-            LOG.info(String.format("Setting `%s` to `%s`", Constants.GAUGE_CUSTOM_CLASSPATH, cp));
-            commandLine.getEnvironment().put(Constants.GAUGE_CUSTOM_CLASSPATH, cp);
         }
     }
 

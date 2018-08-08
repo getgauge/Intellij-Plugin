@@ -14,13 +14,21 @@ import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.core.GaugeVersion;
 import com.thoughtworks.gauge.execution.runner.GaugeConsoleProperties;
 import com.thoughtworks.gauge.settings.GaugeSettingsService;
+import com.thoughtworks.gauge.util.GaugeUtil;
 import org.jetbrains.annotations.NotNull;
 
+import static com.intellij.testFramework.LightPlatformTestCase.getModule;
+
 public class GaugeCommandLineState extends CommandLineState {
+    private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.execution.GaugeCommandLineState");
+
     private final GeneralCommandLine commandLine;
     private final Project project;
     private final ExecutionEnvironment env;
@@ -40,12 +48,12 @@ public class GaugeCommandLineState extends CommandLineState {
         return GaugeRunProcessHandler.runCommandLine(commandLine, GaugeDebugInfo.getInstance(commandLine, env), project);
     }
 
-
     @NotNull
     @Override
     public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
         if (GaugeVersion.isGreaterOrEqual(GaugeRunConfiguration.TEST_RUNNER_SUPPORT_VERSION, false)
                 && GaugeSettingsService.getSettings().useIntelliJTestRunner()) {
+            addProjectClasspath();
             ProcessHandler handler = startProcess();
             GaugeConsoleProperties properties = new GaugeConsoleProperties(config, "Gauge", executor, handler);
             ConsoleView console = SMTestRunnerConnectionUtil.createAndAttachConsole("Gauge", handler, properties);
@@ -60,5 +68,14 @@ public class GaugeCommandLineState extends CommandLineState {
             return result;
         }
         return super.execute(executor, runner);
+    }
+
+    private void addProjectClasspath() {
+        Module module = getModule();
+        if (module != null) {
+            String cp = GaugeUtil.classpathForModule(module);
+            LOG.info(String.format("Setting `%s` to `%s`", Constants.GAUGE_CUSTOM_CLASSPATH, cp));
+            commandLine.getEnvironment().put(Constants.GAUGE_CUSTOM_CLASSPATH, cp);
+        }
     }
 }
