@@ -33,7 +33,9 @@ public class GaugeOutputToGeneralTestEventsProcessor extends OutputToGeneralTest
         processors = Arrays.asList(
                 new SuiteEventProcessor(this, cache),
                 new SpecEventProcessor(this, cache),
-                new ScenarioEventProcessor(this, cache)
+                new ScenarioEventProcessor(this, cache),
+                new NotificationEventProcessor(this, cache)
+
         );
         unexpectedEndProcessor = new UnexpectedEndProcessor(this, cache);
     }
