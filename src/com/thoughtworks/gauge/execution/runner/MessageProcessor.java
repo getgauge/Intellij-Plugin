@@ -7,5 +7,7 @@ import java.text.ParseException;
 public interface MessageProcessor {
     boolean process(ServiceMessageBuilder msg, Integer nodeId, Integer parentId) throws ParseException;
 
+    void process(String text);
+
     boolean processLineBreak();
 }

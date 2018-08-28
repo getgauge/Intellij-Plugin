@@ -7,6 +7,7 @@ public class ExecutionEvent {
     public Integer line;
     public String parentId;
     public String name;
+    public String message;
     public GaugeNotification notification;
     public ExecutionResult result;
     public static final String SUITE_START = "suiteStart";
@@ -16,6 +17,7 @@ public class ExecutionEvent {
     public static final String SCENARIO_END = "scenarioEnd";
     public static final String SUITE_END = "suiteEnd";
     public static final String NOTIFICATION = "notification";
+    public static final String STANDARD_OUTPUT = "out";
     public static final String FAIL = "fail";
     public static final String SKIP = "skip";
 }
