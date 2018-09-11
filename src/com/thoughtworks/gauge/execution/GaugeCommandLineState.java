@@ -24,8 +24,6 @@ import com.thoughtworks.gauge.settings.GaugeSettingsService;
 import com.thoughtworks.gauge.util.GaugeUtil;
 import org.jetbrains.annotations.NotNull;
 
-import static com.intellij.testFramework.LightPlatformTestCase.getModule;
-
 public class GaugeCommandLineState extends CommandLineState {
     private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.execution.GaugeCommandLineState");
 
@@ -71,7 +69,7 @@ public class GaugeCommandLineState extends CommandLineState {
     }
 
     private void addProjectClasspath() {
-        Module module = getModule();
+        Module module = config.getModule();
         if (module != null) {
             String cp = GaugeUtil.classpathForModule(module);
             LOG.info(String.format("Setting `%s` to `%s`", Constants.GAUGE_CUSTOM_CLASSPATH, cp));
