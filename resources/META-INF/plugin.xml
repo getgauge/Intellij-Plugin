@@ -37,6 +37,14 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      <p>0.3.13</p>
+      <ul>
+            <li> Bug fixes, and stability improvements. </li>
+      </ul>
+      <p>0.3.12</p>
+      <ul>
+            <li> Adding support for IntelliJ IDEA 2018.2.* </li>
+      </ul>
       <p>0.3.11</p>
       <ul>
             <li> Adding support for IntelliJ IDEA 2018.1.* </li>
