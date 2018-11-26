@@ -37,6 +37,7 @@ public class ReferenceSearchHelperTest extends LightCodeInsightFixtureTestCase {
     @Test
     public void testShouldFindReferencesOfGaugeElement() throws Exception {
         SpecStepImpl element = mock(SpecStepImpl.class);
+        when(element.getProject()).thenReturn(project);
         ReferencesSearch.SearchParameters searchParameters = new ReferencesSearch.SearchParameters(element, GlobalSearchScope.allScope(project), true);
 
         when(moduleHelper.isGaugeModule(element)).thenReturn(true);
@@ -49,6 +50,7 @@ public class ReferenceSearchHelperTest extends LightCodeInsightFixtureTestCase {
     @Test
     public void testShouldNotFindReferencesOfNonGaugeElement() throws Exception {
         PsiClass element = mock(PsiClass.class);
+        when(element.getProject()).thenReturn(project);
         ReferencesSearch.SearchParameters searchParameters = new ReferencesSearch.SearchParameters(element, GlobalSearchScope.allScope(project), true);
 
         when(moduleHelper.isGaugeModule(element)).thenReturn(true);
@@ -62,6 +64,7 @@ public class ReferenceSearchHelperTest extends LightCodeInsightFixtureTestCase {
     @Test
     public void testShouldNotFindReferencesWhenUnknownScope() throws Exception {
         PsiClass element = mock(PsiClass.class);
+        when(element.getProject()).thenReturn(project);
         ReferencesSearch.SearchParameters searchParameters = new ReferencesSearch.SearchParameters(element, scope, true);
 
         when(moduleHelper.isGaugeModule(element)).thenReturn(true);
@@ -76,6 +79,7 @@ public class ReferenceSearchHelperTest extends LightCodeInsightFixtureTestCase {
     @Test
     public void testShouldFindReferencesWhenNotUnknownScope() throws Exception {
         PsiClass element = mock(PsiClass.class);
+        when(element.getProject()).thenReturn(project);
         ReferencesSearch.SearchParameters searchParameters = new ReferencesSearch.SearchParameters(element, scope, true);
 
         when(moduleHelper.isGaugeModule(element)).thenReturn(true);
@@ -90,6 +94,7 @@ public class ReferenceSearchHelperTest extends LightCodeInsightFixtureTestCase {
     @Test
     public void testGetReferenceElements() throws Exception {
         SpecStepImpl element = mock(SpecStepImpl.class);
+        when(element.getProject()).thenReturn(project);
         StepValue stepValue = new StepValue("hello", "", new ArrayList<>());
         ReferencesSearch.SearchParameters searchParameters = new ReferencesSearch.SearchParameters(element, scope, true);
 
@@ -104,6 +109,7 @@ public class ReferenceSearchHelperTest extends LightCodeInsightFixtureTestCase {
     @Test
     public void testGetReferenceElementsForConceptStep() throws Exception {
         ConceptStepImpl element = mock(ConceptStepImpl.class);
+        when(element.getProject()).thenReturn(project);
         StepValue stepValue = new StepValue("# hello", "", new ArrayList<>());
         ReferencesSearch.SearchParameters searchParameters = new ReferencesSearch.SearchParameters(element, scope, true);
 
@@ -118,6 +124,7 @@ public class ReferenceSearchHelperTest extends LightCodeInsightFixtureTestCase {
     @Test
     public void testShouldNotFindReferencesIfNotGaugeModule() throws Exception {
         SpecStepImpl element = mock(SpecStepImpl.class);
+        when(element.getProject()).thenReturn(project);
         ReferencesSearch.SearchParameters searchParameters = new ReferencesSearch.SearchParameters(element, scope, true);
 
         when(moduleHelper.isGaugeModule(element)).thenReturn(false);
@@ -133,6 +140,7 @@ public class ReferenceSearchHelperTest extends LightCodeInsightFixtureTestCase {
     @Test
     public void testShouldFindReferencesIfGaugeModule() throws Exception {
         SpecStepImpl element = mock(SpecStepImpl.class);
+        when(element.getProject()).thenReturn(project);
         ReferencesSearch.SearchParameters searchParameters = new ReferencesSearch.SearchParameters(element, scope, true);
 
         when(moduleHelper.isGaugeModule(element)).thenReturn(true);

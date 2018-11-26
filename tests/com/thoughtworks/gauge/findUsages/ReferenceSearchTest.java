@@ -29,6 +29,7 @@ public class ReferenceSearchTest extends LightCodeInsightFixtureTestCase {
 
     @Test
     public void testShouldNotFindReferencesOfNonGaugeElement() throws Exception {
+        when(element.getProject()).thenReturn(project);
         ReferencesSearch.SearchParameters searchParameters = new ReferencesSearch.SearchParameters(element, GlobalSearchScope.allScope(project), true);
         when(helper.shouldFindReferences(searchParameters, searchParameters.getElementToSearch())).thenReturn(false);
 
@@ -39,6 +40,7 @@ public class ReferenceSearchTest extends LightCodeInsightFixtureTestCase {
 
     @Test
     public void testShouldFindReferencesOfGaugeElement() throws Exception {
+        when(element.getProject()).thenReturn(project);
         ReferencesSearch.SearchParameters searchParameters = new ReferencesSearch.SearchParameters(element, GlobalSearchScope.allScope(project), true);
 
         when(helper.shouldFindReferences(searchParameters, searchParameters.getElementToSearch())).thenReturn(true);
