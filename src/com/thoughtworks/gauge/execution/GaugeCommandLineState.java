@@ -49,9 +49,9 @@ public class GaugeCommandLineState extends CommandLineState {
     @NotNull
     @Override
     public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
+        addProjectClasspath();
         if (GaugeVersion.isGreaterOrEqual(GaugeRunConfiguration.TEST_RUNNER_SUPPORT_VERSION, false)
                 && GaugeSettingsService.getSettings().useIntelliJTestRunner()) {
-            addProjectClasspath();
             ProcessHandler handler = startProcess();
             GaugeConsoleProperties properties = new GaugeConsoleProperties(config, "Gauge", executor, handler);
             ConsoleView console = SMTestRunnerConnectionUtil.createAndAttachConsole("Gauge", handler, properties);
