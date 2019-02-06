@@ -67,7 +67,7 @@ public class Gauge {
         if (modules != null) return modules;
         modules = new HashSet<>();
         for (Module m : ModuleManager.getInstance(module.getProject()).getModules())
-            if (getProjectGroupValue(m).equals(value)) {
+            if (getProjectGroupValue(m).contains(value)) {
                 modules.add(m);
                 addToModulesMap(m, value);
             }
