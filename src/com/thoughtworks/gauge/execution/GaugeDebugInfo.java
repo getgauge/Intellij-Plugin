@@ -5,7 +5,6 @@ import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.thoughtworks.gauge.util.SocketUtils;
 
-import static com.thoughtworks.gauge.GaugeConstant.GAUGE_DEBUG_OPTS_ENV;
 
 public class GaugeDebugInfo {
     private final boolean shouldDebug;
@@ -36,7 +35,7 @@ public class GaugeDebugInfo {
     public static GaugeDebugInfo getInstance(GeneralCommandLine commandLine, ExecutionEnvironment env) {
         if (isDebugExecution(env)) {
             String port = debugPort();
-            commandLine.getEnvironment().put(GAUGE_DEBUG_OPTS_ENV, port);
+            commandLine.getEnvironment().put("GAUGE_DEBUG_OPTS", port);
             return new GaugeDebugInfo(true, port);
         }
         return new GaugeDebugInfo(false, "");
