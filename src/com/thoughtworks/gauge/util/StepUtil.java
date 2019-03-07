@@ -40,8 +40,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.thoughtworks.gauge.GaugeConstant.STEP_ANNOTATION_QUALIFIER;
-
 public class StepUtil {
 
     private static HashMap<String, StepValue> stepValueCache = new HashMap<>();
@@ -182,7 +180,7 @@ public class StepUtil {
 
 
     public static Collection<PsiMethod> getStepMethods(Module module) {
-        final PsiClass step = JavaPsiFacade.getInstance(module.getProject()).findClass(STEP_ANNOTATION_QUALIFIER, GlobalSearchScope.allScope(module.getProject()));
+        final PsiClass step = JavaPsiFacade.getInstance(module.getProject()).findClass("com.thoughtworks.gauge.Step", GlobalSearchScope.allScope(module.getProject()));
         if (step != null) {
             Collection<PsiMethod> methods = new ArrayList<>();
             for (Module m : Gauge.getSubModules(module))
