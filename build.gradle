@@ -5,7 +5,7 @@ buildscript {
 }
 
 plugins {
-    id "org.jetbrains.intellij" version "0.3.4"
+    id "org.jetbrains.intellij" version "0.4.7"
     id "java"
     id "idea"
 }
@@ -48,6 +48,9 @@ dependencies {
             'org.mockito:mockito-all:1.10.19',
     )
 }
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 group 'org.jetbrains'
 version version
