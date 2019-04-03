@@ -30,6 +30,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.thoughtworks.gauge.language.SpecFile;
 import com.thoughtworks.gauge.language.psi.SpecScenario;
+import org.apache.commons.lang.StringUtils;
 
 import static com.thoughtworks.gauge.util.GaugeUtil.isSpecFile;
 

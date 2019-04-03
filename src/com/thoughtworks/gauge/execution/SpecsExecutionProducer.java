@@ -42,7 +42,6 @@ import static com.thoughtworks.gauge.util.GaugeUtil.isSpecFile;
 public class SpecsExecutionProducer extends RunConfigurationProducer {
 
     public static final String DEFAULT_CONFIGURATION_NAME = "Specifications";
-    public static final String SPECS_DIR = "specs";
 
     public SpecsExecutionProducer() {
         super(new GaugeRunTaskConfigurationType());
@@ -61,10 +60,9 @@ public class SpecsExecutionProducer extends RunConfigurationProducer {
         if (selectedFiles.length == 1) {
             if (!selectedFiles[0].isDirectory()) {
                 return false;
-            } else if (selectedFiles[0].equals(configurationContext.getProject().getBaseDir())) {
+            } else if (selectedFiles[0].getPath().equals(configurationContext.getProject().getBasePath())) {
                 configuration.setName(DEFAULT_CONFIGURATION_NAME);
                 ((GaugeRunConfiguration) configuration).setModule(module);
-                ((GaugeRunConfiguration) configuration).setSpecsToExecute(projectSpecsDirectory(configurationContext.getProject()));
                 return true;
             }
         }
@@ -105,10 +103,6 @@ public class SpecsExecutionProducer extends RunConfigurationProducer {
 
     private boolean shouldAddDirToExecute(VirtualFile selectedFile) {
         return numberOfSpecFiles(selectedFile) != 0;
-    }
-
-    private String projectSpecsDirectory(Project project) {
-        return new File(project.getBaseDir().getPath(), SPECS_DIR).getAbsolutePath();
     }
 
     private int numberOfSpecFiles(VirtualFile directory) {
