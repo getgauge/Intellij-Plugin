@@ -61,23 +61,6 @@ public class FileManager {
         return javaFile.getName();
     }
 
-    public static List<String> getDirNamesUnderSpecs(Project project) {
-        File dir = new File(project.getBasePath() + File.separator + Constants.SPECS_DIR);
-        File[] files = dir.listFiles();
-        List<String> dirs = new ArrayList<>();
-        dirs.add(String.format("%s%s", Constants.SPECS_DIR, File.separator));
-        if (files != null) getDirectories(files, dirs, project.getBasePath() + File.separator);
-        return dirs;
-    }
-
-    private static void getDirectories(File[] files, List<String> dirs, String basePath) {
-        for (File file : files)
-            if (file.isDirectory()) {
-                dirs.add(file.getPath().replace(basePath, "") + File.separator);
-                getDirectories(file.listFiles(), dirs, basePath);
-            }
-    }
-
     public static List<VirtualFile> getAllSpecFiles(Project project) {
         Collection<VirtualFile> virtualFiles = FileTypeIndex.getFiles(SpecFileType.INSTANCE, GlobalSearchScope.projectScope(project));
         return new ArrayList<>(virtualFiles);

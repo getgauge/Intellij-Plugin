@@ -38,7 +38,6 @@ import com.thoughtworks.gauge.settings.GaugeSettingsModel;
 import com.thoughtworks.gauge.settings.GaugeSettingsService;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.serialization.PathMacroUtil;
 
 import java.io.BufferedReader;
@@ -47,8 +46,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
-
-import static com.thoughtworks.gauge.Constants.SPECS_DIR;
 
 public class GaugeUtil {
     private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.GaugeUtil");
@@ -86,20 +83,6 @@ public class GaugeUtil {
         return file.exists() && file.isFile() && file.canExecute();
     }
 
-    @Nullable
-    private static String getBinaryPathFrom(String name, String value) {
-        LOG.info(String.format("%s => %s", name, value));
-        if (!StringUtils.isEmpty(value)) {
-            File bin = new File(value, "bin");
-            File gaugeExec = new File(bin, gaugeExecutable());
-            if (gaugeExec.exists()) {
-                LOG.info(String.format("executable path from `%s` : %s", name, gaugeExec.getAbsolutePath()));
-                return gaugeExec.getAbsolutePath();
-            }
-        }
-        return null;
-    }
-
     private static String gaugeExecutable() {
         return isWindows() ? Constants.GAUGE + ".exe" : Constants.GAUGE;
     }
@@ -124,12 +107,7 @@ public class GaugeUtil {
      * @return whether or not the given file is a Gauge project directory.
      */
     public static boolean isGaugeProjectDir(File dir) {
-        return containsManifest(dir) && containsSpecsDir(dir);
-    }
-
-    private static boolean containsSpecsDir(File projectDir) {
-        File specDir = new File(projectDir, SPECS_DIR);
-        return specDir.exists() && specDir.isDirectory();
+        return containsManifest(dir);
     }
 
     private static boolean containsManifest(File projectDir) {
