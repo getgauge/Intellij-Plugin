@@ -37,7 +37,7 @@ public class ExtractConceptInfoCollector {
     public ExtractConceptInfo getAllInfo() {
         String steps = getFormattedSteps();
         List<String> args = getArgs(steps);
-        final ExtractConceptDialog form = new ExtractConceptDialog(this.editor.getProject(), args, FileManager.getDirNamesUnderSpecs(project));
+        final ExtractConceptDialog form = new ExtractConceptDialog(this.editor.getProject(), args);
         showDialog(steps, form);
         if (form.getInfo().cancelled)
             return form.getInfo();

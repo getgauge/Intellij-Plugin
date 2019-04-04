@@ -20,20 +20,18 @@ public class ExtractConceptDialog extends JDialog {
     private com.intellij.ui.TextFieldWithAutoCompletion conceptName;
     private JTextArea steps;
     private JComboBox<String> files;
-    private com.intellij.ui.TextFieldWithAutoCompletion newFile;
+    private JTextField newFile;
     private JButton OKButton;
     private JButton cancelButton;
     private JLabel errors;
     private Project project;
     private List<String> args;
-    private List<String> dirNames;
     private boolean cancelled = true;
     private DialogBuilder builder;
 
-    public ExtractConceptDialog(Project project, List<String> args, List<String> dirNames) {
+    public ExtractConceptDialog(Project project, List<String> args) {
         this.project = project;
         this.args = args;
-        this.dirNames = dirNames;
         setContentPane(contentPane);
         setModal(true);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -64,7 +62,6 @@ public class ExtractConceptDialog extends JDialog {
         contentPane.registerKeyboardAction(getCancelAction(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         this.newFile.setVisible(false);
         this.conceptName.setPlaceholder("Enter Concept Name. Example: my new \"concept\"");
-        this.newFile.setPlaceholder("Enter File Name");
         this.files.addActionListener(e -> {
             ExtractConceptDialog.this.newFile.setVisible(false);
             if (ExtractConceptDialog.this.files.getSelectedItem().toString().equals(ExtractConceptInfoCollector.CREATE_NEW_FILE))
@@ -101,7 +98,6 @@ public class ExtractConceptDialog extends JDialog {
 
     private void createUIComponents() {
         this.conceptName = new com.intellij.ui.TextFieldWithAutoCompletion<>(this.project, getAutoCompleteTextField(this.args), true, "");
-        this.newFile = new com.intellij.ui.TextFieldWithAutoCompletion<>(this.project, getAutoCompleteTextField(this.dirNames), true, "");
     }
 
     private TextFieldWithAutoCompletionListProvider<String> getAutoCompleteTextField(final List<String> dirNames) {
