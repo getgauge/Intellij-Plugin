@@ -37,6 +37,12 @@
     ]]></description>
 
     <change-notes><![CDATA[
+     <p>0.3.15</p>
+      <ul>
+            <li> gradle project. spec file error </li>
+            <li> Support IntelliJ 2019.1 </li>
+            <li> Plugin does not detect specs in non-standard location </li>
+      </ul>
       <p>0.3.14</p>
       <ul>
             <li> Adding support for IntelliJ IDEA 2018.3.* </li>
