@@ -1,5 +1,7 @@
 Intellij support for [Gauge](https://github.com/getgauge/gauge) project.
 
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
+
 # Installation
 
 Plugin can be installed by downloading from Jetbrains plugin repository.
