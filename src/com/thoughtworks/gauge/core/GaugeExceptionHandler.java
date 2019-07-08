@@ -53,7 +53,7 @@ public class GaugeExceptionHandler extends Thread {
                 output = getOutput(output, process.getErrorStream());
                 output = getOutput(output, process.getInputStream());
             } while (process.isAlive());
-            if (process.exitValue() != 0 && !output.trim().equals(""))
+            if (process.exitValue() != 0 && !output.trim().equals("") && project.isOpen())
                 Notifications.Bus.notify(createNotification(output), project);
         } catch (Exception ignored) {
         }
