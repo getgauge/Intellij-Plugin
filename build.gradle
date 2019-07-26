@@ -5,12 +5,13 @@ buildscript {
 }
 
 plugins {
-    id "org.jetbrains.intellij" version "0.4.7"
+    id "org.jetbrains.intellij" version "0.4.9"
     id "java"
     id "idea"
 }
 
 intellij {
+    plugins 'java'
     version ideaVersion
     pluginName 'Gauge-Java-Intellij'
     sameSinceUntilBuild false
