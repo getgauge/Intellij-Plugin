@@ -37,6 +37,11 @@
     ]]></description>
 
     <change-notes><![CDATA[
+     <p>0.3.16</p>
+      <ul>
+            <li> Exception when closing one of several Gauge projects open </li>
+            <li> Support IntelliJ 2019.2 </li>
+      </ul>
      <p>0.3.15</p>
       <ul>
             <li> gradle project. spec file error </li>
