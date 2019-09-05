@@ -12,7 +12,6 @@ import com.thoughtworks.gauge.core.GaugeVersion;
 import java.io.File;
 import java.util.Arrays;
 
-import static com.intellij.openapi.vcs.VcsNotifier.STANDARD_NOTIFICATION;
 import static com.thoughtworks.gauge.Constants.MIN_GAUGE_VERSION;
 import static com.thoughtworks.gauge.util.GaugeUtil.isGaugeProjectDir;
 
