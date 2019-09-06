@@ -26,7 +26,7 @@ public class Constants {
     public static final String RUN = "run";
     public static final String INSTALL = "install";
     public static final String DOCS = "docs";
-    public static final String VERSION = "version";
+    public static final String VERSION = "--version";
     public static final String MACHINE_READABLE = "--machine-readable";
     public static final String SIMPLE_CONSOLE = "--simple-console";
     public static final String TAGS = "--tags";
