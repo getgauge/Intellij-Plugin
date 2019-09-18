@@ -34,9 +34,12 @@ import java.io.InputStream;
 public class GaugeExceptionHandler extends Thread {
 
     private static final String LINE_BREAK = "\n";
-    private static final String NOTIFICATION_TEMPLATE = "Please log an issue <a href=\"https://github.com/getgauge/Intellij-Plugin/issues/new\">here</a> with the following details and reload the project.%s%s";
+    private static final String NOTIFICATION_TEMPLATE = "More details...<br><br>%s%s";
     private static final String NOTIFICATION_TITLE = "Exception occurred in Gauge plugin";
-    private static final String ISSUE_TEMPLATE = "<pre>```%s```\n* Idea version: %s\n* API version: %s\n* Plugin version: %s\n* Gauge version: %s</pre>";
+    private static final String ISSUE_TEMPLATE = "\n\nPlease log an issue in https://github.com/getgauge/intellij-plugin with following details:<br><br>" +
+            "#### gauge process exited with code %d"+
+            "<pre>```%s```" +
+            "\n* Idea version: %s\n* API version: %s\n* Plugin version: %s\n* Gauge version: %s</pre>";
     private Process process;
     private Project project;
 
@@ -54,7 +57,7 @@ public class GaugeExceptionHandler extends Thread {
                 output = getOutput(output, process.getInputStream());
             } while (process.isAlive());
             if (process.exitValue() != 0 && !output.trim().equals("") && project.isOpen())
-                Notifications.Bus.notify(createNotification(output), project);
+                Notifications.Bus.notify(createNotification(output, process.exitValue()), project);
         } catch (Exception ignored) {
         }
     }
@@ -64,13 +67,13 @@ public class GaugeExceptionHandler extends Thread {
         return lines.trim().isEmpty() ? "" : String.format("%s%s%s", output, LINE_BREAK, lines);
     }
 
-    private Notification createNotification(String stacktrace) {
+    private Notification createNotification(String stacktrace, int exitValue) {
         IdeaPluginDescriptor plugin = PluginManager.getPlugin(PluginId.findId("com.thoughtworks.gauge"));
         String pluginVersion = plugin == null ? "" : plugin.getVersion();
         String apiVersion = ApplicationInfo.getInstance().getApiVersion();
         String ideaVersion = ApplicationInfo.getInstance().getFullVersion();
         String gaugeVersion = GaugeVersion.getVersion(false).version;
-        String body = String.format(ISSUE_TEMPLATE, stacktrace, ideaVersion, apiVersion, pluginVersion, gaugeVersion);
+        String body = String.format(ISSUE_TEMPLATE, exitValue,stacktrace, ideaVersion, apiVersion, pluginVersion, gaugeVersion);
         String content = String.format(NOTIFICATION_TEMPLATE, LINE_BREAK, body);
         return new Notification("Gauge Exception", NOTIFICATION_TITLE, content, NotificationType.ERROR, NotificationListener.URL_OPENING_LISTENER);
     }
