@@ -2,6 +2,7 @@ package com.thoughtworks.gauge.undo;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
@@ -20,6 +21,7 @@ import java.util.Map;
 import static com.intellij.openapi.vfs.LocalFileSystem.getInstance;
 
 public class UndoHandler {
+    private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.undo.UndoHandler");
     private final List<String> fileNames;
     private final Project project;
     private final String name;
@@ -69,6 +71,7 @@ public class UndoHandler {
                         document.setText(StringUtils.join(FileUtils.readLines(new File(fileName), EncodingManager.getInstance().getEncoding(virtualFile, true).toString()).toArray(), "\n"));
                 }
             } catch (Exception ignored) {
+                LOG.debug(ignored);
             }
     }
 

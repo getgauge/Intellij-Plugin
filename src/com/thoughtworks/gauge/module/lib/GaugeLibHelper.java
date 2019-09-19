@@ -18,6 +18,7 @@
 package com.thoughtworks.gauge.module.lib;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.roots.ContentEntry;
@@ -46,6 +47,7 @@ public class GaugeLibHelper extends AbstractLibHelper {
     public static final String JAVA = "java";
     private static final String SRC_DIR = new File(new File("src", "test"), JAVA).getPath();
     public static final String LIBS = "libs";
+    private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.module.lib.GaugeLibHelper");
 
     public GaugeLibHelper(Module module) {
         super(module);
@@ -170,6 +172,7 @@ public class GaugeLibHelper extends AbstractLibHelper {
             libRoot = gaugeConnection.getLibPath("java");
         } catch (IOException e) {
             System.err.println("Could not add gauge lib, add it manually: " + e.getMessage());
+            LOG.debug("Could not add gauge lib, add it manually: " + e.getMessage());
             return null;
         } catch (PluginNotInstalledException e) {
             throw new RuntimeException("Gauge " + JAVA + " plugin is not installed.");

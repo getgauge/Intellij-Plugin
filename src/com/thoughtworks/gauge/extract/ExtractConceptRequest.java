@@ -1,5 +1,6 @@
 package com.thoughtworks.gauge.extract;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.psi.PsiElement;
 import com.thoughtworks.gauge.core.Gauge;
@@ -17,6 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ExtractConceptRequest {
+    private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.extract.ExtractConceptRequest");
     private List<Api.step> steps;
     private final String fileName;
     private final Api.step concept;
@@ -82,6 +84,7 @@ public class ExtractConceptRequest {
                 return gaugeService.getGaugeConnection().sendGetExtractConceptRequest(steps, concept, refactorOtherUsages, fileName, textInfo);
             } catch (Exception ignored) {
                 message = "Something went wrong during extract concept request.";
+                LOG.debug(ignored);
             }
         return Api.ExtractConceptResponse.newBuilder().setIsSuccess(false).setError(message).build();
     }

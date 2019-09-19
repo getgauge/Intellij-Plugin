@@ -1,5 +1,6 @@
 package com.thoughtworks.gauge.extract.stepBuilder;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.psi.PsiElement;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class StepsBuilder {
+    private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.extract.stepBuilder.StepsBuilder");
     protected final Editor editor;
     protected final PsiFile psiFile;
     protected Map<String, String> tableMap = new HashMap<>();
@@ -60,6 +62,7 @@ public abstract class StepsBuilder {
                 specSteps.add(step);
                 currentOffset += step.getText().length();
             } catch (Exception ignored) {
+                LOG.debug(ignored);
             }
         }
         return specSteps;

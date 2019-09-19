@@ -27,6 +27,7 @@ import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
@@ -55,6 +56,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CreateStepImplFix extends BaseIntentionAction {
+    private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.annotator.CreateStepImplFix");
     private static final PsiFile NEW_FILE_HOLDER = null;
     public static final String IMPLEMENTATION = "implementation";
     private final SpecStep step;
@@ -241,6 +243,7 @@ public class CreateStepImplFix extends BaseIntentionAction {
                     return methodName;
             }
         } catch (Exception ignored) {
+            LOG.debug(ignored);
         }
         return IMPLEMENTATION;
     }

@@ -30,7 +30,7 @@ public class GaugeComponent implements ProjectComponent {
             if (!GaugeVersion.isGreaterOrEqual(MIN_GAUGE_VERSION, false)) {
                 String notificationTitle = String.format("Unsupported Gauge Version(%s)", GaugeVersion.getVersion(false).version);
                 String errorMessage = String.format("This version of Gauge Intellij plugin only works with Gauge version >= %s", MIN_GAUGE_VERSION);
-                LOG.error(String.format("%s\n%s", notificationTitle, errorMessage));
+                LOG.debug(String.format("%s\n%s", notificationTitle, errorMessage));
                 Notification notification = new Notification("Error", notificationTitle, errorMessage, NotificationType.ERROR);
                 Notifications.Bus.notify(notification, this.project);
             }

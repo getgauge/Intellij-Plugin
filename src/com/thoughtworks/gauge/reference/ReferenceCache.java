@@ -1,13 +1,14 @@
 package com.thoughtworks.gauge.reference;
 
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.thoughtworks.gauge.language.psi.SpecStep;
 
 import java.util.Hashtable;
 
 public class ReferenceCache {
-
+    private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.reference.ReferenceCache");
     private final Hashtable<String, PsiStepReferenceCache> stepReferences;
 
     public ReferenceCache() {
@@ -23,6 +24,7 @@ public class ReferenceCache {
             }
             stepReferences.remove(stepValueText);
         } catch (Exception e) {
+            LOG.debug(e);
             return null;
         }
         return null;

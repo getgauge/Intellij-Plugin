@@ -29,6 +29,7 @@ import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.configurations.RunProfileWithCompileBeforeLaunchOption;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.SettingsEditor;
@@ -52,7 +53,7 @@ import java.util.Map;
 import static com.thoughtworks.gauge.execution.GaugeDebugInfo.isDebugExecution;
 
 public class GaugeRunConfiguration extends LocatableConfigurationBase implements RunProfileWithCompileBeforeLaunchOption {
-
+    private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.execution.GaugeRunConfiguration");
     public static final String TEST_RUNNER_SUPPORT_VERSION = "0.9.2";
     private String specsToExecute;
     private Module module;
@@ -88,6 +89,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
         commandLine.addParameter(Constants.RUN);
         if (GaugeVersion.isGreaterOrEqual(TEST_RUNNER_SUPPORT_VERSION, true)
                 && GaugeSettingsService.getSettings().useIntelliJTestRunner()) {
+            LOG.info("Using IntelliJ Test Runner");
             commandLine.addParameter(Constants.MACHINE_READABLE);
             commandLine.addParameter(Constants.HIDE_SUGGESTION);
         }
@@ -141,6 +143,7 @@ public class GaugeRunConfiguration extends LocatableConfigurationBase implements
                 }
             } catch (NumberFormatException e) {
                 System.err.println("Incorrect number of parallel execution streams specified: " + parallelNodes);
+                LOG.debug("Incorrect number of parallel execution streams specified: " + parallelNodes);
                 e.printStackTrace();
             }
         }

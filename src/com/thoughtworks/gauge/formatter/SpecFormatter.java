@@ -23,6 +23,7 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -39,6 +40,7 @@ import java.io.File;
 import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeSettings;
 
 public class SpecFormatter extends AnAction {
+    private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.formatter.SpecFormatter");
     @Override
     public void actionPerformed(AnActionEvent anActionEvent) {
         final Project project = anActionEvent.getData(LangDataKeys.PROJECT);
@@ -73,6 +75,7 @@ public class SpecFormatter extends AnAction {
             selectedFile.refresh(false, false);
         } catch (Exception e) {
             e.printStackTrace();
+            LOG.debug(e);
             Messages.showErrorDialog("Error on formatting spec", "Format Error");
         }
     }
