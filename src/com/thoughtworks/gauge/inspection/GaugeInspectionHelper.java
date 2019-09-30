@@ -1,5 +1,6 @@
 package com.thoughtworks.gauge.inspection;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.thoughtworks.gauge.Constants;
 import com.thoughtworks.gauge.exception.GaugeNotFoundException;
 import com.thoughtworks.gauge.settings.GaugeSettingsModel;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 import static com.thoughtworks.gauge.util.GaugeUtil.getGaugeSettings;
 
 class GaugeInspectionHelper {
+    private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.inspection.GaugeInspectionHelper");
     @NotNull
     static List<GaugeError> getErrors(File directory) {
         try {
@@ -29,6 +31,7 @@ class GaugeInspectionHelper {
             String[] errors = GaugeUtil.getOutput(process.getInputStream(), "\n").split("\n");
             return Arrays.stream(errors).map(GaugeError::getInstance).filter(Objects::nonNull).collect(Collectors.toList());
         } catch (IOException | InterruptedException | GaugeNotFoundException e) {
+            LOG.debug(e);
             e.printStackTrace();
         }
         return new ArrayList<>();

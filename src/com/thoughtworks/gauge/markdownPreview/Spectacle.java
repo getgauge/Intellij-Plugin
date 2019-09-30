@@ -5,6 +5,7 @@ import com.intellij.notification.NotificationAction;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import static com.intellij.openapi.vcs.VcsNotifier.STANDARD_NOTIFICATION;
 
 class Spectacle {
+    private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.markdownPreview.Spectacle");
     public static final String NAME = "spectacle";
     private final Project project;
     private GaugeSettingsModel settings;
@@ -51,6 +53,7 @@ class Spectacle {
                         throw new RuntimeException(GaugeUtil.getOutput(process.getInputStream(), "\n"));
                     Notifications.Bus.notify(new Notification("Successful", "Installation Completed", "Installation of plugin Spectacle is completed successfully", NotificationType.INFORMATION));
                 } catch (Exception e) {
+                    LOG.debug(e);
                     Notification notification = new Notification("Error", "Installation Failed", e.getMessage(), NotificationType.ERROR);
                     Notifications.Bus.notify(notification, project);
                 }

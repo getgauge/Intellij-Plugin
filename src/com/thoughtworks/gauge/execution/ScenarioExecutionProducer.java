@@ -23,6 +23,7 @@ import com.intellij.execution.actions.RunConfigurationProducer;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
@@ -37,6 +38,7 @@ import com.thoughtworks.gauge.util.GaugeUtil;
 import static com.thoughtworks.gauge.util.GaugeUtil.isSpecFile;
 
 public class ScenarioExecutionProducer extends RunConfigurationProducer {
+    private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.execution.ScenarioExecutionProducer");
     private final int NO_SCENARIOS = -1;
     private final int NON_SCENARIO_CONTEXT = -2;
 
@@ -74,6 +76,7 @@ public class ScenarioExecutionProducer extends RunConfigurationProducer {
             ((GaugeRunConfiguration) configuration).setModule(module);
             return true;
         } catch (Exception ex) {
+            LOG.debug(ex);
             ex.printStackTrace();
         }
         return true;

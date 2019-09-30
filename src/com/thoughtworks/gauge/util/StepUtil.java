@@ -17,6 +17,7 @@
 
 package com.thoughtworks.gauge.util;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -41,7 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class StepUtil {
-
+    private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.util.StepUtil");
     private static HashMap<String, StepValue> stepValueCache = new HashMap<>();
 
     public static PsiElement findStepImpl(SpecStep step, Module module) {
@@ -89,6 +90,7 @@ public class StepUtil {
                 }
             }
         } catch (Exception e) {
+            LOG.debug(e);
             return null;
         }
         return null;

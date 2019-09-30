@@ -25,6 +25,7 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.template.TemplateBuilder;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiDocumentManager;
@@ -53,6 +54,7 @@ import static com.thoughtworks.gauge.language.psi.SpecPsiImplUtil.getStepValueFo
 import static com.thoughtworks.gauge.util.StepUtil.getGaugeStepAnnotationValues;
 
 public class StepCompletionProvider extends CompletionProvider<CompletionParameters> {
+    private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.autocomplete.StepCompletionProvider");
 
     public static final String STEP = "step";
     public static final String CONCEPT = "concept";
@@ -149,6 +151,7 @@ public class StepCompletionProvider extends CompletionProvider<CompletionParamet
                 gaugeConnection.fetchAllConcepts().forEach(concept -> addStep(steps, concept.getStepValue(), CONCEPT));
             }
         } catch (IOException ignored) {
+            LOG.debug(ignored);
         }
         return steps.values();
     }

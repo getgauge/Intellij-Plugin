@@ -24,6 +24,7 @@ import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationInfo;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
 import com.thoughtworks.gauge.util.GaugeUtil;
@@ -42,6 +43,7 @@ public class GaugeExceptionHandler extends Thread {
             "\n* Idea version: %s\n* API version: %s\n* Plugin version: %s\n* Gauge version: %s</pre>";
     private Process process;
     private Project project;
+    private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.core.GaugeExceptionHandler");
 
     public GaugeExceptionHandler(Process process, Project project) {
         this.process = process;
@@ -56,9 +58,12 @@ public class GaugeExceptionHandler extends Thread {
                 output = getOutput(output, process.getErrorStream());
                 output = getOutput(output, process.getInputStream());
             } while (process.isAlive());
-            if (process.exitValue() != 0 && !output.trim().equals("") && project.isOpen())
+            if (process.exitValue() != 0 && !output.trim().equals("") && project.isOpen()) {
+                LOG.debug(output);
                 Notifications.Bus.notify(createNotification(output, process.exitValue()), project);
+            }
         } catch (Exception ignored) {
+            LOG.debug(ignored);
         }
     }
 

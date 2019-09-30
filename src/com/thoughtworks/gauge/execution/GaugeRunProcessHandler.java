@@ -31,15 +31,17 @@ import com.intellij.execution.remote.RemoteConfigurationType;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 
 public class GaugeRunProcessHandler extends ColoredProcessHandler {
-
+    private static final Logger LOG = Logger.getInstance("#com.thoughtworks.gauge.execution.GaugeRunProcessHandler");
     private GaugeRunProcessHandler(Process process, String commandLineString) {
         super(process, commandLineString);
     }
 
     public static GaugeRunProcessHandler runCommandLine(final GeneralCommandLine commandLine, GaugeDebugInfo debugInfo, Project project) throws ExecutionException {
+        LOG.info(String.format("Running Gauge tests with command : %s", commandLine.getCommandLineString()));
         final GaugeRunProcessHandler gaugeRunProcess = new GaugeRunProcessHandler(commandLine.createProcess(), commandLine.getCommandLineString());
         ProcessTerminatedListener.attach(gaugeRunProcess);
         if (debugInfo.shouldDebug()) {
@@ -71,6 +73,7 @@ public class GaugeRunProcessHandler extends ColoredProcessHandler {
                     debuggerConnected = true;
                 } catch (Exception e) {
                     System.err.println("Failed to connect debugger. Retrying... : " + e.getMessage());
+                    LOG.debug(e);
                 }
             }
         };
