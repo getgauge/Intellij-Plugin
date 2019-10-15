@@ -32,21 +32,7 @@ the steps
 
 Create a new Gauge project and start writing your tests.
 
-Explore all the :ref:`features of Gauge Intellij IDEA plugin <intellij-features>` now!
-
-*Install [nightly version](#installing-nightly) of Gauge Intellij plugin*
-
-
-## Installing Nightly
-
-Nightly builds are also available in IntelliJ plugin repository.
-
--  Follow the
-   [instructions](https://www.jetbrains.com/idea/help/managing-enterprise-plugin-repositories.html)
-   to add `Nightly` channel to IntelliJ Idea.
--  Add the following repository URL
-
-    https://plugins.jetbrains.com/plugins/nightly/7535
+Explore all the :ref:`features of Gauge Intellij IDEA plugin <Features>` now!
 
 ## Creating a Java project
 
