@@ -32,7 +32,7 @@ the steps
 
 Create a new Gauge project and start writing your tests.
 
-Explore all the :ref:`features of Gauge Intellij IDEA plugin <Features>` now!
+Explore all the [features of Gauge Intellij IDEA plugin](#features) now!
 
 ## Creating a Java project
 
