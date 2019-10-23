@@ -101,6 +101,7 @@ public class CustomRenameHandler implements RenameHandler {
     }
 
     private PsiElement getStepElement(PsiElement selectedElement) {
+        if (selectedElement == null) return null;
         if (selectedElement instanceof SpecStepImpl || selectedElement instanceof ConceptStepImpl)
             return selectedElement;
         if (selectedElement.getParent() == null) return null;
