@@ -1,5 +1,6 @@
 Intellij support for [Gauge](https://github.com/getgauge/gauge) project.
 
+[![Actions Status](https://github.com/getgauge/Intellij-Plugin/workflows/tests/badge.svg)](https://github.com/getgauge/Intellij-Plugin/actions)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
 
 # Installation
