@@ -19,6 +19,7 @@
     <id>com.thoughtworks.gauge</id>
     <name>Gauge</name>
     <vendor email="getgauge@googlegroups.com" url="http://getgauge.io">Gauge</vendor>
+    <depends>com.intellij.modules.java</depends>
 
     <description><![CDATA[
       Plugin for writing Gauge tests
@@ -216,11 +217,6 @@
         </component>
     </project-components>
 
-    <!-- please see http:confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
-         on how to target different products -->
-    <!-- uncomment to enable plugin in all products
-    <depends>com.intellij.modules.lang</depends>
-    -->
     <module-components>
         <component>
             <implementation-class>com.thoughtworks.gauge.GaugeModuleComponent</implementation-class>
