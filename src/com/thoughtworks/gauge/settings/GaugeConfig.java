@@ -1,58 +1,44 @@
 package com.thoughtworks.gauge.settings;
 
-import com.intellij.execution.application.ApplicationConfiguration;
-import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.options.SettingsEditor;
-import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.ui.TextComponentAccessor;
 
 import javax.swing.*;
 
-public class GaugeConfig extends SettingsEditor<ApplicationConfiguration> {
+public class GaugeConfig {
     private JPanel configWindow;
-    private JButton gaugeChooser;
-    private JButton homeChooser;
-    private JButton rootChooser;
-    private JTextField gaugePath;
-    private JTextField homePath;
+    private com.intellij.openapi.ui.TextFieldWithBrowseButton gaugePath;
+    private com.intellij.openapi.ui.TextFieldWithBrowseButton homePath;
     private JCheckBox useIntelliJTestRunner;
 
-    public GaugeConfig() {
-        gaugeChooser.addActionListener(e -> setPath(gaugePath, true));
-        homeChooser.addActionListener(e -> setPath(homePath, false));
-    }
+    JComponent createEditor() {
+        FileChooserDescriptor homeFileDescriptor = new FileChooserDescriptor(false, true, false, false, false, false);
+        homePath.addBrowseFolderListener(
+                "",
+                "Gauge Home Path",
+                null,
+                homeFileDescriptor,
+                TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
 
-    @Override
-    protected void resetEditorFrom(@NotNull ApplicationConfiguration applicationConfiguration) {
+        FileChooserDescriptor gaugePathFileDescriptor = new FileChooserDescriptor(true, false, false, false, false, false);
+        gaugePath.addBrowseFolderListener(
+                "",
+                "Gauge Binary Path",
+                null,
+                gaugePathFileDescriptor,
+                TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
 
-    }
-
-    @Override
-    protected void applyEditorTo(@NotNull ApplicationConfiguration applicationConfiguration) throws ConfigurationException {
-
-    }
-
-    @NotNull
-    @Override
-    protected JComponent createEditor() {
         return configWindow;
     }
 
-    private void setPath(JTextField field, boolean chooseFiles) {
-        VirtualFile file = FileChooser.chooseFile(new FileChooserDescriptor(chooseFiles, !chooseFiles, false, false, false, false), null, null);
-        if (file == null) return;
-        field.setText(file.getPath());
-    }
-
-    public void setValues(GaugeSettingsModel model) {
+    void setValues(GaugeSettingsModel model) {
         this.homePath.setText(model.homePath);
         this.gaugePath.setText(model.gaugePath);
         this.useIntelliJTestRunner.setSelected(model.useIntelliJTestRunner);
     }
 
-    public GaugeSettingsModel getValues() {
+    GaugeSettingsModel getValues() {
         return new GaugeSettingsModel(this.gaugePath.getText(), this.homePath.getText(), this.useIntelliJTestRunner.isSelected());
     }
+
 }

@@ -1,17 +1,28 @@
 package com.thoughtworks.gauge.settings;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.options.SearchableConfigurable;
+import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class GaugeSettings implements com.intellij.openapi.options.Configurable {
+public class GaugeSettings implements SearchableConfigurable, Disposable {
 
-    private GaugeConfig gaugeConfig = new GaugeConfig();
+    private GaugeConfig gaugeConfig;
     private GaugeSettingsModel model;
 
-    @Nls
+
+    @NotNull
+    @Override
+    public String getId() {
+        return "gauge";
+    }
+
+    @Nls(capitalization = Nls.Capitalization.Title)
     @Override
     public String getDisplayName() {
         return "Gauge";
@@ -19,16 +30,11 @@ public class GaugeSettings implements com.intellij.openapi.options.Configurable 
 
     @Nullable
     @Override
-    public String getHelpTopic() {
-        return null;
-    }
-
-    @Nullable
-    @Override
     public JComponent createComponent() {
         model = GaugeSettingsService.getSettings();
+        gaugeConfig = new GaugeConfig();
         gaugeConfig.setValues(model);
-        return gaugeConfig.getComponent();
+        return gaugeConfig.createEditor();
     }
 
     @Override
@@ -45,5 +51,15 @@ public class GaugeSettings implements com.intellij.openapi.options.Configurable 
     @Override
     public void reset() {
         gaugeConfig.setValues(model);
+    }
+
+    @Override
+    public void disposeUIResources() {
+        Disposer.dispose(this);
+    }
+
+    @Override
+    public void dispose() {
+        gaugeConfig = null;
     }
 }
