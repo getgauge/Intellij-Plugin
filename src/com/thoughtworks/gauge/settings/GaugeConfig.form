@@ -21,7 +21,7 @@
           <grid row="3" column="0" row-span="1" col-span="6" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
-      <component id="b7cf" class="javax.swing.JTextField" binding="gaugePath">
+      <component id="7d72b" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="gaugePath">
         <constraints>
           <grid row="0" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
@@ -31,15 +31,7 @@
           <text value=""/>
         </properties>
       </component>
-      <component id="382e0" class="javax.swing.JButton" binding="gaugeChooser">
-        <constraints>
-          <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="..."/>
-        </properties>
-      </component>
-      <component id="2d823" class="javax.swing.JTextField" binding="homePath">
+      <component id="4dfd7" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="homePath">
         <constraints>
           <grid row="1" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
@@ -56,14 +48,6 @@
         </constraints>
         <properties>
           <text value="GAUGE_HOME:"/>
-        </properties>
-      </component>
-      <component id="9b2a7" class="javax.swing.JButton" binding="homeChooser">
-        <constraints>
-          <grid row="1" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="..."/>
         </properties>
       </component>
       <grid id="76d32" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
