@@ -18,7 +18,7 @@
 <idea-plugin>
     <id>com.thoughtworks.gauge</id>
     <name>Gauge</name>
-    <vendor email="getgauge@googlegroups.com" url="http://getgauge.io">Gauge</vendor>
+    <vendor email="getgauge@googlegroups.com" url="http://gauge.org">Gauge</vendor>
     <depends>com.intellij.modules.java</depends>
 
     <description><![CDATA[
