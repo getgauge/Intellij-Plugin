@@ -15,11 +15,6 @@ intellij {
     version ideaVersion
     pluginName 'Gauge-Java-Intellij'
     sameSinceUntilBuild false
-    publishPlugin {
-        username publishUsername
-        password publishPassword
-        channels publishChannel
-    }
     patchPluginXml {
         sinceBuild customSinceBuild
         untilBuild customUntilBuild

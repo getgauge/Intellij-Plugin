@@ -27,7 +27,7 @@ jobs:
         run: |
           cd build/distributions/
           if [ -z "$version" ]; then
-            version=$(ls Gauge-Java-Intellij-* | head -1 | sed "s/\.[^\.]*$//" | sed "s/Gauge-Java-Intellij-//" | sed | sed "s/-[a-z]*\.[a-z0-9_]*$//");
+            version=$(ls Gauge-Java-Intellij-*.zip | sed "s/^Gauge-Java-Intellij-\([^;]*\).zip/\1/");
           fi
           artifacts=()
           dir=`pwd`
@@ -35,19 +35,14 @@ jobs:
           echo "---------------------------"
           echo "Updating release v$version"
           echo "---------------------------"
-          echo -e "Gauge-Java-Intellij $version\n\n" > desc.txt
+          echo -e "Gauge Intellij Plugin $version\n\n" > desc.txt
           release_description=$(ruby -e "$(curl -sSfL https://github.com/getgauge/gauge/raw/master/build/create_release_text.rb)" Intellij-Plugin getgauge)
           echo "$release_description" >> desc.txt
           echo "Creating new draft for release v$version"
           hub release create -d -F ./desc.txt "v$version"
           rm -rf desc.txt
           echo "Start uploading assets..."
-          for i in `ls $artifacts`; do
-              hub release edit -m "" -a $i "v$version"
-              if [ $? -ne 0 ];then
-                  exit 1
-              fi
-          done
+          hub release edit -m "" -a "Gauge-Java-Intellij-$version.zip" "v$version"
       - name: 'deployment success'
         if: success()
         uses: 'deliverybot/status@master'
