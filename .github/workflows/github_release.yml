@@ -1,0 +1,63 @@
+name: Deploy
+
+on: [deployment]
+
+jobs:
+  deploy:
+    name: Create Draft with assets
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup java
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11.x.x'
+
+      - name: Build artifacts
+        run: |
+          ./gradlew clean buildPlugin
+
+      - name: Install hub
+        run: brew install hub
+
+      - name: update
+        run: |
+          cd build/distributions/
+          if [ -z "$version" ]; then
+            version=$(ls Gauge-Java-Intellij-* | head -1 | sed "s/\.[^\.]*$//" | sed "s/Gauge-Java-Intellij-//" | sed | sed "s/-[a-z]*\.[a-z0-9_]*$//");
+          fi
+          artifacts=()
+          dir=`pwd`
+          artifacts+="$dir/*.vsix"
+          echo "---------------------------"
+          echo "Updating release v$version"
+          echo "---------------------------"
+          echo -e "Gauge-Java-Intellij $version\n\n" > desc.txt
+          release_description=$(ruby -e "$(curl -sSfL https://github.com/getgauge/gauge/raw/master/build/create_release_text.rb)" Intellij-Plugin getgauge)
+          echo "$release_description" >> desc.txt
+          echo "Creating new draft for release v$version"
+          hub release create -d -F ./desc.txt "v$version"
+          rm -rf desc.txt
+          echo "Start uploading assets..."
+          for i in `ls $artifacts`; do
+              hub release edit -m "" -a $i "v$version"
+              if [ $? -ne 0 ];then
+                  exit 1
+              fi
+          done
+      - name: 'deployment success'
+        if: success()
+        uses: 'deliverybot/status@master'
+        with:
+          state: 'success'
+          token: '${{ secrets.GITHUB_TOKEN }}'
+
+      - name: 'deployment failure'
+        if: failure()
+        uses: 'deliverybot/status@master'
+        with:
+          state: 'failure'
+          token: '${{ secrets.GITHUB_TOKEN }}'
