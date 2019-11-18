@@ -3,6 +3,14 @@ Intellij support for [Gauge](https://github.com/getgauge/gauge) project.
 [![Actions Status](https://github.com/getgauge/Intellij-Plugin/workflows/tests/badge.svg)](https://github.com/getgauge/Intellij-Plugin/actions)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
 
+## Deprecation Notice
+*[VS Code](https://code.visualstudio.com/) has good support for Java and the [Gauge VS Code](https://github.com/getgauge/gauge-vscode/) works great with the [Gauge java plugin](https://github.com/getgauge/gauge-java). We are deprecating the IntelliJ Gauge plugin in favour of the [Gauge VS Code plugin](https://github.com/getgauge/gauge-vscode/).*
+
+*The Gauge team will stop addding new features to the IntelliJ Gauge plugin, only bug fixes will be done henceforth. The Gauge team will officially end support for IntelliJ Gauge plugin in October 2020.*
+
+*If you wish to take up owership of this plugin, please contact us. We would be happy to transfer the plugin ownwership.*
+
+
 # Installation
 
 Plugin can be installed by downloading from Jetbrains plugin repository.
