@@ -38,6 +38,10 @@
     ]]></description>
 
     <change-notes><![CDATA[
+     <p>0.3.17</p>
+      <ul>
+            <li> Minor enhancements and bug fixes </li>
+      </ul>
      <p>0.3.16</p>
       <ul>
             <li> Exception when closing one of several Gauge projects open </li>
@@ -92,122 +96,6 @@
            <li> Enhanced spec/concept preview </li>
            <li> Adding support for latest IntelliJ(2017.2) </li>
       </ul>
-      <p>0.2.5</p>
-      <ul>
-           <li> Bug Fixes </li>
-      </ul>
-      <p>0.2.4</p>
-      <ul>
-           <li> Adding Extract to concept feature</li>
-           <li> Bug Fixes </li>
-      </ul>
-      <p>0.2.3</p>
-      <ul>
-           <li> Bug Fixes and enhancements </li>
-      </ul>
-      <p>0.2.1</p>
-      <ul>
-           <li> Bug Fixes and enhancements </li>
-      </ul>
-      <br>
-      <p>0.2.0</p>
-      <ul>
-           <li> Gradle project support </li>
-           <li> Enhanced spec/scenario execution </li>
-           <li> Bug Fixes and enhancements </li>
-      </ul>
-      <br>
-      <p>0.1.0</p>
-      <ul>
-           <li> Adding IntelliJ 15 compatibility changes </li>
-           <li> Bug Fixes </li>
-      </ul>
-      <br>
-      <p>0.0.15</p>
-      <ul>
-           <li> Enhanced Find usages, Autocomplete, HTML preview and Quick fix functionality </li>
-           <li> Bug Fixes </li>
-      </ul>
-      <br>
-      <p>0.0.14</p>
-      <ul>
-           <li> Changes for compatibility with gauge-java version 0.2.2 </li>
-      </ul>
-      <br>
-      <p>0.0.13</p>
-      <ul>
-           <li> Enhanced find usages functionality </li>
-           <li> Added spec and concept commenting feature </li>
-           <li> Added error highlighting </li>
-           <li> Bug Fixes and enhancements </li>
-      </ul>
-      <br>
-      <p>0.0.12</p>
-      <ul>
-           <li> Enhanced auto completion support </li>
-           <li> Bug Fixes and enhancements </li>
-      </ul>
-      <br>
-      <p>0.0.11</p>
-      <ul>
-           <li> Bug Fixes and enhancements </li>
-      </ul>
-      <br>
-      <p>0.0.10</p>
-      <ul>
-           <li> Bug Fixes and enhancements </li>
-      </ul>
-      <br>
-      <p>0.0.9</p>
-      <ul>
-           <li> Improving debugger support. Do not need to launch remote config after launching specs in debug mode </li>
-           <li> Bug Fixes and enhancements </li>
-      </ul>
-      <br>
-      <p>0.0.8</p>
-      <ul>
-           <li> Support for using gauge-maven-plugin </li>
-           <li> Added spec and scenario templates </li>
-           <li> Bug Fixes and enhancements </li>
-      </ul>
-      <br>
-
-      <p>0.0.7</p>
-      <ul>
-           <li> Importing the project seamlessly </li>
-           <li> Adding caching mechanism, improves performance.</li>
-      </ul>
-      <br>
-      <p>0.0.6</p>
-      <ul>
-           <li> Removed find usages feature due to performance issues </li>
-           <li> Bug fixes and enhancements </li>
-      </ul>
-      <br>
-      <p>0.0.5</p>
-      <ul>
-           <li> Basic find usages on steps that have implementation </li>
-           <li> Fixes bug where gauge.exe was not detected on windows </li>
-      </ul>
-
-      <br>
-      <p>0.0.4</p>
-      <ul>
-           <li> Parallel Execution in run configuration </li>
-           <li> Html preview tab for spec and concept files </li>
-           <li> Bug fixes </li>
-      </ul>
-
-      <br>
-      <p>0.0.3</p>
-        <ul>
-           <li> Refactoring of steps across gauge project </li>
-           <li> Single scenario execution </li>
-           <li> Multiple spec execution from project explorer </li>
-           <li> Tag expression in spec run configuration </li>
-           <li> Template for adding tables </li>
-           <li> Specification and concept file creation </li>
-        </ul>
     ]]>
     </change-notes>
 
