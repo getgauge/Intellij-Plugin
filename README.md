@@ -10,6 +10,15 @@ Intellij support for [Gauge](https://github.com/getgauge/gauge) project.
 
 *If you wish to take up owership of this plugin, please contact us. We would be happy to transfer the plugin ownwership.*
 
+# Building from Source
+
+```
+> git clone git@github.com:getgauge/Intellij-Plugin.git
+> cd Intellij-Plugin
+> ./gradlew buildPlugin
+```
+
+The plugin zip will be available at `build/distributions`. Install the zip file from [IntelliJ IDEA](https://www.jetbrains.com/help/idea/2017.1/installing-a-plugin-from-the-disk.html)
 
 # Installation
 
