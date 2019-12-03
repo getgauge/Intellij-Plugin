@@ -38,6 +38,10 @@
     ]]></description>
 
     <change-notes><![CDATA[
+     <p>0.3.18</p>
+      <ul>
+            <li> Adding support for intellij 2019.3 </li>
+      </ul>
      <p>0.3.17</p>
       <ul>
             <li> Minor enhancements and bug fixes </li>
