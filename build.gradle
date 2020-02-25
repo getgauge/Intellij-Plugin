@@ -38,7 +38,7 @@ allprojects {
 }
 dependencies {
     compile(
-            'com.thoughtworks.gauge:gauge-java:+',
+            'com.thoughtworks.gauge:gauge-java:0.7.3',
     )
     testCompile(
             'org.mockito:mockito-all:1.10.19',
