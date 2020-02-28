@@ -78,7 +78,28 @@ public class GaugeModuleComponent implements ModuleComponent {
     }
 
     private static GaugeConnection initializeGaugeConnection(int apiPort) {
-        return apiPort != -1 ? new GaugeConnection(apiPort) : null;
+        if (apiPort != -1) {
+            LOG.warn("Initializing Gauge connection");
+            GaugeConnection gaugeConn = null;
+
+            for (int i = 1; i <= 10; i++) {
+                try {
+                    gaugeConn = new GaugeConnection(apiPort);
+                    break;
+                } catch (java.lang.RuntimeException ex) {
+                    LOG.warn("Unable to open connection on try " + i + ".   Waiting and trying again");
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            return gaugeConn;
+        } else {
+            return null;
+        }
     }
 
     private static Process initializeGaugeProcess(int apiPort, Module module) {
