@@ -112,7 +112,7 @@ public class CreateStepImplFix extends BaseIntentionAction {
 
                     @Override
                     public Icon getIconFor(PsiFile aValue) {
-                        return aValue == null ? AllIcons.Actions.CreateFromUsage : aValue.getIcon(0);
+                        return aValue == null ? AllIcons.Actions.IntentionBulb : aValue.getIcon(0);
                     }
 
                     @NotNull

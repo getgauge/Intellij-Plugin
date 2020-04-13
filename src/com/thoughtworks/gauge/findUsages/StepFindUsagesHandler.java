@@ -36,12 +36,12 @@ public class StepFindUsagesHandler extends FindUsagesHandler {
     }
 
     @Override
-    public boolean processElementUsages(final PsiElement psiElement, final Processor<UsageInfo> processor, final FindUsagesOptions findUsagesOptions) {
+    public boolean processElementUsages(final PsiElement psiElement, final Processor<? super UsageInfo> processor, final FindUsagesOptions findUsagesOptions) {
         ApplicationManager.getApplication().invokeLater(() -> runFindUsageReadAction(psiElement, processor, findUsagesOptions));
         return true;
     }
 
-    private void runFindUsageReadAction(final PsiElement psiElement, final Processor<UsageInfo> processor, final FindUsagesOptions findUsagesOptions) {
+    private void runFindUsageReadAction(final PsiElement psiElement, final Processor<? super UsageInfo> processor, final FindUsagesOptions findUsagesOptions) {
         ApplicationManager.getApplication().runReadAction(() -> {
             if (psiElement instanceof PsiMethod) {
                 PsiMethod[] psiMethods = SuperMethodWarningUtil.checkSuperMethods((PsiMethod) psiElement, CustomFUH.getActionString());
@@ -53,7 +53,7 @@ public class StepFindUsagesHandler extends FindUsagesHandler {
         });
     }
 
-    public boolean processUsages(final PsiElement psiElement, final Processor<UsageInfo> processor, final FindUsagesOptions findUsagesOptions) {
+    public boolean processUsages(final PsiElement psiElement, final Processor<? super UsageInfo> processor, final FindUsagesOptions findUsagesOptions) {
         return super.processElementUsages(psiElement, processor, findUsagesOptions);
     }
 
